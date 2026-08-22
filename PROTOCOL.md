@@ -72,6 +72,10 @@ triggers:
   - ...
 ```
 
+## Identity detection
+
+On first interaction, read `git config user.name` and `git config user.email` to identify the current user. Match against profiles in `people/`. If no match exists, run the onboard skill.
+
 ## Verbs
 
 See `VERBS.md` for the full list. Key verbs: `hello` (briefing), `status` (what's in flight), `onboard` (new member setup), `decide` (file a decision), `handoff` (transfer work), `lint` (check hygiene), `search` (find knowledge), `sync` (pull/push vault changes).
@@ -86,7 +90,7 @@ Records and conventions carry a `last-verified` date. The `lint` skill flags any
 
 ## Scope boundary
 
-Conventions in this vault apply to **this vault only**. In a multi-root workspace, project repos have their own rules. Never apply vault conventions (branching, commit style, merge strategy) to a project repo unless that project's own instructions say to.
+Conventions in this vault apply to **this vault only**. In a multi-root workspace, project repos have their own rules. Never apply vault conventions (branching, commit style, merge strategy) to a project repo unless that project's own instructions say to. Project repo instructions take precedence over this vault on any conflict.
 
 ## Tag-based scoping
 

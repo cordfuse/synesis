@@ -78,7 +78,7 @@ Each AI harness has its own entrypoint file. Synesis ships a one-line shim for e
 | Harness | Mode | Shim file | Content |
 |---|---|---|---|
 | Claude Code | CLI + VS Code | `CLAUDE.md` | Read and follow PROTOCOL.md |
-| OpenAI Codex | CLI + VS Code | `AGENTS.md` | Agent instructions + PROTOCOL.md pointer — Codex reads AGENTS.md natively, so this file pulls double duty |
+| OpenAI Codex | CLI + VS Code | `AGENTS.md` | Read and follow PROTOCOL.md |
 | GitHub Copilot | CLI + VS Code | `.github/copilot-instructions.md` | Read and follow PROTOCOL.md |
 
 All three harnesses have both CLI and VS Code extensions. Three harnesses supported at launch. Adding a new harness = adding a one-line shim file. The actual knowledge stays in one place.
