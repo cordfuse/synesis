@@ -34,7 +34,7 @@ Same pattern as cortex: `cordfuse/cortex` = framework, `steve-krisjanovs/cortex`
 ```
 hivemind/
   PROTOCOL.md                 # teaches any agent the conventions — carries version in frontmatter
-  AGENTS.md                   # agent-facing instructions (capabilities, rules)
+  AGENTS.md                   # agent instructions + Codex CLI/VS Code entrypoint (includes PROTOCOL.md pointer)
   VERBS.md                    # team workflows (hello, status, sync, onboard)
   records/                    # institutional memory
     2026-08-18-auth-decision.md
@@ -48,7 +48,6 @@ hivemind/
     architecture.md           # system overview, key decisions
     onboarding.md             # new dev reads this on day 1
   CLAUDE.md                   # shim: "Read and follow PROTOCOL.md" (Claude Code CLI + VS Code)
-  AGENTS.md                   # doubles as Codex CLI entrypoint
   .github/
     copilot-instructions.md   # shim: "Read and follow PROTOCOL.md" (GitHub Copilot)
   README.md                   # the only branded file
@@ -63,7 +62,7 @@ Each AI harness has its own entrypoint file. Hivemind ships a one-line shim for 
 | Harness | Mode | Shim file | Content |
 |---|---|---|---|
 | Claude Code | CLI + VS Code | `CLAUDE.md` | Read and follow PROTOCOL.md |
-| OpenAI Codex | CLI + VS Code | `AGENTS.md` | Already the agent-facing instructions file — Codex reads it natively |
+| OpenAI Codex | CLI + VS Code | `AGENTS.md` | Agent instructions + PROTOCOL.md pointer — Codex reads AGENTS.md natively, so this file pulls double duty |
 | GitHub Copilot | CLI + VS Code | `.github/copilot-instructions.md` | Read and follow PROTOCOL.md |
 
 All three harnesses have both CLI and VS Code extensions. Three harnesses supported at launch. Adding a new harness = adding a one-line shim file. The actual knowledge stays in one place.
@@ -88,7 +87,7 @@ The agent sees both hivemind and the project. When working in the project and ne
 
 The public framework ships a template `.code-workspace` file. Teams customize it with their own project paths.
 
-Terminal users (Claude Code, OpenCode, etc.) open a separate session on the hivemind repo as needed.
+Terminal users (Claude Code CLI, Codex CLI) open a separate session on the hivemind repo as needed.
 
 ### Multi-root risks
 
@@ -98,7 +97,7 @@ Terminal users (Claude Code, OpenCode, etc.) open a separate session on the hive
 | Accidental cross-repo commits | Git catches this (different working trees) — document the foot-gun |
 | Context window bloat | Keep hivemind lean; agents index both repos |
 | Copilot code suggestions polluted by prose | Minor — monitor during dogfooding |
-| ~~Copilot ignores `.github/` in multi-root workspaces~~ | Fixed Sep 2025 ([vscode#264837](https://github.com/microsoft/vscode/issues/264837)). No workaround needed |
+
 
 ## Versioning
 
@@ -198,7 +197,7 @@ No PR gate. Commit directly to the hivemind. Trust the team. Git blame + git log
 ### Phase 2 — Dogfood with Innovia
 - [ ] Fork to steve-krisjanovs/hivemind (private)
 - [ ] Populate with real team knowledge (conventions, people, architecture)
-- [ ] Test with multiple agents (Claude Code + Copilot minimum)
+- [ ] Test with all three harnesses (Claude Code, Codex, Copilot)
 - [ ] Test multi-root workspace flow in VS Code
 - [ ] Iterate on protocol based on real usage
 
