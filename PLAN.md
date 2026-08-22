@@ -1,7 +1,8 @@
 # Hivemind — Execution Plan
 
 > **Codename:** Hivemind (working title — brand-neutral internals, rename costs nothing)
-> **Repo:** cordfuse/hivemind (public)
+> **Repo:** cordfuse/hivemind (public) — the framework/template
+> **Dogfood:** steve-krisjanovs/hivemind (private) — real team knowledge, Innovia testing
 > **What it is:** A file-based, repo-embedded, agent-agnostic shared knowledge protocol for software teams.
 > **What it is not:** A SaaS product, an MCP server, an npm package, a database.
 
@@ -21,31 +22,95 @@ Cortex proved the pattern for one person. Hivemind is cortex for teams.
 4. **Trust the team.** No review gates on knowledge contributions. Anyone can commit. Git history is the audit trail. Friction kills adoption.
 5. **Framework/custom split.** Framework = the protocol (shared, versioned, upstream-synced). Custom = team-specific knowledge (decisions, people, conventions).
 
+## Repo model
+
+- **`cordfuse/hivemind`** (public) — the framework/template. Protocol docs, example files, README. Teams fork this.
+- **`steve-krisjanovs/hivemind`** (private) — Steve's fork. Real people, real decisions, real conventions. Dogfood repo for Innovia.
+
+Same pattern as cortex: `cordfuse/cortex` = framework, `steve-krisjanovs/cortex` = personal instance.
+
 ## Architecture
 
 ```
-repo/
-  .hivemind/                    # or whatever the install dir is — TBD
-    PROTOCOL.md                 # teaches any agent the conventions (like CORTEX.md)
-    AGENTS.md                   # agent-facing instructions (capabilities, rules)
-    VERBS.md                    # team workflows (hello, status, sync, onboard)
-    records/                    # institutional memory
-      2026-08-18-auth-decision.md
-      2026-08-20-api-redesign.md
-    people/                     # team context
-      sarah.md                  # role, expertise, owns auth layer
-      mike.md                   # role, expertise, owns frontend
-    conventions/                # how we do things here
-      git.md                    # branching, commit style, PR process
-      architecture.md           # system overview, key decisions
-      onboarding.md             # new dev reads this on day 1
+hivemind/
+  PROTOCOL.md                 # teaches any agent the conventions — carries version in frontmatter
+  AGENTS.md                   # agent-facing instructions (capabilities, rules)
+  VERBS.md                    # team workflows (hello, status, sync, onboard)
+  records/                    # institutional memory
+    2026-08-18-auth-decision.md
+    2026-08-20-api-redesign.md
+  people/                     # team context (private forks only — templates in public repo)
+    _template.md              # example format (public repo)
+    sarah.md                  # role, expertise, owns auth layer (private fork)
+    mike.md                   # role, expertise, owns frontend (private fork)
+  conventions/                # how we do things here
+    git.md                    # branching, commit style, PR process
+    architecture.md           # system overview, key decisions
+    onboarding.md             # new dev reads this on day 1
+  CLAUDE.md                   # shim: "Read and follow PROTOCOL.md"
+  .github/
+    copilot-instructions.md   # shim: "Read and follow PROTOCOL.md"
+  .cursorrules                # shim: "Read and follow PROTOCOL.md"
+  README.md                   # the only branded file
 ```
+
+Top-level layout, no dot-prefix. This is a cloned repo, not a config directory nested inside another project.
+
+## Harness shims
+
+Each AI harness has its own entrypoint file. Hivemind ships a one-line shim for each supported harness that redirects into `PROTOCOL.md`:
+
+| Harness | Shim file | Content |
+|---|---|---|
+| Claude Code | `CLAUDE.md` | Read and follow PROTOCOL.md |
+| GitHub Copilot | `.github/copilot-instructions.md` | Read and follow PROTOCOL.md |
+| Cursor | `.cursorrules` | Read and follow PROTOCOL.md |
+
+Adding support for a new harness = adding a one-line shim file. The actual knowledge stays in one place.
+
+## VS Code multi-root workspace
+
+Developers using VS Code-based harnesses (Copilot, Cursor, Claude for VS Code) work in a **multi-root workspace** that includes hivemind alongside their project repos:
+
+```json
+{
+  "folders": [
+    { "path": "../hivemind" },
+    { "path": "../my-al-project" },
+    { "path": "../another-al-project" }
+  ]
+}
+```
+
+The agent sees both hivemind and the project. When working in the project and needing team context — conventions, ownership, past decisions — hivemind is right there in the workspace.
+
+The public framework ships a template `.code-workspace` file. Teams customize it with their own project paths.
+
+Terminal users (Claude Code, OpenCode, etc.) open a separate session on the hivemind repo as needed.
+
+### Multi-root risks
+
+| Risk | Mitigation |
+|---|---|
+| Conflicting agent instructions (both repos have CLAUDE.md) | Documented precedence rule: project repo overrides hivemind on conflicts |
+| Accidental cross-repo commits | Git catches this (different working trees) — document the foot-gun |
+| Context window bloat | Keep hivemind lean; agents index both repos |
+| Copilot code suggestions polluted by prose | Minor — monitor during dogfooding |
+
+## Versioning
+
+Major.minor in `PROTOCOL.md` frontmatter, starting at **v0.1**.
+
+- **Minor bump:** add/change a convention, new verb, new template
+- **Major bump:** breaking change to directory structure or PROTOCOL.md format
+
+Private forks track upstream version: `upstream: cordfuse/hivemind@v0.1` in their PROTOCOL.md frontmatter.
 
 ## What carries over from cortex
 
 | Cortex concept | Hivemind equivalent | Changes |
 |---|---|---|
-| CORTEX.md | PROTOCOL.md | Brand-neutral name |
+| CORTEX.md | PROTOCOL.md | Brand-neutral name, versioned |
 | Records | records/ | Add attribution (who wrote it, when) |
 | Verbs (hello, goodbye, sync) | VERBS.md | Add team verbs: `onboard`, `handoff`, `decide` |
 | Framework/custom split | Same pattern | Framework = hivemind upstream, custom = team overrides |
@@ -55,10 +120,10 @@ repo/
 ## New features (not in cortex)
 
 ### 1. People directory
-`people/` folder with one markdown per team member. Role, expertise areas, what they own. Agents use this to answer "who should I ask about X?" and to attribute context correctly.
+`people/` folder with one markdown per team member. Role, expertise areas, what they own. Agents use this to answer "who should I ask about X?" and to attribute context correctly. Real profiles live in private forks only — the public repo ships `_template.md`.
 
 ### 2. Onboarding mode
-New dev clones repo, runs `hello` (or their agent reads PROTOCOL.md on first open). The protocol catches them up: architecture overview, active work, team conventions, who owns what.
+New dev clones the fork, opens their harness, types `hello` (or the agent reads PROTOCOL.md on first open). The protocol catches them up: architecture overview, active work, team conventions, who owns what.
 
 ### 3. Decision log with attribution
 Records include who decided, who was consulted, and why. Prevents relitigating settled decisions. Template:
@@ -74,13 +139,10 @@ Records include who decided, who was consulted, and why. Prevents relitigating s
 ### 4. Knowledge freshness
 Each record carries a `last-verified` date in frontmatter. A `lint` verb flags records older than N days (configurable) as stale. No automated deletion — just visibility.
 
-### 5. Cross-repo awareness
-A central hivemind repo that satellite project repos can reference. Satellite repos carry a pointer file (`HIVEMIND.md` or `.hivemind/upstream.md`) that tells agents where to find the team brain.
-
-### 6. Conventions as code
+### 5. Conventions as code
 `conventions/` folder replaces tribal knowledge. Git branching strategy, commit message format, deployment process, coding standards — all in markdown, all agent-readable. New devs and new agents get the same briefing.
 
-### 7. Contribution workflow
+### 6. Contribution workflow
 No PR gate. Commit directly to the hivemind. Trust the team. Git blame + git log = full audit trail. A `lint` verb handles hygiene (staleness, orphaned refs, missing attribution).
 
 ## Verb definitions (initial set)
@@ -98,22 +160,24 @@ No PR gate. Commit directly to the hivemind. Trust the team. Git blame + git log
 ## Phases
 
 ### Phase 1 — Protocol scaffold
-- [ ] Define PROTOCOL.md (the core teaching document)
+- [ ] Define PROTOCOL.md with v0.1 frontmatter
 - [ ] Define AGENTS.md (agent-facing instructions)
 - [ ] Define VERBS.md with initial verb set
 - [ ] Define directory structure and file conventions
+- [ ] Write harness shim files (CLAUDE.md, copilot-instructions.md, .cursorrules)
+- [ ] Create template .code-workspace file
+- [ ] Create example records, people templates, conventions
 - [ ] Write README.md (the only branded file)
-- [ ] Create example records, people, conventions
 
 ### Phase 2 — Dogfood with Innovia
-- [ ] Install hivemind in one Innovia repo
+- [ ] Fork to steve-krisjanovs/hivemind (private)
 - [ ] Populate with real team knowledge (conventions, people, architecture)
 - [ ] Test with multiple agents (Claude Code + Copilot minimum)
+- [ ] Test multi-root workspace flow in VS Code
 - [ ] Iterate on protocol based on real usage
 
-### Phase 3 — Cross-repo and polish
-- [ ] Design and test the satellite repo pointer pattern
-- [ ] Lint verb implementation (shell script or agent-native)
+### Phase 3 — Polish
+- [ ] Lint verb implementation (agent-native, no shell scripts)
 - [ ] Onboarding flow testing with a real new developer
 - [ ] Documentation site (if warranted)
 
@@ -122,15 +186,9 @@ No PR gate. Commit directly to the hivemind. Trust the team. Git blame + git log
 - [ ] README, examples, getting-started guide
 - [ ] Announce
 
-## Open questions
-
-1. **Install directory name:** `.hivemind/` at repo root? Or top-level `hivemind/`? Dot-prefix hides it from casual browsing but some teams want visibility.
-2. **People directory privacy:** Some teams won't want individual profiles in a public repo. Optional? Gitignored? Separate private repo?
-3. **Versioning:** Should the protocol carry a version number (like cortex does)? Useful for upstream sync but adds overhead.
-4. **Satellite pointer format:** How does a project repo reference the central hivemind? Symlinks break on Windows. Git submodules are painful. Simple URL pointer in a markdown file?
-
 ---
 
 *Filed: 2026-08-22*
+*Updated: 2026-08-22*
 *Codename: Hivemind*
 *Status: Planning*
