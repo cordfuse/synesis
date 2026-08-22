@@ -36,7 +36,6 @@ Same pattern as cortex: `cordfuse/cortex` = framework, `steve-krisjanovs/cortex`
 synesis/
   PROTOCOL.md                 # teaches any agent the conventions — version in frontmatter
   AGENTS.md                   # Codex entrypoint shim → PROTOCOL.md
-  VERBS.md                    # verb definitions (hello, status, onboard, decide, etc.)
   skills/                     # agent capabilities — flat files, one per skill
     hello.md
     status.md
@@ -67,7 +66,7 @@ synesis/
 
 Top-level layout, no dot-prefix. This is a cloned repo, not a config directory nested inside another project. The framework (public template) ships `_template.md` files and example skills. Teams fork and fill in real content.
 
-**Naming convention:** UPPERCASE filenames (`PROTOCOL.md`, `AGENTS.md`, `VERBS.md`) are protocol infrastructure. Lowercase filenames (`onboard.md`, `sarah.md`, `git.md`) are team content. The casing tells you at a glance what's plumbing and what's knowledge.
+**Naming convention:** UPPERCASE filenames (`PROTOCOL.md`, `AGENTS.md`) are protocol infrastructure. Lowercase filenames (`onboard.md`, `sarah.md`, `git.md`) are team content. The casing tells you at a glance what's plumbing and what's knowledge.
 
 **Linking convention:** Use `[[wikilinks]]` for all internal cross-references. Skills that create content (decide, onboard) write links at creation time. The lint skill validates that links resolve to real files. Wikilinks are native to Obsidian and readable by AI agents as plain text.
 
@@ -130,7 +129,7 @@ Private forks track upstream version: `upstream: cordfuse/synesis@v0.1` in their
 |---|---|---|
 | CORTEX.md | PROTOCOL.md | Brand-neutral name, versioned |
 | Records | records/ | Add attribution (who wrote it, when), `status`/`superseded-by` tracking |
-| Verbs (hello, goodbye, sync) | VERBS.md | Add team verbs: `onboard`, `handoff`, `decide` |
+| Verbs (hello, goodbye, sync) | `skills/` frontmatter | Verbs derived from skill files, no separate index |
 | Skills | skills/ | Carry over, flattened — no actor wrapper. Skills define their own triggers |
 | Fork model | Same pattern | Teams fork the template and own their copy |
 | Actor profiles | Dropped | Actors absorbed into skills — functional roles with triggers, no personalities |
@@ -258,25 +257,16 @@ The `lint` skill scans the repo for hygiene issues. No automated fixes — it re
 4. **Orphaned profiles** — people profiles where `email` doesn't match any recent git author
 5. **Empty templates** — files that are still just the `_template.md` content, never filled in
 
-## Verb definitions (initial set)
+## Verb definitions
 
-| Verb | What it does |
-|---|---|
-| `hello` | Briefing: active work, recent decisions, team status |
-| `status` | What's in flight, who's working on what |
-| `onboard` | Re-run onboarding (interview + briefing). Automatic on first `hello` when no profile exists; manual trigger for profile updates or re-briefing |
-| `decide` | File a decision record (prompted template) |
-| `handoff` | Transfer ownership/context on a piece of work |
-| `lint` | Check freshness, orphaned refs, missing attribution |
-| `search` | Find knowledge across records and conventions |
-| `sync` | Pull latest changes and push local work |
+Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by reading skill frontmatter (`name` + `description`). No separate VERBS.md index — single source of truth in `skills/`.
 
 ## Phases
 
 ### Phase 1 — Protocol scaffold
 - [x] Define PROTOCOL.md with v0.1 frontmatter
 - [x] Define AGENTS.md (Codex entrypoint shim)
-- [x] Define VERBS.md with initial verb set
+- [x] Define verb set (verbs derived from skills/ frontmatter, no separate VERBS.md)
 - [x] Define directory structure and frontmatter conventions
 - [x] Write harness shim files (CLAUDE.md, AGENTS.md, .github/copilot-instructions.md)
 - [x] Write skill files (hello, status, onboard, decide, handoff, lint, search)

@@ -47,7 +47,6 @@ That's it. The agent now knows the protocol. As you add people, decisions, and c
 ```
 synesis/
   PROTOCOL.md              # the protocol — teaches any agent the conventions
-  VERBS.md                 # commands the agent understands
   CLAUDE.md                # Claude Code shim → PROTOCOL.md
   AGENTS.md                # Codex shim → PROTOCOL.md
   .github/
@@ -119,26 +118,11 @@ Synesis works with any AI coding agent that can read project files. It ships one
 
 Each shim redirects the agent into `PROTOCOL.md`, where the actual protocol lives. Adding support for a new harness = adding a one-line shim file. The knowledge stays in one place.
 
-## Verbs
+## Verbs and skills
 
-Verbs are commands you give to the agent. The agent reads `VERBS.md` to know what's available.
+Verbs are commands you give to the agent. Each verb maps to a skill file in `skills/`. The agent reads skill frontmatter to discover what's available — no separate verb index to maintain.
 
-| Verb | What it does |
-|---|---|
-| `hello` | Team briefing — active work, recent decisions, team status |
-| `status` | What's in flight, who's working on what |
-| `onboard` | New member setup — interview, profile creation, full briefing |
-| `decide` | File a decision record with attribution and context |
-| `handoff` | Transfer ownership and context on a piece of work |
-| `lint` | Check vault hygiene — stale records, broken links, missing attribution |
-| `search` | Find knowledge across records, conventions, and people |
-| `sync` | Pull latest changes and push local work |
-
-## Skills
-
-Skills are agent capabilities defined as markdown files in `skills/`. Each skill specifies its triggers and step-by-step instructions. The agent reads them to know what it can do and when to activate.
-
-Included skills: `hello`, `status`, `onboard`, `decide`, `handoff`, `lint`, `search`, `sync`.
+Skills are markdown files that define triggers and step-by-step instructions. See `skills/` for the full set.
 
 ## VS Code multi-root workspace
 

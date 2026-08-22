@@ -43,7 +43,7 @@ Greet the user by name, then cover these sections in order:
 - Count of tools in `tools/` (if any beyond README.md)
 
 ### Available verbs
-- List all verbs from VERBS.md with one-line descriptions
+- List all verbs by reading `skills/*.md` frontmatter (`name` + `description`)
 
 ## Notes
 

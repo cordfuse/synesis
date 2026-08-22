@@ -24,7 +24,7 @@ This repo is your team's institutional memory. Decisions, conventions, people pr
 
 ## Naming convention
 
-UPPERCASE filenames (`PROTOCOL.md`, `AGENTS.md`, `VERBS.md`) are protocol infrastructure. Lowercase filenames (`onboard.md`, `sarah.md`, `git.md`) are team content.
+UPPERCASE filenames (`PROTOCOL.md`, `AGENTS.md`) are protocol infrastructure. Lowercase filenames (`onboard.md`, `sarah.md`, `git.md`) are team content.
 
 ## Linking
 
@@ -78,7 +78,7 @@ On first interaction, read `git config user.name` and `git config user.email` to
 
 ## Verbs
 
-See `VERBS.md` for the full list. Key verbs: `hello` (briefing), `status` (what's in flight), `onboard` (new member setup), `decide` (file a decision), `handoff` (transfer work), `lint` (check hygiene), `search` (find knowledge), `sync` (pull/push vault changes).
+Verbs are commands a developer gives to the agent. Each verb maps to a skill file in `skills/`. The agent reads `skills/*.md` frontmatter (`name` + `description`) to discover available verbs.
 
 ## Versioning
 
