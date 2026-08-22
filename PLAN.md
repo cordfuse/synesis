@@ -78,20 +78,15 @@ Developers using VS Code-based harnesses (Claude Code, Codex, Copilot — all ha
     { "path": "../hivemind" },
     { "path": "../my-al-project" },
     { "path": "../another-al-project" }
-  ],
-  "settings": {
-    "github.copilot.chat.instructionsFilesLocations": [
-      { "path": "hivemind/.github" }
-    ]
-  }
+  ]
 }
 ```
 
-The `settings` block is required for Copilot. In multi-root workspaces, Copilot does not auto-discover `.github/copilot-instructions.md` from workspace folders ([vscode#264837](https://github.com/microsoft/vscode/issues/264837), [vscode#296972](https://github.com/microsoft/vscode/issues/296972)). The explicit path works around this. Claude Code and Codex read their shim files without this workaround.
+All three harnesses auto-discover their shim files from workspace folders in multi-root workspaces. Copilot had a bug with this ([vscode#264837](https://github.com/microsoft/vscode/issues/264837)) but it was fixed in September 2025.
 
 The agent sees both hivemind and the project. When working in the project and needing team context — conventions, ownership, past decisions — hivemind is right there in the workspace.
 
-The public framework ships a template `.code-workspace` file with the Copilot workaround baked in. Teams customize it with their own project paths.
+The public framework ships a template `.code-workspace` file. Teams customize it with their own project paths.
 
 Terminal users (Claude Code, OpenCode, etc.) open a separate session on the hivemind repo as needed.
 
@@ -103,7 +98,7 @@ Terminal users (Claude Code, OpenCode, etc.) open a separate session on the hive
 | Accidental cross-repo commits | Git catches this (different working trees) — document the foot-gun |
 | Context window bloat | Keep hivemind lean; agents index both repos |
 | Copilot code suggestions polluted by prose | Minor — monitor during dogfooding |
-| Copilot ignores `.github/` in multi-root workspaces | Known bug ([vscode#264837](https://github.com/microsoft/vscode/issues/264837)). Workaround baked into template `.code-workspace` via `instructionsFilesLocations` setting |
+| ~~Copilot ignores `.github/` in multi-root workspaces~~ | Fixed Sep 2025 ([vscode#264837](https://github.com/microsoft/vscode/issues/264837)). No workaround needed |
 
 ## Versioning
 
