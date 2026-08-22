@@ -21,6 +21,7 @@ Cortex proved the pattern for one person. Hivemind is cortex for teams.
 3. **Brand-neutral internals.** `PROTOCOL.md`, not `HIVEMIND.md`. The brand lives in the README and docs, never in the protocol files themselves. Zero rename cost.
 4. **Trust the team.** No review gates on knowledge contributions. Anyone can commit. Git history is the audit trail. Friction kills adoption.
 5. **Framework/custom split.** Framework = the protocol (shared, versioned, upstream-synced). Custom = team-specific knowledge (decisions, people, conventions).
+6. **Obsidian-compatible.** The vault doubles as an Obsidian vault. `[[wikilinks]]` for internal linking, `aliases` and `tags` in frontmatter. `.obsidian/` is gitignored (per-user config).
 
 ## Repo model
 
@@ -58,11 +59,14 @@ hivemind/
     copilot-instructions.md   # shim → PROTOCOL.md (Copilot)
   README.md                   # the only branded file
   hivemind.code-workspace     # template multi-root workspace
+  .gitignore                  # ignores .obsidian/ (per-user Obsidian config)
 ```
 
 Top-level layout, no dot-prefix. This is a cloned repo, not a config directory nested inside another project. The framework (public template) ships `_template.md` files and example skills. Teams fork and fill in real content.
 
 **Naming convention:** UPPERCASE filenames (`PROTOCOL.md`, `AGENTS.md`, `VERBS.md`) are protocol infrastructure. Lowercase filenames (`onboard.md`, `sarah.md`, `git.md`) are team content. The casing tells you at a glance what's plumbing and what's knowledge.
+
+**Linking convention:** Use `[[wikilinks]]` for all internal cross-references. Skills that create content (decide, onboard) write links at creation time. The lint skill validates that links resolve to real files. Wikilinks are native to Obsidian and readable by AI agents as plain text.
 
 ## Harness shims
 
@@ -211,27 +215,33 @@ consulted: [JL]
 last-verified: 2026-08-18
 status: active
 superseded-by:
+tags: [auth, architecture]
 ---
 ```
-`status` is `active` or `superseded`. When superseded, `superseded-by` links to the replacement record filename. The lint skill validates that `superseded-by` targets an existing file.
+`status` is `active` or `superseded`. When superseded, `superseded-by` links to the replacement record filename. The lint skill validates that `superseded-by` targets an existing file. `tags` enable Obsidian filtering and agent search.
+
+Use `[[wikilinks]]` in the body to cross-reference other files: `[[people/sarah]]`, `[[conventions/git]]`, `[[records/2026-08-20-api-redesign]]`.
 
 **`people/*.md`**
 ```yaml
 ---
 name: Sarah Chen
 initials: SC
+aliases: [SC, Sarah]
 email: sarah.chen@company.com
 role: Frontend developer
 joined: 2026-08-18
+tags: [frontend, auth]
 ---
 ```
-`email` is matched against `git config user.email` for automatic user detection during onboarding.
+`email` is matched against `git config user.email` for automatic user detection during onboarding. `aliases` let Obsidian resolve `[[SC]]` to this profile. `tags` mark expertise areas.
 
 **`conventions/*.md`**
 ```yaml
 ---
 name: Git branching strategy
 last-verified: 2026-08-18
+tags: [git, workflow]
 ---
 ```
 
@@ -240,7 +250,7 @@ last-verified: 2026-08-18
 The `lint` skill scans the repo for hygiene issues. No automated fixes — it reports what it finds and the developer decides.
 
 1. **Stale knowledge** — records and conventions where `last-verified` is older than N days (configurable in PROTOCOL.md)
-2. **Broken links** — `superseded-by` pointing to a file that doesn't exist
+2. **Broken links** — `superseded-by` or `[[wikilinks]]` pointing to a file that doesn't exist
 3. **Missing attribution** — records without `decided-by`
 4. **Orphaned profiles** — people profiles where `email` doesn't match any recent git author
 5. **Empty templates** — files that are still just the `_template.md` content, never filled in
