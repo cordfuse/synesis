@@ -20,13 +20,13 @@ Cortex proved the pattern for one person. Hivemind is cortex for teams.
 2. **Agent-agnostic.** Works with any AI harness that reads project files. No vendor lock-in.
 3. **Brand-neutral internals.** `PROTOCOL.md`, not `HIVEMIND.md`. The brand lives in the README and docs, never in the protocol files themselves. Zero rename cost.
 4. **Trust the team.** No review gates on knowledge contributions. Anyone can commit. Git history is the audit trail. Friction kills adoption.
-5. **Framework/custom split.** Framework = the protocol (shared, versioned, upstream-synced). Custom = team-specific knowledge (decisions, people, conventions).
+5. **Fork and own.** Teams fork the template and make it theirs. The protocol defines the structure; the team fills it with real knowledge. Upstream pulls are rare — git handles conflicts when they happen.
 6. **Obsidian-compatible.** The vault doubles as an Obsidian vault. `[[wikilinks]]` for internal linking, `aliases` and `tags` in frontmatter. `.obsidian/` is gitignored (per-user config).
 
 ## Repo model
 
 - **`cordfuse/hivemind`** (public) — the framework/template. Protocol docs, example files, README. Teams fork this.
-- **`steve-krisjanovs/hivemind`** (private) — Steve's fork. Real people, real decisions, real conventions. Dogfood repo for Innovia.
+- **`steve-krisjanovs/hivemind`** (private) — Steve's fork. Real people, real decisions, real conventions. Dogfood repo.
 
 Same pattern as cortex: `cordfuse/cortex` = framework, `steve-krisjanovs/cortex` = personal instance.
 
@@ -129,7 +129,7 @@ Private forks track upstream version: `upstream: cordfuse/hivemind@v0.1` in thei
 | Records | records/ | Add attribution (who wrote it, when), `status`/`superseded-by` tracking |
 | Verbs (hello, goodbye, sync) | VERBS.md | Add team verbs: `onboard`, `handoff`, `decide` |
 | Skills | skills/ | Carry over, flattened — no actor wrapper. Skills define their own triggers |
-| Framework/custom split | Same pattern | Framework = hivemind upstream, custom = team overrides |
+| Fork model | Same pattern | Teams fork the template and own their copy |
 | Actor profiles | Dropped | Actors absorbed into skills — functional roles with triggers, no personalities |
 | Personal daily journal | Dropped | Not relevant at team level |
 
@@ -281,7 +281,7 @@ The `lint` skill scans the repo for hygiene issues. No automated fixes — it re
 - [ ] Create attachments/ and tools/ directories with README
 - [ ] Write README.md (the only branded file)
 
-### Phase 2 — Dogfood with Innovia
+### Phase 2 — Dogfood
 - [ ] Fork to steve-krisjanovs/hivemind (private)
 - [ ] Populate with real team knowledge (conventions, people, architecture)
 - [ ] Test with all three harnesses (Claude Code, Codex, Copilot)
