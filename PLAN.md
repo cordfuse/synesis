@@ -33,27 +33,34 @@ Same pattern as cortex: `cordfuse/cortex` = framework, `steve-krisjanovs/cortex`
 
 ```
 hivemind/
-  PROTOCOL.md                 # teaches any agent the conventions — carries version in frontmatter
-  AGENTS.md                   # agent instructions + Codex CLI/VS Code entrypoint (includes PROTOCOL.md pointer)
-  VERBS.md                    # team workflows (hello, status, sync, onboard)
-  records/                    # institutional memory
-    2026-08-18-auth-decision.md
-    2026-08-20-api-redesign.md
-  people/                     # team context (private forks only — templates in public repo)
-    _template.md              # example format (public repo)
-    sarah.md                  # role, expertise, owns auth layer (private fork)
-    mike.md                   # role, expertise, owns frontend (private fork)
+  PROTOCOL.md                 # teaches any agent the conventions — version in frontmatter
+  AGENTS.md                   # agent instructions + Codex CLI/VS Code entrypoint
+  VERBS.md                    # verb definitions (hello, status, onboard, decide, etc.)
+  skills/                     # agent capabilities — flat files, one per skill
+    onboard.md
+    decide.md
+    handoff.md
+    lint.md
+    search.md
+  records/                    # institutional memory — decisions, ADRs
+    _template.md
+  people/                     # team member profiles
+    _template.md
   conventions/                # how we do things here
-    git.md                    # branching, commit style, PR process
-    architecture.md           # system overview, key decisions
-    onboarding.md             # new dev reads this on day 1
-  CLAUDE.md                   # shim: "Read and follow PROTOCOL.md" (Claude Code CLI + VS Code)
+    _template.md
+  attachments/                # binary files linked to records
+    2026-08-18-auth-decision/
+      diagram.png
+  tools/                      # team-shared scripts (ps1, sh, js, etc.)
+    README.md
+  CLAUDE.md                   # shim → PROTOCOL.md (Claude Code)
   .github/
-    copilot-instructions.md   # shim: "Read and follow PROTOCOL.md" (GitHub Copilot)
+    copilot-instructions.md   # shim → PROTOCOL.md (Copilot)
   README.md                   # the only branded file
+  hivemind.code-workspace     # template multi-root workspace
 ```
 
-Top-level layout, no dot-prefix. This is a cloned repo, not a config directory nested inside another project.
+Top-level layout, no dot-prefix. This is a cloned repo, not a config directory nested inside another project. The framework (public template) ships `_template.md` files and example skills. Teams fork and fill in real content.
 
 ## Harness shims
 
@@ -113,10 +120,11 @@ Private forks track upstream version: `upstream: cordfuse/hivemind@v0.1` in thei
 | Cortex concept | Hivemind equivalent | Changes |
 |---|---|---|
 | CORTEX.md | PROTOCOL.md | Brand-neutral name, versioned |
-| Records | records/ | Add attribution (who wrote it, when) |
+| Records | records/ | Add attribution (who wrote it, when), `status`/`superseded-by` tracking |
 | Verbs (hello, goodbye, sync) | VERBS.md | Add team verbs: `onboard`, `handoff`, `decide` |
+| Skills | skills/ | Carry over, flattened — no actor wrapper. Skills define their own triggers |
 | Framework/custom split | Same pattern | Framework = hivemind upstream, custom = team overrides |
-| Actor profiles | Dropped | Single voice per team, not personalities |
+| Actor profiles | Dropped | Actors absorbed into skills — functional roles with triggers, no personalities |
 | Personal daily journal | Dropped | Not relevant at team level |
 
 ## New features (not in cortex)
@@ -150,25 +158,90 @@ Agent: Got it. I've created your profile and pushed it.
        Let me catch you up on how the team works...
 ```
 
-### 3. Decision log with attribution
-Records include who decided, who was consulted, and why. Prevents relitigating settled decisions. Template:
-```markdown
-## Decision: [title]
-- **Date:** 2026-08-18
-- **Decided by:** Sarah, Mike
-- **Context:** [why this came up]
-- **Decision:** [what was decided]
-- **Alternatives considered:** [what was rejected and why]
-```
+### 3. Skills
+`skills/` folder with flat markdown files — one per skill. Each skill defines its own triggers and instructions. No actor wrapper layer. The agent reads skill files to know what it can do and when to activate.
 
-### 4. Knowledge freshness
-Each record carries a `last-verified` date in frontmatter. A `lint` verb flags records older than N days (configurable) as stale. No automated deletion — just visibility.
+### 4. Decision log with attribution
+Records include who decided, who was consulted, and why. Prevents relitigating settled decisions. Records can be marked `superseded` and linked to their replacement via `superseded-by`.
 
-### 5. Conventions as code
+### 5. Knowledge freshness
+Each record carries a `last-verified` date in frontmatter. The `lint` skill flags records older than N days (configurable in PROTOCOL.md) as stale. No automated deletion — just visibility.
+
+### 6. Conventions as code
 `conventions/` folder replaces tribal knowledge. Git branching strategy, commit message format, deployment process, coding standards — all in markdown, all agent-readable. New devs and new agents get the same briefing.
 
-### 6. Contribution workflow
-No PR gate. Commit directly to the hivemind. Trust the team. Git blame + git log = full audit trail. A `lint` verb handles hygiene (staleness, orphaned refs, missing attribution).
+### 7. Attachments
+`attachments/` folder stores binary files linked to records. Subfolder per record, named to match the record filename. Convention: if `attachments/{record-name}/` exists, those files belong to that record.
+
+### 8. Shared tooling
+`tools/` folder for team-shared scripts (PowerShell, bash, Node, etc.) that don't belong in any single project repo. `tools/README.md` is the index — lists what's available and how to use each script.
+
+### 9. Contribution workflow
+No PR gate. Commit directly to the hivemind. Trust the team. Git blame + git log = full audit trail. The `lint` skill handles hygiene.
+
+## Frontmatter spec
+
+**`PROTOCOL.md`**
+```yaml
+---
+version: 0.1
+---
+```
+
+**`skills/*.md`**
+```yaml
+---
+name: onboard
+description: Onboards new team members — interview, profile creation, briefing
+triggers:
+  - no matching people/ profile on hello
+  - onboard verb
+---
+```
+
+**`records/*.md`**
+```yaml
+---
+title: Auth provider decision
+date: 2026-08-18
+decided-by: [SC, MK]
+consulted: [JL]
+last-verified: 2026-08-18
+status: active
+superseded-by:
+---
+```
+`status` is `active` or `superseded`. When superseded, `superseded-by` links to the replacement record filename. The lint skill validates that `superseded-by` targets an existing file.
+
+**`people/*.md`**
+```yaml
+---
+name: Sarah Chen
+initials: SC
+email: sarah.chen@company.com
+role: Frontend developer
+joined: 2026-08-18
+---
+```
+`email` is matched against `git config user.email` for automatic user detection during onboarding.
+
+**`conventions/*.md`**
+```yaml
+---
+name: Git branching strategy
+last-verified: 2026-08-18
+---
+```
+
+## Lint skill checks
+
+The `lint` skill scans the repo for hygiene issues. No automated fixes — it reports what it finds and the developer decides.
+
+1. **Stale knowledge** — records and conventions where `last-verified` is older than N days (configurable in PROTOCOL.md)
+2. **Broken links** — `superseded-by` pointing to a file that doesn't exist
+3. **Missing attribution** — records without `decided-by`
+4. **Orphaned profiles** — people profiles where `email` doesn't match any recent git author
+5. **Empty templates** — files that are still just the `_template.md` content, never filled in
 
 ## Verb definitions (initial set)
 
@@ -188,10 +261,12 @@ No PR gate. Commit directly to the hivemind. Trust the team. Git blame + git log
 - [ ] Define PROTOCOL.md with v0.1 frontmatter
 - [ ] Define AGENTS.md (agent-facing instructions)
 - [ ] Define VERBS.md with initial verb set
-- [ ] Define directory structure and file conventions
+- [ ] Define directory structure and frontmatter conventions
 - [ ] Write harness shim files (CLAUDE.md, AGENTS.md, .github/copilot-instructions.md)
-- [ ] Create template .code-workspace file
-- [ ] Create example records, people templates, conventions
+- [ ] Write skill files (onboard, decide, handoff, lint, search)
+- [ ] Create `_template.md` files for records, people, conventions
+- [ ] Create template hivemind.code-workspace file
+- [ ] Create attachments/ and tools/ directories with README
 - [ ] Write README.md (the only branded file)
 
 ### Phase 2 — Dogfood with Innovia
