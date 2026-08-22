@@ -1,8 +1,8 @@
-# Hivemind — Execution Plan
+# Synesis — Execution Plan
 
-> **Codename:** Hivemind (working title — brand-neutral internals, rename costs nothing)
-> **Repo:** cordfuse/hivemind (public) — the framework/template
-> **Dogfood:** steve-krisjanovs/hivemind (private) — real team knowledge, dogfooding
+> **Name:** Synesis (Greek: σύνεσις — "understanding, the faculty of putting things together")
+> **Repo:** cordfuse/synesis (public) — the framework/template
+> **Dogfood:** steve-krisjanovs/synesis (private) — real team knowledge, dogfooding
 > **What it is:** A file-based, repo-embedded, agent-agnostic shared knowledge protocol for software teams.
 > **What it is not:** A SaaS product, an MCP server, an npm package, a database.
 
@@ -12,28 +12,28 @@
 
 Every AI coding agent (Claude Code, Codex, Copilot, and others) can read markdown files in a repo. None of them ship a convention for **shared team knowledge** — the kind that survives developer turnover, lives next to the code, and works regardless of which agent a developer uses.
 
-Cortex proved the pattern for one person. Hivemind is cortex for teams.
+Cortex proved the pattern for one person. Synesis is cortex for teams.
 
 ## Design principles
 
 1. **Files, not services.** Markdown in a repo. No server, no database, no API keys. Clone and go.
 2. **Agent-agnostic.** Works with any AI harness that reads project files. No vendor lock-in.
-3. **Brand-neutral internals.** `PROTOCOL.md`, not `HIVEMIND.md`. The brand lives in the README and docs, never in the protocol files themselves. Zero rename cost.
+3. **Brand-neutral internals.** `PROTOCOL.md`, not `SYNESIS.md`. The brand lives in the README and docs, never in the protocol files themselves. Zero rename cost.
 4. **Trust the team.** No review gates on knowledge contributions. Anyone can commit. Git history is the audit trail. Friction kills adoption.
 5. **Fork and own.** Teams fork the template and make it theirs. The protocol defines the structure; the team fills it with real knowledge. Upstream pulls are rare — git handles conflicts when they happen.
 6. **Obsidian-compatible.** The vault doubles as an Obsidian vault. `[[wikilinks]]` for internal linking, `aliases` and `tags` in frontmatter. `.obsidian/` is gitignored (per-user config).
 
 ## Repo model
 
-- **`cordfuse/hivemind`** (public) — the framework/template. Protocol docs, example files, README. Teams fork this.
-- **`steve-krisjanovs/hivemind`** (private) — Steve's fork. Real people, real decisions, real conventions. Dogfood repo.
+- **`cordfuse/synesis`** (public) — the framework/template. Protocol docs, example files, README. Teams fork this.
+- **`steve-krisjanovs/synesis`** (private) — Steve's fork. Real people, real decisions, real conventions. Dogfood repo.
 
 Same pattern as cortex: `cordfuse/cortex` = framework, `steve-krisjanovs/cortex` = personal instance.
 
 ## Architecture
 
 ```
-hivemind/
+synesis/
   PROTOCOL.md                 # teaches any agent the conventions — version in frontmatter
   AGENTS.md                   # agent instructions + Codex CLI/VS Code entrypoint
   VERBS.md                    # verb definitions (hello, status, onboard, decide, etc.)
@@ -58,7 +58,7 @@ hivemind/
   .github/
     copilot-instructions.md   # shim → PROTOCOL.md (Copilot)
   README.md                   # the only branded file
-  hivemind.code-workspace     # template multi-root workspace
+  synesis.code-workspace      # template multi-root workspace
   .gitignore                  # ignores .obsidian/ (per-user Obsidian config)
 ```
 
@@ -70,7 +70,7 @@ Top-level layout, no dot-prefix. This is a cloned repo, not a config directory n
 
 ## Harness shims
 
-Each AI harness has its own entrypoint file. Hivemind ships a one-line shim for each supported harness that redirects into `PROTOCOL.md`:
+Each AI harness has its own entrypoint file. Synesis ships a one-line shim for each supported harness that redirects into `PROTOCOL.md`:
 
 | Harness | Mode | Shim file | Content |
 |---|---|---|---|
@@ -82,12 +82,12 @@ All three harnesses have both CLI and VS Code extensions. Three harnesses suppor
 
 ## VS Code multi-root workspace
 
-Developers using VS Code-based harnesses (Claude Code, Codex, Copilot — all have VS Code extensions) work in a **multi-root workspace** that includes hivemind alongside their project repos:
+Developers using VS Code-based harnesses (Claude Code, Codex, Copilot — all have VS Code extensions) work in a **multi-root workspace** that includes synesis alongside their project repos:
 
 ```json
 {
   "folders": [
-    { "path": "../hivemind" },
+    { "path": "../synesis" },
     { "path": "../my-al-project" },
     { "path": "../another-al-project" }
   ]
@@ -96,19 +96,19 @@ Developers using VS Code-based harnesses (Claude Code, Codex, Copilot — all ha
 
 All three harnesses auto-discover their shim files from workspace folders in multi-root workspaces. Copilot had a bug with this ([vscode#264837](https://github.com/microsoft/vscode/issues/264837)) but it was fixed in September 2025.
 
-The agent sees both hivemind and the project. When working in the project and needing team context — conventions, ownership, past decisions — hivemind is right there in the workspace.
+The agent sees both synesis and the project. When working in the project and needing team context — conventions, ownership, past decisions — synesis is right there in the workspace.
 
 The public framework ships a template `.code-workspace` file. Teams customize it with their own project paths.
 
-Terminal users (Claude Code CLI, Codex CLI) open a separate session on the hivemind repo as needed.
+Terminal users (Claude Code CLI, Codex CLI) open a separate session on the synesis repo as needed.
 
 ### Multi-root risks
 
 | Risk | Mitigation |
 |---|---|
-| Conflicting agent instructions (both repos have CLAUDE.md) | Documented precedence rule: project repo overrides hivemind on conflicts |
+| Conflicting agent instructions (both repos have CLAUDE.md) | Documented precedence rule: project repo overrides synesis on conflicts |
 | Accidental cross-repo commits | Git catches this (different working trees) — document the foot-gun |
-| Context window bloat | Keep hivemind lean; agents index both repos |
+| Context window bloat | Keep synesis lean; agents index both repos |
 | Copilot code suggestions polluted by prose | Minor — monitor during dogfooding |
 
 
@@ -119,11 +119,11 @@ Major.minor in `PROTOCOL.md` frontmatter, starting at **v0.1**.
 - **Minor bump:** add/change a convention, new verb, new template
 - **Major bump:** breaking change to directory structure or PROTOCOL.md format
 
-Private forks track upstream version: `upstream: cordfuse/hivemind@v0.1` in their PROTOCOL.md frontmatter.
+Private forks track upstream version: `upstream: cordfuse/synesis@v0.1` in their PROTOCOL.md frontmatter.
 
 ## What carries over from cortex
 
-| Cortex concept | Hivemind equivalent | Changes |
+| Cortex concept | Synesis equivalent | Changes |
 |---|---|---|
 | CORTEX.md | PROTOCOL.md | Brand-neutral name, versioned |
 | Records | records/ | Add attribution (who wrote it, when), `status`/`superseded-by` tracking |
@@ -183,7 +183,7 @@ Each record carries a `last-verified` date in frontmatter. The `lint` skill flag
 `tools/` folder for team-shared scripts (PowerShell, bash, Node, etc.) that don't belong in any single project repo. `tools/README.md` is the index — lists what's available and how to use each script.
 
 ### 9. Contribution workflow
-No PR gate. Commit directly to the hivemind. Trust the team. Git blame + git log = full audit trail. The `lint` skill handles hygiene.
+No PR gate. Commit directly to synesis. Trust the team. Git blame + git log = full audit trail. The `lint` skill handles hygiene.
 
 ## Frontmatter spec
 
@@ -277,12 +277,12 @@ The `lint` skill scans the repo for hygiene issues. No automated fixes — it re
 - [ ] Write harness shim files (CLAUDE.md, AGENTS.md, .github/copilot-instructions.md)
 - [ ] Write skill files (onboard, decide, handoff, lint, search)
 - [ ] Create `_template.md` files for records, people, conventions
-- [ ] Create template hivemind.code-workspace file
+- [ ] Create template synesis.code-workspace file
 - [ ] Create attachments/ and tools/ directories with README
 - [ ] Write README.md (the only branded file)
 
 ### Phase 2 — Dogfood
-- [ ] Fork to steve-krisjanovs/hivemind (private)
+- [ ] Fork to steve-krisjanovs/synesis (private)
 - [ ] Populate with real team knowledge (conventions, people, architecture)
 - [ ] Test with all three harnesses (Claude Code, Codex, Copilot)
 - [ ] Test multi-root workspace flow in VS Code
@@ -294,7 +294,7 @@ The `lint` skill scans the repo for hygiene issues. No automated fixes — it re
 - [ ] Documentation site (if warranted)
 
 ### Phase 4 — Public launch
-- [ ] Final naming decision
+- [x] Final naming decision — **Synesis**
 - [ ] README, examples, getting-started guide
 - [ ] Announce
 
@@ -302,5 +302,5 @@ The `lint` skill scans the repo for hygiene issues. No automated fixes — it re
 
 *Filed: 2026-08-22*
 *Updated: 2026-08-22*
-*Codename: Hivemind*
+*Name: Synesis*
 *Status: Planning*
