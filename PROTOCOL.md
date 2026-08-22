@@ -74,7 +74,7 @@ triggers:
 
 ## Verbs
 
-See `VERBS.md` for the full list. Key verbs: `hello` (briefing), `onboard` (new member setup), `decide` (file a decision), `lint` (check hygiene), `search` (find knowledge).
+See `VERBS.md` for the full list. Key verbs: `hello` (briefing), `status` (what's in flight), `onboard` (new member setup), `decide` (file a decision), `handoff` (transfer work), `lint` (check hygiene), `search` (find knowledge).
 
 ## Versioning
 
@@ -87,6 +87,16 @@ Records and conventions carry a `last-verified` date. The `lint` skill flags any
 ## Scope boundary
 
 Conventions in this vault apply to **this vault only**. In a multi-root workspace, project repos have their own rules. Never apply vault conventions (branching, commit style, merge strategy) to a project repo unless that project's own instructions say to.
+
+## Tag-based scoping
+
+Convention `tags` can scope content by audience:
+
+- **Machine tags** (e.g. `[cachy]`, `[mac]`) — conventions specific to one host. Agents on other machines skip these.
+- **Agent tags** (e.g. `[claude-code]`, `[codex]`) — agent-type-specific tuning. Each agent reads its own tag and ignores others.
+- **Topic tags** (e.g. `[git]`, `[ci]`, `[infrastructure]`) — for search and filtering.
+
+Tags are conventions, not enforcement — agents use them as guidance for what to read.
 
 ## Contributing
 

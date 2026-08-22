@@ -6,7 +6,15 @@ Synesis (Greek: σύνεσις — *understanding, the faculty of putting things
 
 ---
 
-## The problem
+## Why this exists
+
+AI coding agents are becoming essential infrastructure, but every vendor wants to own your team's knowledge. Claude has its memory system. Copilot has its knowledge bases. Each one locks your conventions, decisions, and institutional memory inside a proprietary format that only works with that vendor's tools.
+
+Switch agents and you start from zero. Run multiple agents and you maintain parallel knowledge stores. Your team's understanding of itself becomes a vendor dependency.
+
+Synesis exists to prevent that. Plain markdown in a git repo. Any agent that can read a file — Claude Code, Codex, Copilot, Gemini, or whatever ships next quarter — inherits your team's knowledge automatically. No migration, no export, no lock-in.
+
+## The problem it solves
 
 Your team makes decisions every week. Conventions exist as tribal knowledge. New developers ask the same questions. AI coding agents start every session with zero context about how your team works.
 
@@ -113,6 +121,7 @@ Verbs are commands you give to the agent. The agent reads `VERBS.md` to know wha
 | Verb | What it does |
 |---|---|
 | `hello` | Team briefing — active work, recent decisions, team status |
+| `status` | What's in flight, who's working on what |
 | `onboard` | New member setup — interview, profile creation, full briefing |
 | `decide` | File a decision record with attribution and context |
 | `handoff` | Transfer ownership and context on a piece of work |
@@ -123,7 +132,7 @@ Verbs are commands you give to the agent. The agent reads `VERBS.md` to know wha
 
 Skills are agent capabilities defined as markdown files in `skills/`. Each skill specifies its triggers and step-by-step instructions. The agent reads them to know what it can do and when to activate.
 
-Included skills: `onboard`, `decide`, `handoff`, `lint`, `search`.
+Included skills: `hello`, `status`, `onboard`, `decide`, `handoff`, `lint`, `search`.
 
 ## VS Code multi-root workspace
 
@@ -142,6 +151,8 @@ For VS Code users, open your Synesis vault alongside your project repos in a mul
 The agent sees both your code and your team knowledge. When it needs context — conventions, ownership, past decisions — the vault is right there in the workspace.
 
 All three supported harnesses (Claude Code, Codex, Copilot) auto-discover their shim files from workspace folders. A template `.code-workspace` file is included.
+
+**Scope boundary:** Vault conventions apply to the vault only. In a multi-root workspace, project repos keep their own rules. The agent never applies vault conventions (branching, commit style, merge strategy) to a project repo unless that project's own instructions say to.
 
 ## Onboarding
 

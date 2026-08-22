@@ -38,6 +38,8 @@ synesis/
   AGENTS.md                   # agent instructions + Codex CLI/VS Code entrypoint
   VERBS.md                    # verb definitions (hello, status, onboard, decide, etc.)
   skills/                     # agent capabilities — flat files, one per skill
+    hello.md
+    status.md
     onboard.md
     decide.md
     handoff.md
@@ -270,23 +272,24 @@ The `lint` skill scans the repo for hygiene issues. No automated fixes — it re
 ## Phases
 
 ### Phase 1 — Protocol scaffold
-- [ ] Define PROTOCOL.md with v0.1 frontmatter
-- [ ] Define AGENTS.md (agent-facing instructions)
-- [ ] Define VERBS.md with initial verb set
-- [ ] Define directory structure and frontmatter conventions
-- [ ] Write harness shim files (CLAUDE.md, AGENTS.md, .github/copilot-instructions.md)
-- [ ] Write skill files (onboard, decide, handoff, lint, search)
-- [ ] Create `_template.md` files for records, people, conventions
-- [ ] Create template synesis.code-workspace file
-- [ ] Create attachments/ and tools/ directories with README
-- [ ] Write README.md (the only branded file)
+- [x] Define PROTOCOL.md with v0.1 frontmatter
+- [x] Define AGENTS.md (agent-facing instructions)
+- [x] Define VERBS.md with initial verb set
+- [x] Define directory structure and frontmatter conventions
+- [x] Write harness shim files (CLAUDE.md, AGENTS.md, .github/copilot-instructions.md)
+- [x] Write skill files (hello, status, onboard, decide, handoff, lint, search)
+- [x] Create `_template.md` files for records, people, conventions
+- [x] Create template synesis.code-workspace file
+- [x] Create attachments/ and tools/ directories with README
+- [x] Write README.md (the only branded file)
 
 ### Phase 2 — Dogfood
-- [ ] Fork to steve-krisjanovs/synesis (private)
-- [ ] Populate with real team knowledge (conventions, people, architecture)
-- [ ] Test with all three harnesses (Claude Code, Codex, Copilot)
-- [ ] Test multi-root workspace flow in VS Code
-- [ ] Iterate on protocol based on real usage
+- [x] Fork to steve-krisjanovs/synesis (private)
+- [x] Populate with real team knowledge (conventions, people, architecture)
+- [x] Test with Claude Code (hello, lint, decide verbs — 6 bugs found and fixed)
+- [x] Test multi-root workspace scope boundary (convention bleed test passed)
+- [x] Iterate on protocol based on real usage (tag-based scoping, scope boundary, librarian absorption)
+- [ ] Test with Codex and Copilot harnesses
 
 ### Phase 3 — Polish
 - [ ] Lint verb implementation (agent-native, no shell scripts)
@@ -295,7 +298,7 @@ The `lint` skill scans the repo for hygiene issues. No automated fixes — it re
 
 ### Phase 4 — Public launch
 - [x] Final naming decision — **Synesis**
-- [ ] README, examples, getting-started guide
+- [x] README, examples, getting-started guide
 - [ ] Announce
 
 ---
@@ -303,4 +306,4 @@ The `lint` skill scans the repo for hygiene issues. No automated fixes — it re
 *Filed: 2026-08-22*
 *Updated: 2026-08-22*
 *Name: Synesis*
-*Status: Planning*
+*Status: Phase 2 dogfooding complete, Phase 3 next*
