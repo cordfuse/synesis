@@ -30,3 +30,4 @@ When triggered, guide the developer through filing a decision record.
 - The record should capture enough context that someone reading it six months later understands not just what was decided, but why, and what was rejected.
 - If the decision supersedes a prior record, set `status: superseded` and `superseded-by: {new-filename}` on the old record in the same commit.
 - Keep the conversation natural. The prompts above are content to collect, not a rigid form.
+- If the user provides the decision context in their message (e.g. "decide: we're using X because Y"), extract the info from the message rather than prompting for each field. Only ask follow-up questions for missing fields.
