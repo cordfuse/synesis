@@ -84,6 +84,10 @@ This protocol is at **v0.1**. Minor bumps add conventions or verbs. Major bumps 
 
 Records and conventions carry a `last-verified` date. The `lint` skill flags anything older than the `stale-days` threshold in this file's frontmatter (default: 90 days).
 
+## Scope boundary
+
+Conventions in this vault apply to **this vault only**. In a multi-root workspace, project repos have their own rules. Never apply vault conventions (branching, commit style, merge strategy) to a project repo unless that project's own instructions say to.
+
 ## Contributing
 
-No PR gate. Commit directly. Trust the team. Git blame + git log = full audit trail. The `lint` skill handles hygiene.
+No PR gate on this vault. Commit directly. Trust the team. Git blame + git log = full audit trail. The `lint` skill handles hygiene.
