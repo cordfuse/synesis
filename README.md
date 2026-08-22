@@ -47,14 +47,19 @@ That's it. The agent now knows the protocol. As you add people, decisions, and c
 ```
 synesis/
   PROTOCOL.md              # the protocol — teaches any agent the conventions
-  AGENTS.md                # Codex entrypoint shim → PROTOCOL.md
   VERBS.md                 # commands the agent understands
+  CLAUDE.md                # Claude Code shim → PROTOCOL.md
+  AGENTS.md                # Codex shim → PROTOCOL.md
+  .github/
+    copilot-instructions.md  # Copilot shim → PROTOCOL.md
   skills/                  # agent capabilities (onboard, decide, lint, etc.)
   records/                 # decisions and institutional memory
   people/                  # one profile per team member
   conventions/             # how your team does things
   attachments/             # binary files linked to records
   tools/                   # team-shared scripts
+  synesis.code-workspace   # template multi-root workspace
+  .gitignore               # ignores .obsidian/ (per-user config)
 ```
 
 ### Records
