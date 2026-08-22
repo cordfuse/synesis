@@ -8,7 +8,7 @@ Read and follow `PROTOCOL.md` in this repository. It defines the directory struc
 
 ## Quick reference
 
-- **Verbs:** See `VERBS.md` for available commands (hello, onboard, decide, lint, search, etc.)
+- **Verbs:** See `VERBS.md` for available commands (hello, status, onboard, decide, handoff, lint, search, sync)
 - **Skills:** See `skills/` for agent capabilities and their triggers
 - **People:** See `people/` for team member profiles
 - **Records:** See `records/` for decisions and institutional memory

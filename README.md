@@ -127,12 +127,13 @@ Verbs are commands you give to the agent. The agent reads `VERBS.md` to know wha
 | `handoff` | Transfer ownership and context on a piece of work |
 | `lint` | Check vault hygiene — stale records, broken links, missing attribution |
 | `search` | Find knowledge across records, conventions, and people |
+| `sync` | Pull latest changes and push local work |
 
 ## Skills
 
 Skills are agent capabilities defined as markdown files in `skills/`. Each skill specifies its triggers and step-by-step instructions. The agent reads them to know what it can do and when to activate.
 
-Included skills: `hello`, `status`, `onboard`, `decide`, `handoff`, `lint`, `search`.
+Included skills: `hello`, `status`, `onboard`, `decide`, `handoff`, `lint`, `search`, `sync`.
 
 ## VS Code multi-root workspace
 

@@ -45,6 +45,7 @@ synesis/
     handoff.md
     lint.md
     search.md
+    sync.md
   records/                    # institutional memory — decisions, ADRs
     _template.md
   people/                     # team member profiles
@@ -268,6 +269,7 @@ The `lint` skill scans the repo for hygiene issues. No automated fixes — it re
 | `handoff` | Transfer ownership/context on a piece of work |
 | `lint` | Check freshness, orphaned refs, missing attribution |
 | `search` | Find knowledge across records and conventions |
+| `sync` | Pull latest changes and push local work |
 
 ## Phases
 
