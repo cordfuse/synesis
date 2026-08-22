@@ -62,6 +62,8 @@ hivemind/
 
 Top-level layout, no dot-prefix. This is a cloned repo, not a config directory nested inside another project. The framework (public template) ships `_template.md` files and example skills. Teams fork and fill in real content.
 
+**Naming convention:** UPPERCASE filenames (`PROTOCOL.md`, `AGENTS.md`, `VERBS.md`) are protocol infrastructure. Lowercase filenames (`onboard.md`, `sarah.md`, `git.md`) are team content. The casing tells you at a glance what's plumbing and what's knowledge.
+
 ## Harness shims
 
 Each AI harness has its own entrypoint file. Hivemind ships a one-line shim for each supported harness that redirects into `PROTOCOL.md`:
