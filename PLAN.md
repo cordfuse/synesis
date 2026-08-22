@@ -2,7 +2,7 @@
 
 > **Codename:** Hivemind (working title — brand-neutral internals, rename costs nothing)
 > **Repo:** cordfuse/hivemind (public) — the framework/template
-> **Dogfood:** steve-krisjanovs/hivemind (private) — real team knowledge, Innovia testing
+> **Dogfood:** steve-krisjanovs/hivemind (private) — real team knowledge, dogfooding
 > **What it is:** A file-based, repo-embedded, agent-agnostic shared knowledge protocol for software teams.
 > **What it is not:** A SaaS product, an MCP server, an npm package, a database.
 
@@ -10,7 +10,7 @@
 
 ## The gap
 
-Every AI coding agent (Claude Code, Copilot, Cursor, Gemini, OpenCode) can read markdown files in a repo. None of them ship a convention for **shared team knowledge** — the kind that survives developer turnover, lives next to the code, and works regardless of which agent a developer uses.
+Every AI coding agent (Claude Code, Codex, Copilot, and others) can read markdown files in a repo. None of them ship a convention for **shared team knowledge** — the kind that survives developer turnover, lives next to the code, and works regardless of which agent a developer uses.
 
 Cortex proved the pattern for one person. Hivemind is cortex for teams.
 
@@ -47,10 +47,10 @@ hivemind/
     git.md                    # branching, commit style, PR process
     architecture.md           # system overview, key decisions
     onboarding.md             # new dev reads this on day 1
-  CLAUDE.md                   # shim: "Read and follow PROTOCOL.md"
+  CLAUDE.md                   # shim: "Read and follow PROTOCOL.md" (Claude Code CLI + VS Code)
+  AGENTS.md                   # doubles as Codex CLI entrypoint
   .github/
-    copilot-instructions.md   # shim: "Read and follow PROTOCOL.md"
-  .cursorrules                # shim: "Read and follow PROTOCOL.md"
+    copilot-instructions.md   # shim: "Read and follow PROTOCOL.md" (GitHub Copilot)
   README.md                   # the only branded file
 ```
 
@@ -60,17 +60,17 @@ Top-level layout, no dot-prefix. This is a cloned repo, not a config directory n
 
 Each AI harness has its own entrypoint file. Hivemind ships a one-line shim for each supported harness that redirects into `PROTOCOL.md`:
 
-| Harness | Shim file | Content |
-|---|---|---|
-| Claude Code | `CLAUDE.md` | Read and follow PROTOCOL.md |
-| GitHub Copilot | `.github/copilot-instructions.md` | Read and follow PROTOCOL.md |
-| Cursor | `.cursorrules` | Read and follow PROTOCOL.md |
+| Harness | Mode | Shim file | Content |
+|---|---|---|---|
+| Claude Code | CLI + VS Code | `CLAUDE.md` | Read and follow PROTOCOL.md |
+| OpenAI Codex | CLI + VS Code | `AGENTS.md` | Already the agent-facing instructions file — Codex reads it natively |
+| GitHub Copilot | CLI + VS Code | `.github/copilot-instructions.md` | Read and follow PROTOCOL.md |
 
-Adding support for a new harness = adding a one-line shim file. The actual knowledge stays in one place.
+All three harnesses have both CLI and VS Code extensions. Three harnesses supported at launch. Adding a new harness = adding a one-line shim file. The actual knowledge stays in one place.
 
 ## VS Code multi-root workspace
 
-Developers using VS Code-based harnesses (Copilot, Cursor, Claude for VS Code) work in a **multi-root workspace** that includes hivemind alongside their project repos:
+Developers using VS Code-based harnesses (Claude Code, Codex, Copilot — all have VS Code extensions) work in a **multi-root workspace** that includes hivemind alongside their project repos:
 
 ```json
 {
@@ -123,7 +123,7 @@ Private forks track upstream version: `upstream: cordfuse/hivemind@v0.1` in thei
 `people/` folder with one markdown per team member. Role, expertise areas, what they own. Agents use this to answer "who should I ask about X?" and to attribute context correctly. Real profiles live in private forks only — the public repo ships `_template.md`.
 
 ### 2. Onboarding mode
-New dev clones the fork, opens their harness. PROTOCOL.md detects no matching `people/` profile for the current user and triggers the onboarding flow:
+New dev clones the fork, opens their harness. The agent reads `git config user.name` and `git config user.email` to identify the current user, then checks `people/` for a matching profile. No match triggers the onboarding flow:
 
 1. **Interview:** Agent asks the developer for their name, initials, role, and expertise areas.
 2. **Create profile:** Agent writes `people/{name}.md` with the collected info.
@@ -174,7 +174,7 @@ No PR gate. Commit directly to the hivemind. Trust the team. Git blame + git log
 |---|---|
 | `hello` | Briefing: active work, recent decisions, team status |
 | `status` | What's in flight, who's working on what |
-| `onboard` | Full catch-up for a new team member |
+| `onboard` | Re-run onboarding (interview + briefing). Automatic on first `hello` when no profile exists; manual trigger for profile updates or re-briefing |
 | `decide` | File a decision record (prompted template) |
 | `handoff` | Transfer ownership/context on a piece of work |
 | `lint` | Check freshness, orphaned refs, missing attribution |
@@ -187,7 +187,7 @@ No PR gate. Commit directly to the hivemind. Trust the team. Git blame + git log
 - [ ] Define AGENTS.md (agent-facing instructions)
 - [ ] Define VERBS.md with initial verb set
 - [ ] Define directory structure and file conventions
-- [ ] Write harness shim files (CLAUDE.md, copilot-instructions.md, .cursorrules)
+- [ ] Write harness shim files (CLAUDE.md, AGENTS.md, .github/copilot-instructions.md)
 - [ ] Create template .code-workspace file
 - [ ] Create example records, people templates, conventions
 - [ ] Write README.md (the only branded file)
