@@ -123,7 +123,30 @@ Private forks track upstream version: `upstream: cordfuse/hivemind@v0.1` in thei
 `people/` folder with one markdown per team member. Role, expertise areas, what they own. Agents use this to answer "who should I ask about X?" and to attribute context correctly. Real profiles live in private forks only — the public repo ships `_template.md`.
 
 ### 2. Onboarding mode
-New dev clones the fork, opens their harness, types `hello` (or the agent reads PROTOCOL.md on first open). The protocol catches them up: architecture overview, active work, team conventions, who owns what.
+New dev clones the fork, opens their harness. PROTOCOL.md detects no matching `people/` profile for the current user and triggers the onboarding flow:
+
+1. **Interview:** Agent asks the developer for their name, initials, role, and expertise areas.
+2. **Create profile:** Agent writes `people/{name}.md` with the collected info.
+3. **Commit and push:** Agent commits the new profile and pushes to the vault. The team now knows who joined.
+4. **Briefing:** Agent delivers the full onboarding catch-up — architecture overview, active work, team conventions, who owns what.
+
+Returning devs (profile already exists) skip straight to the briefing on `hello`.
+
+The interview is lightweight — 4-5 questions, not a form. The agent drives it conversationally. Example:
+
+```
+Agent: Welcome to [team]. I don't have a profile for you yet.
+       What's your name?
+Dev:   Sarah Chen
+Agent: Initials?
+Dev:   SC
+Agent: What's your role on the team?
+Dev:   Frontend developer
+Agent: What areas will you be working on?
+Dev:   Auth UI, dashboard components
+Agent: Got it. I've created your profile and pushed it.
+       Let me catch you up on how the team works...
+```
 
 ### 3. Decision log with attribution
 Records include who decided, who was consulted, and why. Prevents relitigating settled decisions. Template:
