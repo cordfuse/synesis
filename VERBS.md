@@ -15,3 +15,4 @@ Verbs are commands a developer can give to an AI agent working in this vault. Th
 | `handoff` | Transfer ownership or context on a piece of work. The agent creates a record capturing what's being handed off, current state, open questions, and who's picking it up. |
 | `lint` | Check vault hygiene: stale knowledge, broken links, missing attribution, orphaned profiles, empty templates. Reports findings — does not auto-fix. |
 | `search` | Find knowledge across records, conventions, and people profiles. The agent searches file contents and frontmatter tags. |
+| `sync` | Pull latest changes from the remote vault and push any uncommitted local changes. Use mid-session to stay current with team knowledge. |

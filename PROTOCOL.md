@@ -74,7 +74,7 @@ triggers:
 
 ## Verbs
 
-See `VERBS.md` for the full list. Key verbs: `hello` (briefing), `status` (what's in flight), `onboard` (new member setup), `decide` (file a decision), `handoff` (transfer work), `lint` (check hygiene), `search` (find knowledge).
+See `VERBS.md` for the full list. Key verbs: `hello` (briefing), `status` (what's in flight), `onboard` (new member setup), `decide` (file a decision), `handoff` (transfer work), `lint` (check hygiene), `search` (find knowledge), `sync` (pull/push vault changes).
 
 ## Versioning
 
