@@ -51,9 +51,7 @@ synesis/
     _template.md
   conventions/                # how we do things here
     _template.md
-  attachments/                # binary files linked to records
-    2026-08-18-auth-decision/
-      diagram.png
+  attachments/                # binary files linked to records (subfolder per record)
   tools/                      # team-shared scripts (ps1, sh, js, etc.)
     README.md
   CLAUDE.md                   # shim → PROTOCOL.md (Claude Code)
@@ -269,7 +267,7 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 - [x] Define verb set (verbs derived from skills/ frontmatter, no separate VERBS.md)
 - [x] Define directory structure and frontmatter conventions
 - [x] Write harness shim files (CLAUDE.md, AGENTS.md, .github/copilot-instructions.md)
-- [x] Write skill files (hello, status, onboard, decide, handoff, lint, search)
+- [x] Write skill files (hello, status, onboard, decide, handoff, lint, search, sync)
 - [x] Create `_template.md` files for records, people, conventions
 - [x] Create template synesis.code-workspace file
 - [x] Create attachments/ and tools/ directories with README
