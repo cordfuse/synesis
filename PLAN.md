@@ -35,7 +35,7 @@ Same pattern as cortex: `cordfuse/cortex` = framework, `steve-krisjanovs/cortex`
 ```
 synesis/
   PROTOCOL.md                 # teaches any agent the conventions — version in frontmatter
-  AGENTS.md                   # agent instructions + Codex CLI/VS Code entrypoint
+  AGENTS.md                   # Codex entrypoint shim → PROTOCOL.md
   VERBS.md                    # verb definitions (hello, status, onboard, decide, etc.)
   skills/                     # agent capabilities — flat files, one per skill
     hello.md
@@ -275,7 +275,7 @@ The `lint` skill scans the repo for hygiene issues. No automated fixes — it re
 
 ### Phase 1 — Protocol scaffold
 - [x] Define PROTOCOL.md with v0.1 frontmatter
-- [x] Define AGENTS.md (agent-facing instructions)
+- [x] Define AGENTS.md (Codex entrypoint shim)
 - [x] Define VERBS.md with initial verb set
 - [x] Define directory structure and frontmatter conventions
 - [x] Write harness shim files (CLAUDE.md, AGENTS.md, .github/copilot-instructions.md)

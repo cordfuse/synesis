@@ -47,7 +47,7 @@ That's it. The agent now knows the protocol. As you add people, decisions, and c
 ```
 synesis/
   PROTOCOL.md              # the protocol — teaches any agent the conventions
-  AGENTS.md                # agent instructions (also Codex entrypoint)
+  AGENTS.md                # Codex entrypoint shim → PROTOCOL.md
   VERBS.md                 # commands the agent understands
   skills/                  # agent capabilities (onboard, decide, lint, etc.)
   records/                 # decisions and institutional memory
