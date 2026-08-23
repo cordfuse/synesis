@@ -51,11 +51,22 @@ git diff --name-status upstream/main HEAD -- PROTOCOL.md AGENTS.md 'skills/*.md'
 
 **2. Categorize** each result:
 
-| Status | Meaning | Category |
+The diff is written `upstream/main HEAD`, so the letters are **from the template's point of view**. `D` does not mean anything was deleted — read the table, not the letter.
+
+| Status | What it actually means | Category |
 |---|---|---|
-| `M` | content differs | **Drifted** — needs a direction decision |
-| present upstream, absent locally | template added it | **Behind** — upstream has something you don't |
-| present locally, absent upstream | you added it | **Ahead** — you have something the template doesn't |
+| `M <path>` | content differs between template and vault | **Drifted** — needs a direction decision |
+| `D <path>` | exists **upstream**, missing in your vault — the template added it | **Behind** — pull it |
+| `A <path>` | exists **in your vault**, missing upstream — you added it | **Ahead** — promote, keep, or delete |
+
+If that mapping ever looks wrong, confirm it directly rather than guessing:
+
+```sh
+git ls-tree -r --name-only upstream/main | sort > /tmp/up.txt
+git ls-tree -r --name-only HEAD | sort > /tmp/local.txt
+comm -23 /tmp/up.txt /tmp/local.txt   # upstream only  -> Behind
+comm -13 /tmp/up.txt /tmp/local.txt   # vault only     -> Ahead
+```
 
 **2a. Discount expected drift.** The vault's `PROTOCOL.md` carries an `upstream:` frontmatter line that the template cannot have — the template *is* the upstream. A `PROTOCOL.md` whose only difference is that line is **in sync**; do not report it. Compare with the line filtered out:
 
