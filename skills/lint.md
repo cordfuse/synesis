@@ -9,6 +9,16 @@ triggers:
 
 When triggered, scan the vault for hygiene issues. Report findings — do not auto-fix.
 
+## Run the script
+
+```sh
+bun tools/lint.ts        # or: npx tsx tools/lint.ts
+```
+
+`tools/lint.ts` implements every check below plus weave block integrity, and exits 1 on findings. **Run it rather than performing the checks by reading files** — the rules are mechanical, and doing them by hand gives a different answer each time. Relay its output; add judgement only on what the findings mean.
+
+Fall back to reading files manually only if the script cannot run (no Bun, no Node). The rules below are the specification the script implements, and stay authoritative if the two ever disagree.
+
 ## General rules
 
 - **Skip `_template.md` files** in all checks. Templates have intentionally empty frontmatter.
@@ -33,6 +43,9 @@ Scan `people/` profiles and check each `email` field against recent git authors 
 ### 5. Empty templates
 Scan `records/`, `people/`, and `conventions/` for files that are still identical to (or trivially different from) their `_template.md`. Report any unfilled templates.
 
+### 6. Weave block integrity
+Check the derived `## Related` blocks in `records/` and `conventions/` (see Record linking in `PROTOCOL.md`). Report: links that are not reciprocated, unpaired or duplicated `weave:start` / `weave:end` markers, empty weave blocks (omit the section instead), and any `## Related` heading without markers (hand-written links belong in the body, not in derived space).
+
 ## Output format
 
 Report findings grouped by check, with file paths and a one-line description of each issue. If a check finds nothing, say so in one line. Example:
@@ -50,3 +63,4 @@ Missing attribution:
 No orphaned profiles found.
 No empty templates found.
 ```
+
