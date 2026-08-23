@@ -17,7 +17,9 @@ When triggered, mark a record or convention as no longer active without deleting
 
 3. **Set the flag.** Add `archived: true` to the file's frontmatter. Do not move the file or change its location.
 
-4. **Commit.** Commit the change with a descriptive message.
+4. **Re-run `weave`.** Other files may still link to this one. Regenerating drops those links, since weave never links to archived files.
+
+5. **Commit.** Commit the flag and any weave changes together.
 
 ## Effect
 
@@ -25,6 +27,7 @@ When triggered, mark a record or convention as no longer active without deleting
 - The `status` skill skips archived files.
 - The `lint` skill skips archived files from stale-knowledge checks.
 - The `search` skill still finds archived files — they're historical, not deleted.
+- The `weave` skill neither generates a `## Related` block for archived files nor links to them. **Re-run `weave` after archiving** so inbound links from active files drop away on regeneration.
 
 ## Reversing
 

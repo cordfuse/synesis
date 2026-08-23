@@ -20,7 +20,7 @@ Weave `records/` and `conventions/`.
 
 Skip:
 - `_template.md` in every directory
-- files with `archived: true` in frontmatter
+- files with `archived: true` in frontmatter — both as a source (no block is generated for them) and as a **target** (never link *to* an archived file)
 - `people/` profiles — the "Owns" section is hand-maintained, and every file would link to the same one or two people
 
 ## Steps
