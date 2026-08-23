@@ -81,6 +81,14 @@ On first interaction, read `git config user.name` and `git config user.email` to
 
 Verbs are commands a developer gives to the agent. Each verb maps to a skill file in `skills/`. The agent reads `skills/*.md` frontmatter (`name` + `description`) to discover available verbs.
 
+### Precedence over parent instructions
+
+**A vault's verbs override any parent instruction file's definition of the same name.** When this vault sits inside a larger workspace whose root `CLAUDE.md` / `AGENTS.md` defines its own session verbs — `hello`, `sync`, `status`, `goodbye` — the vault protocol wins inside this directory and everything below it. A vault is self-contained; when you are in it, it is authoritative.
+
+Reserved by this protocol: every name in `skills/*.md` frontmatter. A parent defining a name the vault does not reserve passes through untouched.
+
+Precedence is not composition. Do not run both the parent's version and the vault's — run the vault's only. Two briefings in one turn is the failure this rule exists to prevent.
+
 ## Versioning
 
 This protocol is at **v0.1**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
@@ -92,6 +100,39 @@ Records and conventions carry a `last-verified` date. The `lint` skill flags any
 ## Archiving
 
 Records and conventions can be marked `archived: true` in frontmatter. Archived files are skipped by `hello`, `status`, and `lint` but still discoverable via `search`. Use the `archive` skill to set the flag. Remove it to restore.
+
+## Record immutability
+
+A record is a snapshot of what was decided, by whom, on a date. **Once a record is committed, its body is not edited.** A decision you can quietly rewrite is not a decision record — it is a draft, and the audit trail (`git blame`, `git log`) becomes worthless.
+
+To correct or change a decision, file a **new** record and set `superseded-by` on the old one. Both stay in the vault. The chain is the history.
+
+**Frontmatter is not body.** These fields are maintained in place, and doing so is not a violation:
+
+- `last-verified` — bumped by the `update` skill
+- `status` / `superseded-by` — set when a record is replaced
+- `archived` — set by the `archive` skill
+
+**The sole body exception** is the derived `## Related` block at the end of a record, which the `weave` skill owns. It is generated, never hand-written, and regenerable from scratch — delete it and `weave` rebuilds it identically. Nothing above that block is ever touched.
+
+**This applies to records only.** Conventions are living documents — how the team works now, not what it decided then. Edit them in place and bump `last-verified`. People profiles are likewise living.
+
+## Record linking (`weave`)
+
+Cross-links between related files are collected in a derived `## Related` block at the end of each record and convention. New links can be added at filing time; the `weave` skill backfills the existing corpus and regenerates the blocks.
+
+The block is derived content and carries a marker so it is never mistaken for authored prose:
+
+```markdown
+## Related
+
+<!-- weave:start -->
+- [[conventions/git-workflow]] — branching rules this decision assumes
+- [[people/steve-krisjanovs]] — decided by
+<!-- weave:end -->
+```
+
+Links are conservative: a real relationship, not topical adjacency. See `skills/weave.md` for the rules.
 
 ## Scope boundary
 
