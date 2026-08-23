@@ -22,7 +22,7 @@ When triggered, run the onboarding flow for the current user.
    - Role on the team
    - Areas they'll be working on
 
-4. **Create the profile.** Write `people/{first-last}.md` using the template from `people/_template.md`. Fill in the frontmatter with collected info. Add `[[wikilinks]]` to relevant conventions or records in the body if appropriate.
+4. **Create the profile.** Write `people/{first-last}.md` using the template from `people/_template.md`. Fill in the frontmatter with collected info. Set both `joined` and `last-seen` to today — `last-seen` seeds the baseline `catchup` reads, and a blank one leaves the new member's first catchup with nothing to diff against. Add `[[wikilinks]]` to relevant conventions or records in the body if appropriate.
 
 5. **Commit and push.** Commit the new profile with a message like: `people: add {name}`. Push to the remote.
 
