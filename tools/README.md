@@ -8,4 +8,4 @@ Team-shared scripts that don't belong in any single project repo. Add scripts he
 
 | Script | Language | What it does |
 |---|---|---|
-| `lint.ts` | TypeScript | Vault hygiene checks — stale knowledge, broken links, missing attribution, orphaned profiles, unfilled templates, weave block integrity. Run `bun tools/lint.ts` (or `npx tsx tools/lint.ts`). Exits 1 on findings. No dependencies. |
+| *(none yet)* | | |

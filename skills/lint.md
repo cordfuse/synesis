@@ -9,16 +9,6 @@ triggers:
 
 When triggered, scan the vault for hygiene issues. Report findings — do not auto-fix.
 
-## Run the script
-
-```sh
-bun tools/lint.ts        # or: npx tsx tools/lint.ts
-```
-
-`tools/lint.ts` implements every check below plus weave block integrity, and exits 1 on findings. **Run it rather than performing the checks by reading files** — the rules are mechanical, and doing them by hand gives a different answer each time. Relay its output; add judgement only on what the findings mean.
-
-Fall back to reading files manually only if the script cannot run (no Bun, no Node). The rules below are the specification the script implements, and stay authoritative if the two ever disagree.
-
 ## General rules
 
 - **Skip `_template.md` files** in all checks. Templates have intentionally empty frontmatter.
