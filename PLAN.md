@@ -100,7 +100,13 @@ The agent sees both synesis and the project. When working in the project and nee
 
 The public framework ships a template `.code-workspace` file. Teams customize it with their own project paths.
 
-Terminal users (Claude Code CLI, Codex CLI) open a separate session on the synesis repo as needed.
+Terminal/CLI users point their harness's global config file to the vault path (one-time setup per developer). Each harness loads its global config in every session, so the vault is available regardless of which project repo the agent is opened in:
+
+| Harness | Global config file |
+|---|---|
+| Claude Code | `~/.claude/CLAUDE.md` |
+| Codex CLI | `~/.codex/AGENTS.md` |
+| Copilot | `~/copilot-instructions.md` |
 
 ### Multi-root risks
 

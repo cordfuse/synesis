@@ -167,9 +167,13 @@ Verbs are commands you give to the agent. Each verb maps to a skill file in `ski
 
 Skills are markdown files that define triggers and step-by-step instructions. See `skills/` for the full set.
 
-## VS Code multi-root workspace
+## Using with your projects
 
-For VS Code users, open your Synesis vault alongside your project repos in a multi-root workspace:
+Synesis lives in its own repo. Your project repos are separate. The agent needs to see both — your code and your team knowledge. Two approaches, depending on your editor.
+
+### VS Code — multi-root workspace
+
+Open your vault alongside your project repos in a multi-root workspace:
 
 ```json
 {
@@ -181,11 +185,29 @@ For VS Code users, open your Synesis vault alongside your project repos in a mul
 }
 ```
 
-The agent sees both your code and your team knowledge. When it needs context — conventions, ownership, past decisions — the vault is right there in the workspace.
+All three harnesses auto-discover their shim files from workspace folders. A template `.code-workspace` file is included.
 
-All three supported harnesses (Claude Code, Codex, Copilot) auto-discover their shim files from workspace folders. A template `.code-workspace` file is included.
+### CLI — global config (one-time setup)
 
-**Scope boundary:** Vault conventions apply to the vault only. In a multi-root workspace, project repos keep their own rules. The agent never applies vault conventions (branching, commit style, merge strategy) to a project repo unless that project's own instructions say to.
+Each harness has a user-level instruction file that loads in every session, regardless of which repo you open. Add a pointer to your vault and every project inherits team knowledge automatically.
+
+| Harness | Global config file |
+|---|---|
+| Claude Code | `~/.claude/CLAUDE.md` |
+| Codex CLI | `~/.codex/AGENTS.md` |
+| Copilot | `~/copilot-instructions.md` |
+
+Add one line to the relevant file:
+
+```
+Read and follow PROTOCOL.md in the team's synesis vault at ~/team/synesis/
+```
+
+Replace the path with wherever you cloned the vault. The agent opens in your project repo (sees your code) and reads team knowledge from the vault path (sees your conventions). One session, one agent, both contexts.
+
+### Scope boundary
+
+Vault conventions apply to the vault only. In a multi-root workspace or with global config, project repos keep their own rules. The agent never applies vault conventions (branching, commit style, merge strategy) to a project repo unless that project's own instructions say to.
 
 ## Onboarding
 
