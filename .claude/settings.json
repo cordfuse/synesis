@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
+      "Bash(*)",
+      "WebSearch",
+      "WebFetch"
+    ],
+    "deny": [
+      "Edit(PROTOCOL.md)",
+      "Write(PROTOCOL.md)",
+      "Edit(CLAUDE.md)",
+      "Write(CLAUDE.md)",
+      "Edit(AGENTS.md)",
+      "Write(AGENTS.md)",
+      "Edit(GEMINI.md)",
+      "Write(GEMINI.md)",
+      "Edit(opencode.json)",
+      "Write(opencode.json)",
+      "Edit(.github/copilot-instructions.md)",
+      "Write(.github/copilot-instructions.md)",
+      "Edit(skills/**)",
+      "Write(skills/**)",
+      "Edit(LICENSE)",
+      "Write(LICENSE)",
+      "Edit(README.md)",
+      "Write(README.md)",
+      "Edit(PLAN.md)",
+      "Write(PLAN.md)",
+      "Edit(.claude/settings.json)",
+      "Write(.claude/settings.json)"
+    ]
+  }
+}
