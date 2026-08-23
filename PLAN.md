@@ -46,10 +46,12 @@ synesis/
     hello.md
     lint.md
     onboard.md
+    reconcile.md
     search.md
     status.md
     sync.md
     update.md
+    weave.md
   records/                    # institutional memory — decisions, ADRs
     _template.md
   people/                     # team member profiles
@@ -129,12 +131,12 @@ Terminal/CLI users set up cross-repo access once per developer. Each harness has
 
 ## Versioning
 
-Major.minor in `PROTOCOL.md` frontmatter, starting at **v0.1**.
+Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v0.2**.
 
 - **Minor bump:** add/change a convention, new verb, new template
 - **Major bump:** breaking change to directory structure or PROTOCOL.md format
 
-Instances track upstream version: `upstream: cordfuse/synesis@v0.1` in their PROTOCOL.md frontmatter.
+Instances track upstream version: `upstream: cordfuse/synesis@v0.2` in their PROTOCOL.md frontmatter.
 
 ## What carries over from cortex
 
@@ -147,6 +149,12 @@ Instances track upstream version: `upstream: cordfuse/synesis@v0.1` in their PRO
 | Fork model | Same pattern | Teams use the template and own their copy |
 | Actor profiles | Dropped | Actors absorbed into skills — functional roles with triggers, no personalities |
 | Personal daily journal | Dropped | Not relevant at team level |
+| Record immutability | Same rule | Records are append-only; correct by superseding. Frontmatter still maintained in place |
+| Weave (record linking) | `weave` verb | Same derived `## Related` block, same conservative linking. Covers conventions too, skips people profiles |
+| Reconcile | `reconcile` verb | Rewritten for template repos: no fork relationship, unrelated histories, file-level diff only — never merge or rebase |
+| Verb precedence over parent | Same rule | Vault verbs beat any parent instruction file; precedence is not composition |
+| Rollup layer | Deferred | Solves unbounded daily-record growth; decision vaults are low-volume. Revisit past ~50 records |
+| Actor profiles / personalities | Dropped | Personal-life surface, no team-knowledge analogue |
 
 ## New features (not in cortex)
 
@@ -270,6 +278,9 @@ The `lint` skill scans the repo for hygiene issues. No automated fixes — it re
 3. **Missing attribution** — records without `decided-by`
 4. **Orphaned profiles** — people profiles where `email` doesn't match any recent git author
 5. **Empty templates** — files that are still just the `_template.md` content, never filled in
+6. **Weave block integrity** — non-reciprocal links, unpaired or duplicated `weave:start`/`weave:end` markers, empty weave blocks, `## Related` headings without markers
+
+Checks stay agent-native: the skill is prose the agent executes, not a script. No runtime, nothing to install.
 
 ## Verb definitions
 
@@ -299,6 +310,7 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 - [x] Test with Codex CLI harness (hello verb, cross-repo via personal skill + --add-dir)
 - [x] Test with Antigravity CLI harness (hello verb, cross-repo via global GEMINI.md + --add-dir)
 - [x] Test with OpenCode CLI harness (hello verb, cross-repo via global skill + references config)
+- [x] Port proven cortex features — record immutability, `weave`, `reconcile`, verb precedence (protocol v0.2)
 
 ### Phase 3 — Polish
 - [ ] Lint verb implementation (agent-native, no shell scripts)
@@ -315,4 +327,4 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 *Filed: 2026-08-22*
 *Updated: 2026-08-23*
 *Name: Synesis*
-*Status: Phase 2 dogfooding complete (all five harnesses tested), Phase 3 next*
+*Status: Phase 2 dogfooding complete (all five harnesses tested) + cortex feature port at v0.2, Phase 3 next*
