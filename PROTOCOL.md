@@ -5,7 +5,7 @@ stale-days: 90
 
 # Protocol
 
-This is a Synesis vault — a file-based shared knowledge protocol for software teams. Every AI coding agent that can read markdown can use this.
+This is a shared knowledge vault for a software team — decisions, conventions, people and institutional memory as plain markdown in a git repo. Every AI coding agent that can read a file can use it.
 
 ## How it works
 
