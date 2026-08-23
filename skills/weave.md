@@ -20,7 +20,7 @@ Weave `records/` and `conventions/`.
 
 Skip:
 - `_template.md` in every directory
-- files with `archived: true` in frontmatter — both as a source (no block is generated for them) and as a **target** (never link *to* an archived file)
+- files with `archived: true` in frontmatter — as a **target**, never link *to* one; and as a **source**, *remove* any `## Related` block they still carry rather than leaving it frozen. Skipping regeneration is not enough: a stale block on an archived file keeps pointing at records that no longer point back, which reads as a one-way link forever. The block is derived, so deleting it loses nothing — un-archive the file and the next weave rebuilds it.
 - `people/` profiles — the "Owns" section is hand-maintained, and every file would link to the same one or two people
 
 ## Steps

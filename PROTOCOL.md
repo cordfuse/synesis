@@ -137,7 +137,7 @@ The block is derived content and carries a marker so it is never mistaken for au
 <!-- weave:end -->
 ```
 
-Links are conservative: a real relationship, not topical adjacency. `weave` covers `records/` and `conventions/`; it skips `people/` profiles, since every record carries `decided-by` and linking people would put the same profile in every block. Archived files are skipped in both directions — no block is generated for them, and nothing links to them. See `skills/weave.md` for the rules.
+Links are conservative: a real relationship, not topical adjacency. `weave` covers `records/` and `conventions/`; it skips `people/` profiles, since every record carries `decided-by` and linking people would put the same profile in every block. Archived files are handled in both directions — nothing links to them, and any block they still carry is removed rather than left frozen. See `skills/weave.md` for the rules.
 
 ## Scope boundary
 
