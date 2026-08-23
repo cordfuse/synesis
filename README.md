@@ -311,6 +311,14 @@ The next time they say `hello`, they skip straight to the briefing. No setup doc
 
 Records and conventions carry a `last-verified` date. The `lint` skill flags anything older than the configurable threshold (default: 90 days). No automated deletion — just visibility. The team decides what to update, verify, or supersede.
 
+Knowledge that is no longer current gets `archive`d rather than deleted: it drops out of briefings and lint, stays findable by `search`, and `weave` stops linking to it so the graph doesn't lead anywhere dead. Nothing leaves the vault, and `git log` keeps the rest.
+
+## Catching up
+
+`catchup` answers "what changed while I was away?" — new decisions, changed conventions, people added, skills modified — by diffing git history against the `last-seen` date in your profile.
+
+That field belongs to `catchup` alone. `hello` deliberately does not touch it: a greeting that stamped today's date would erase the very baseline catchup needs, and you would be told nothing had changed no matter how long you had been gone.
+
 ## Obsidian-compatible
 
 The vault doubles as an Obsidian vault. `[[wikilinks]]` for internal cross-references, `aliases` and `tags` in frontmatter for filtering and linking. `.obsidian/` is gitignored so each user keeps their own Obsidian config.
