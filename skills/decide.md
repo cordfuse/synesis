@@ -21,7 +21,7 @@ When triggered, guide the developer through filing a decision record.
 
 2. **Create the record.** Write `records/{date}-{slug}.md` using the template from `records/_template.md`. Date is today in `YYYY-MM-DD` format. Slug is a short kebab-case summary of the decision.
 
-3. **Link related content.** Add `[[wikilinks]]` in the body to reference related people, conventions, or prior records.
+3. **Link related content.** Add `[[wikilinks]]` in the body prose where a sentence genuinely explains a connection. Do **not** hand-write a `## Related` block — that block is derived and belongs to the `weave` skill. Run `weave` after filing to generate it (see Record linking in `PROTOCOL.md`).
 
 4. **Commit and push.** Commit with a message like: `records: {title}`. Push to the remote.
 
