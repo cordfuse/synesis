@@ -24,11 +24,10 @@ Only these paths are compared. Everything else is vault-local and is **never** t
 |---|---|
 | `PROTOCOL.md` | the protocol itself |
 | `skills/*.md` | verb definitions |
-| `tools/lint.ts` | implements the lint skill |
 | `*/_template.md` | frontmatter shapes |
 | `AGENTS.md` | agent entry point |
 
-Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments/`, `README.md`, `CLAUDE.md`, and any other agent instruction file. That content is the team's, not the template's. `README.md` and `CLAUDE.md` are expected to diverge immediately and permanently — flagging them every run would train the user to ignore the report.
+Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments/`, `tools/`, `README.md`, `CLAUDE.md`, and any other agent instruction file. That content is the team's, not the template's. `README.md` and `CLAUDE.md` are expected to diverge immediately and permanently — flagging them every run would train the user to ignore the report.
 
 ## Setup
 
@@ -47,7 +46,7 @@ The two repos have unrelated histories — a template copy starts with a fresh c
 
 ```sh
 git fetch upstream
-git diff --name-status upstream/main HEAD -- PROTOCOL.md AGENTS.md 'skills/*.md' tools/lint.ts '*/_template.md'
+git diff --name-status upstream/main HEAD -- PROTOCOL.md AGENTS.md 'skills/*.md' '*/_template.md'
 ```
 
 **2. Categorize** each result:
