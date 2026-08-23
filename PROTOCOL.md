@@ -54,7 +54,7 @@ aliases: [...]
 email: ...
 role: ...
 joined: YYYY-MM-DD
-last-seen: YYYY-MM-DD
+last-seen: YYYY-MM-DD   # last time this person ran catchup; only catchup writes it
 tags: [...]
 ```
 

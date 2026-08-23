@@ -16,7 +16,9 @@ When triggered, identify the current user and deliver a team briefing.
 
 2. **If no profile exists:** Trigger the `onboard` skill instead. Do not continue with the briefing.
 
-3. **If a profile exists:** Update `last-seen` in the user's profile to today's date, then deliver the briefing below.
+3. **If a profile exists:** Deliver the briefing below.
+
+**Do not touch `last-seen`.** It is owned by `catchup`, which uses it to work out what changed since you last asked. Overwriting it here silently destroys that baseline — `hello` followed by `catchup` would report no changes no matter how much had happened.
 
 ## Briefing format
 
