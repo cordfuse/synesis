@@ -177,7 +177,7 @@ Skills are markdown files that define triggers and step-by-step instructions. Se
 Two worth knowing about up front:
 
 - **`weave`** — cross-links related records and conventions so the flat vault becomes a navigable graph
-- **`reconcile`** — diffs your vault's protocol files against this template and surfaces what drifted, one file at a time. Vaults are created with "Use this template", so there is no fork relationship and nothing to merge; reconcile is a file-level diff, never a history operation.
+- **`reconcile`** — diffs your vault's protocol files against this template and surfaces what drifted, one file at a time. Vaults are created with "Use this template", so there is no fork relationship and nothing to merge; reconcile is a file-level diff, never a history operation. Your own records and conventions are never in scope — only the protocol files you inherited.
 
 ## Using with your projects
 
@@ -324,6 +324,8 @@ That field belongs to `catchup` alone. `hello` deliberately does not touch it: a
 The vault doubles as an Obsidian vault. `[[wikilinks]]` for internal cross-references, `aliases` and `tags` in frontmatter for filtering and linking. `.obsidian/` is gitignored so each user keeps their own Obsidian config.
 
 The `weave` verb is what fills the graph view. It backfills cross-links across your records and conventions, collecting them in a derived `## Related` block at the end of each file — generated, never hand-written, and safe to delete and rebuild. Links are conservative: a real relationship, not topical adjacency.
+
+Weave is idempotent: run it twice and the second run changes nothing. Links that already exist keep the wording they already had, so a weave pass only ever touches files whose relationships actually changed. Your diffs stay readable.
 
 ## Design principles
 
