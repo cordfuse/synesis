@@ -119,7 +119,12 @@ To correct or change a decision, file a **new** record and set `superseded-by` o
 
 ## Record linking (`weave`)
 
-Cross-links between related files are collected in a derived `## Related` block at the end of each record and convention. New links can be added at filing time; the `weave` skill backfills the existing corpus and regenerates the blocks.
+A vault carries two kinds of link, and they are not interchangeable:
+
+- **Authored links** — `[[wikilinks]]` written by hand in body prose, where a sentence genuinely explains a connection. Yours to write, anywhere, at any time. `weave` never touches them.
+- **The derived `## Related` block** — a generated index at the end of each record and convention. **Only `weave` writes it.** Never hand-write one, not even when filing a new record; file the record, then run `weave` to generate the block.
+
+`weave` backfills the existing corpus and regenerates every block from scratch, so a hand-written one is overwritten on the next run.
 
 The block is derived content and carries a marker so it is never mistaken for authored prose:
 
@@ -128,11 +133,11 @@ The block is derived content and carries a marker so it is never mistaken for au
 
 <!-- weave:start -->
 - [[conventions/git-workflow]] — branching rules this decision assumes
-- [[people/steve-krisjanovs]] — decided by
+- [[records/2026-08-20-api-redesign]] — the decision this one revisits
 <!-- weave:end -->
 ```
 
-Links are conservative: a real relationship, not topical adjacency. See `skills/weave.md` for the rules.
+Links are conservative: a real relationship, not topical adjacency. `weave` covers `records/` and `conventions/`; it skips `people/` profiles, since every record carries `decided-by` and linking people would put the same profile in every block. Archived files are skipped in both directions — no block is generated for them, and nothing links to them. See `skills/weave.md` for the rules.
 
 ## Scope boundary
 
