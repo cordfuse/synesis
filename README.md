@@ -37,7 +37,7 @@ Synesis gives your team a shared vault of decisions, conventions, people profile
 
 1. Click **"Use this template"** to create your team's vault
 2. Clone it locally
-3. Open it in your AI coding agent (Claude Code, Codex, Copilot — all supported)
+3. Open it in your AI coding agent (Claude Code, Codex, Copilot, OpenCode — all supported)
 4. Say `hello` — the agent reads the protocol and offers to onboard you
 
 That's it. The agent now knows the protocol. As you add people, decisions, and conventions, every agent session inherits that knowledge.
@@ -49,6 +49,8 @@ synesis/
   PROTOCOL.md              # the protocol — teaches any agent the conventions
   CLAUDE.md                # Claude Code shim → PROTOCOL.md
   AGENTS.md                # Codex shim → PROTOCOL.md
+  GEMINI.md                # Gemini / Antigravity shim → PROTOCOL.md
+  opencode.json            # OpenCode shim → PROTOCOL.md
   .github/
     copilot-instructions.md  # Copilot shim → PROTOCOL.md
   skills/                  # agent capabilities (onboard, decide, lint, etc.)
@@ -112,6 +114,7 @@ aliases: [SC, Sarah]
 email: sarah.chen@company.com
 role: Frontend developer
 joined: 2026-08-18
+last-seen: 2026-08-18
 tags: [frontend, auth]
 ---
 
@@ -151,13 +154,15 @@ No cherry-picking between branches.
 
 ## Supported harnesses
 
-Synesis works with any AI coding agent that can read project files. It ships one-line shim files for three harnesses out of the box:
+Synesis works with any AI coding agent that can read project files. It ships one-line shim files for five harnesses out of the box:
 
 | Harness | Mode | Shim file |
 |---|---|---|
 | Claude Code | CLI + VS Code | `CLAUDE.md` |
 | OpenAI Codex | CLI + VS Code | `AGENTS.md` |
 | GitHub Copilot | CLI + VS Code | `.github/copilot-instructions.md` |
+| Gemini / Antigravity | CLI | `GEMINI.md` |
+| OpenCode | CLI | `opencode.json` |
 
 Each shim redirects the agent into `PROTOCOL.md`, where the actual protocol lives. Adding support for a new harness = adding a one-line shim file. The knowledge stays in one place.
 
@@ -185,27 +190,100 @@ Open your vault alongside your project repos in a multi-root workspace:
 }
 ```
 
-All three harnesses auto-discover their shim files from workspace folders. A template `.code-workspace` file is included.
+All harnesses except OpenCode auto-discover their shim files from workspace folders. OpenCode uses `opencode.json` in the vault root. A template `.code-workspace` file is included.
 
-### CLI — global config (one-time setup)
+### CLI — cross-repo setup (one-time)
 
-Each harness has a user-level instruction file that loads in every session, regardless of which repo you open. Add a pointer to your vault and every project inherits team knowledge automatically.
+Each harness has a user-level config mechanism that loads in every session, regardless of which repo you open. Point it to your vault and every project inherits team knowledge automatically.
+
+#### Claude Code and Antigravity
+
+Both use a global instruction file that loads in every session. Add one line pointing to the vault:
 
 | Harness | Global config file |
 |---|---|
 | Claude Code | `~/.claude/CLAUDE.md` |
-| Codex CLI | `~/.codex/AGENTS.md` |
-| Copilot | `~/copilot-instructions.md` |
-
-Add one line to the relevant file:
+| Antigravity | `~/.gemini/GEMINI.md` |
 
 ```
 Read and follow PROTOCOL.md in the team's synesis vault at ~/team/synesis/
 ```
 
-Replace the path with wherever you cloned the vault. The agent opens in your project repo (sees your code) and reads team knowledge from the vault path (sees your conventions). One session, one agent, both contexts.
+Replace the path with wherever you cloned the vault. Claude Code can access any path from the global file alone. Antigravity also needs `--add-dir` for file access:
 
-> **Note:** The global config approach is confirmed working for Claude Code. Codex CLI and Copilot CLI support global instruction files, but cross-repo file access from those files has not been fully tested yet. If you test it, let us know.
+```
+agy --add-dir ~/team/synesis/
+```
+
+#### Codex CLI and Copilot CLI
+
+Both use a personal skill for instruction discovery plus `--add-dir` for file access.
+
+**1. Personal skill** — create a `SKILL.md` in the harness's personal skills directory:
+
+| Harness | Skill file path |
+|---|---|
+| Codex CLI | `~/.codex/skills/synesis/SKILL.md` |
+| Copilot CLI | `~/.copilot/skills/synesis/SKILL.md` |
+
+```markdown
+---
+name: synesis
+description: Team knowledge protocol — always active. Handles hello, status, catchup, decide, lint, search, sync, archive, update, onboard, handoff verbs.
+alwaysApply: true
+---
+
+At the start of every session, read and follow PROTOCOL.md in the team's synesis vault at ~/team/synesis/
+
+When the user says "hello", run the hello skill from that vault's skills/ directory.
+```
+
+**2. Directory access** — launch with `--add-dir` pointing to the vault:
+
+```
+codex --add-dir ~/team/synesis/
+copilot --add-dir ~/team/synesis/
+```
+
+The personal skill tells the agent what to do; `--add-dir` gives it permission to read the vault files. Both are needed.
+
+#### OpenCode
+
+OpenCode uses a global skill for instruction discovery plus a `references` entry for file access.
+
+**1. Global skill** — create a `SKILL.md` in OpenCode's global skills directory:
+
+| Path |
+|---|
+| `~/.config/opencode/skills/synesis/SKILL.md` |
+
+```markdown
+---
+name: synesis
+description: Team knowledge protocol — always active. Handles hello, status, catchup, decide, lint, search, sync, archive, update, onboard, handoff verbs.
+---
+
+At the start of every session, read and follow PROTOCOL.md in the team's synesis vault at ~/team/synesis/
+
+When the user says "hello", run the hello skill from that vault's skills/ directory.
+```
+
+**2. Reference** — add a `references` entry in your global config (`~/.config/opencode/opencode.json`):
+
+```json
+{
+  "references": {
+    "synesis": {
+      "path": "~/team/synesis",
+      "description": "Team knowledge vault — conventions, decisions, people profiles. Read PROTOCOL.md for the protocol."
+    }
+  }
+}
+```
+
+The global skill tells the agent what to do; the `references` entry gives it permission to read the vault files. Both are needed.
+
+> **Tested:** All five harnesses are confirmed working cross-repo — Claude Code via global instruction file, Antigravity via global instruction file + `--add-dir`, Codex CLI and Copilot CLI via personal skill + `--add-dir`, OpenCode via global skill + `references` config.
 
 ### Scope boundary
 

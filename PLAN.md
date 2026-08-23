@@ -25,8 +25,8 @@ Cortex proved the pattern for one person. Synesis is cortex for teams.
 
 ## Repo model
 
-- **`cordfuse/synesis`** (public) — the framework/template. Protocol docs, example files, README. Teams fork this.
-- **`steve-krisjanovs/synesis`** (private) — Steve's fork. Real people, real decisions, real conventions. Dogfood repo.
+- **`cordfuse/synesis`** (public) — the framework/template. Protocol docs, example files, README. Teams use this as a GitHub template.
+- **`steve-krisjanovs/synesis`** (private) — Steve's instance. Real people, real decisions, real conventions. Dogfood repo.
 
 Same pattern as cortex: `cordfuse/cortex` = framework, `steve-krisjanovs/cortex` = personal instance.
 
@@ -36,15 +36,20 @@ Same pattern as cortex: `cordfuse/cortex` = framework, `steve-krisjanovs/cortex`
 synesis/
   PROTOCOL.md                 # teaches any agent the conventions — version in frontmatter
   AGENTS.md                   # Codex entrypoint shim → PROTOCOL.md
+  GEMINI.md                   # Gemini / Antigravity shim → PROTOCOL.md
+  opencode.json               # OpenCode shim → PROTOCOL.md
   skills/                     # agent capabilities — flat files, one per skill
-    hello.md
-    status.md
-    onboard.md
+    archive.md
+    catchup.md
     decide.md
     handoff.md
+    hello.md
     lint.md
+    onboard.md
     search.md
+    status.md
     sync.md
+    update.md
   records/                    # institutional memory — decisions, ADRs
     _template.md
   people/                     # team member profiles
@@ -62,7 +67,7 @@ synesis/
   .gitignore                  # ignores .obsidian/ (per-user Obsidian config)
 ```
 
-Top-level layout, no dot-prefix. This is a cloned repo, not a config directory nested inside another project. The framework (public template) ships `_template.md` files and example skills. Teams fork and fill in real content.
+Top-level layout, no dot-prefix. This is a cloned repo, not a config directory nested inside another project. The framework (public template) ships `_template.md` files and example skills. Teams create from the template and fill in real content.
 
 **Naming convention:** UPPERCASE filenames (`PROTOCOL.md`, `AGENTS.md`) are protocol infrastructure. Lowercase filenames (`onboard.md`, `sarah.md`, `git.md`) are team content. The casing tells you at a glance what's plumbing and what's knowledge.
 
@@ -77,8 +82,10 @@ Each AI harness has its own entrypoint file. Synesis ships a one-line shim for e
 | Claude Code | CLI + VS Code | `CLAUDE.md` | Read and follow PROTOCOL.md |
 | OpenAI Codex | CLI + VS Code | `AGENTS.md` | Read and follow PROTOCOL.md |
 | GitHub Copilot | CLI + VS Code | `.github/copilot-instructions.md` | Read and follow PROTOCOL.md |
+| Gemini / Antigravity | CLI | `GEMINI.md` | Read and follow PROTOCOL.md |
+| OpenCode | CLI | `opencode.json` | `"instructions": ["PROTOCOL.md"]` |
 
-All three harnesses have both CLI and VS Code extensions. Three harnesses supported at launch. Adding a new harness = adding a one-line shim file. The actual knowledge stays in one place.
+Five harnesses supported at launch. Adding a new harness = adding a one-line shim file. The actual knowledge stays in one place.
 
 ## VS Code multi-root workspace
 
@@ -94,19 +101,21 @@ Developers using VS Code-based harnesses (Claude Code, Codex, Copilot — all ha
 }
 ```
 
-All three harnesses auto-discover their shim files from workspace folders in multi-root workspaces. Copilot had a bug with this ([vscode#264837](https://github.com/microsoft/vscode/issues/264837)) but it was fixed in September 2025.
+All four harnesses auto-discover their shim files from workspace folders in multi-root workspaces. Copilot had a bug with this ([vscode#264837](https://github.com/microsoft/vscode/issues/264837)) but it was fixed in September 2025.
 
 The agent sees both synesis and the project. When working in the project and needing team context — conventions, ownership, past decisions — synesis is right there in the workspace.
 
 The public framework ships a template `.code-workspace` file. Teams customize it with their own project paths.
 
-Terminal/CLI users point their harness's global config file to the vault path (one-time setup per developer). Each harness loads its global config in every session, so the vault is available regardless of which project repo the agent is opened in:
+Terminal/CLI users set up cross-repo access once per developer. Each harness has a different mechanism:
 
-| Harness | Global config file |
+| Harness | Cross-repo mechanism |
 |---|---|
-| Claude Code | `~/.claude/CLAUDE.md` |
-| Codex CLI | `~/.codex/AGENTS.md` |
-| Copilot | `~/copilot-instructions.md` |
+| Claude Code | Global instruction file: `~/.claude/CLAUDE.md` — one line pointing to the vault (handles both instruction discovery and file access) |
+| Antigravity | Global instruction file: `~/.gemini/GEMINI.md` — one line pointing to the vault + `--add-dir` flag for file access |
+| Codex CLI | Personal skill: `~/.codex/skills/synesis/SKILL.md` with `alwaysApply: true` + `--add-dir` flag for file access |
+| Copilot CLI | Personal skill: `~/.copilot/skills/synesis/SKILL.md` with `alwaysApply: true` + `--add-dir` flag for file access |
+| OpenCode | Global skill: `~/.config/opencode/skills/synesis/SKILL.md` + `references` entry in `~/.config/opencode/opencode.json` for file access |
 
 ### Multi-root risks
 
@@ -125,7 +134,7 @@ Major.minor in `PROTOCOL.md` frontmatter, starting at **v0.1**.
 - **Minor bump:** add/change a convention, new verb, new template
 - **Major bump:** breaking change to directory structure or PROTOCOL.md format
 
-Private forks track upstream version: `upstream: cordfuse/synesis@v0.1` in their PROTOCOL.md frontmatter.
+Instances track upstream version: `upstream: cordfuse/synesis@v0.1` in their PROTOCOL.md frontmatter.
 
 ## What carries over from cortex
 
@@ -135,17 +144,17 @@ Private forks track upstream version: `upstream: cordfuse/synesis@v0.1` in their
 | Records | records/ | Add attribution (who wrote it, when), `status`/`superseded-by` tracking |
 | Verbs (hello, goodbye, sync) | `skills/` frontmatter | Verbs derived from skill files, no separate index |
 | Skills | skills/ | Carry over, flattened — no actor wrapper. Skills define their own triggers |
-| Fork model | Same pattern | Teams fork the template and own their copy |
+| Fork model | Same pattern | Teams use the template and own their copy |
 | Actor profiles | Dropped | Actors absorbed into skills — functional roles with triggers, no personalities |
 | Personal daily journal | Dropped | Not relevant at team level |
 
 ## New features (not in cortex)
 
 ### 1. People directory
-`people/` folder with one markdown per team member. Role, expertise areas, what they own. Agents use this to answer "who should I ask about X?" and to attribute context correctly. Real profiles live in private forks only — the public repo ships `_template.md`.
+`people/` folder with one markdown per team member. Role, expertise areas, what they own. Agents use this to answer "who should I ask about X?" and to attribute context correctly. Real profiles live in private instances only — the public repo ships `_template.md`.
 
 ### 2. Onboarding mode
-New dev clones the fork, opens their harness. The agent reads `git config user.name` and `git config user.email` to identify the current user, then checks `people/` for a matching profile. No match triggers the onboarding flow:
+New dev clones the vault, opens their harness. The agent reads `git config user.name` and `git config user.email` to identify the current user, then checks `people/` for a matching profile. No match triggers the onboarding flow:
 
 1. **Interview:** Agent asks the developer for their name, initials, role, and expertise areas.
 2. **Create profile:** Agent writes `people/{name}.md` with the collected info.
@@ -237,6 +246,7 @@ aliases: [SC, Sarah]
 email: sarah.chen@company.com
 role: Frontend developer
 joined: 2026-08-18
+last-seen: 2026-08-18
 tags: [frontend, auth]
 ---
 ```
@@ -273,7 +283,7 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 - [x] Define verb set (verbs derived from skills/ frontmatter, no separate VERBS.md)
 - [x] Define directory structure and frontmatter conventions
 - [x] Write harness shim files (CLAUDE.md, AGENTS.md, .github/copilot-instructions.md)
-- [x] Write skill files (hello, status, onboard, decide, handoff, lint, search, sync)
+- [x] Write skill files (hello, status, onboard, decide, handoff, lint, search, sync, archive, catchup, update)
 - [x] Create `_template.md` files for records, people, conventions
 - [x] Create template synesis.code-workspace file
 - [x] Create attachments/ and tools/ directories with README
@@ -285,7 +295,10 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 - [x] Test with Claude Code (hello, lint, decide verbs — 6 bugs found and fixed)
 - [x] Test multi-root workspace scope boundary (convention bleed test passed)
 - [x] Iterate on protocol based on real usage (tag-based scoping, scope boundary, librarian absorption)
-- [ ] Test with Codex and Copilot harnesses
+- [x] Test with Copilot CLI harness (hello verb, cross-repo via personal skill + --add-dir)
+- [x] Test with Codex CLI harness (hello verb, cross-repo via personal skill + --add-dir)
+- [x] Test with Antigravity CLI harness (hello verb, cross-repo via global GEMINI.md + --add-dir)
+- [x] Test with OpenCode CLI harness (hello verb, cross-repo via global skill + references config)
 
 ### Phase 3 — Polish
 - [ ] Lint verb implementation (agent-native, no shell scripts)
@@ -300,6 +313,6 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 ---
 
 *Filed: 2026-08-22*
-*Updated: 2026-08-22*
+*Updated: 2026-08-23*
 *Name: Synesis*
-*Status: Phase 2 dogfooding complete, Phase 3 next*
+*Status: Phase 2 dogfooding complete (all five harnesses tested), Phase 3 next*
