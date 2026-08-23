@@ -293,6 +293,7 @@ The `lint` skill scans the repo for hygiene issues. No automated fixes — it re
 4. **Orphaned profiles** — people profiles where `email` doesn't match any recent git author
 5. **Empty templates** — files that are still just the `_template.md` content, never filled in
 6. **Weave block integrity** — non-reciprocal links, unpaired or duplicated `weave:start`/`weave:end` markers, empty weave blocks, `## Related` headings without markers
+7. **Vault references in template files** — `[[wikilinks]]` in `PROTOCOL.md`, `AGENTS.md`, `skills/*.md` or `*/_template.md` that resolve to a real file in this vault. Inverts check 2: template files must use placeholders that resolve nowhere, since they ship to vaults that have none of this content. Scans inside code blocks too — that is where these get written.
 
 Checks stay agent-native: the skill is prose the agent executes, not a script. No runtime, nothing to install.
 
