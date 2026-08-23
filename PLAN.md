@@ -131,12 +131,12 @@ Terminal/CLI users set up cross-repo access once per developer. Each harness has
 
 ## Versioning
 
-Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v0.2**.
+Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v0.3**.
 
 - **Minor bump:** add/change a convention, new verb, new template
 - **Major bump:** breaking change to directory structure or PROTOCOL.md format
 
-Instances track upstream version: `upstream: cordfuse/synesis@v0.2` in their PROTOCOL.md frontmatter.
+Instances track upstream version: `upstream: cordfuse/synesis@v0.3` in their PROTOCOL.md frontmatter.
 
 ## What carries over from cortex
 
@@ -269,6 +269,10 @@ tags: [git, workflow]
 ---
 ```
 
+## Verification method
+
+Reading a skill and running it find different bugs. Of ten bugs fixed at v0.2–v0.3, seven came from reading the specs against each other and three from executing the verbs — and all three of those were in files a spec pass had just cleared. Claims about behaviour ("regeneration is identical", "skips archived files") read as reassurance until something is actually run. Execute new verbs against the dogfood vault before promoting them upstream.
+
 ## Lint skill checks
 
 The `lint` skill scans the repo for hygiene issues. No automated fixes — it reports what it finds and the developer decides.
@@ -317,6 +321,11 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
   - `hello` overwrote `last-seen`, destroying the baseline `catchup` reads. `catchup` now owns the field alone.
   - `decide` told the agent to hand-write links; the `## Related` block is derived and belongs to `weave`.
   - `archive` left inbound links pointing at archived files. `weave` no longer links to them; `archive` re-runs it.
+- [x] Second spec pass — `PROTOCOL.md` still licensed hand-written Related blocks (and its example showed a link `weave` cannot make); `search` never labelled archived hits; `sync` looked like the answer for template drift.
+- [x] **Execute every verb rather than reading it** (protocol v0.3). Three further bugs, each in a file the spec passes had already cleared:
+  - `weave` only *skipped* archived files, so an archived file kept a frozen block pointing at records that no longer pointed back.
+  - `reconcile`'s categorization never mapped git's status letters — `D` means "upstream has it, you don't", which reads as "deleted" and resolves backwards.
+  - `weave` claimed regeneration was identical and idempotent. Link selection and order are pinned; the prose after the em-dash is not, so every run rewrote all 68 descriptions and churned 26 files.
 
 ### Phase 3 — Polish
 - [ ] Lint verb implementation (agent-native, no shell scripts)
@@ -333,4 +342,4 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 *Filed: 2026-08-22*
 *Updated: 2026-08-23*
 *Name: Synesis*
-*Status: Phase 2 dogfooding complete (all five harnesses tested) + cortex feature port at v0.2, Phase 3 next*
+*Status: Phase 2 complete — five harnesses tested, cortex feature port shipped, every verb executed against the dogfood vault. Protocol v0.3. Phase 3 next*
