@@ -25,11 +25,13 @@ When triggered, search the vault for relevant knowledge.
    - A brief summary of the content (1-2 sentences)
    - Tags
    - Status (active/superseded) for records
+   - **`[archived]`** if the file has `archived: true` in frontmatter
 
 4. **Follow links.** If a matching record references other records or conventions via wikilinks, mention those as related content.
 
 ## Notes
 
+- **Search is the one verb that still finds archived content.** `hello`, `status` and `lint` skip archived files, and `weave` will not link to them — search is deliberately the exception, because archiving retires knowledge without deleting it. Include archived matches, but always label them `[archived]` and sort them below active ones. An archived convention that looks live is worse than one that never surfaced.
 - Prioritize exact tag matches over body text matches.
 - If a record is superseded, point the developer to its replacement via `superseded-by`.
 - For people searches, match against `name`, `initials`, `aliases`, `role`, and `tags`.
