@@ -20,7 +20,7 @@ When triggered, create a handoff record capturing the transfer of work between t
 
 2. **Create the record.** Write `records/{date}-handoff-{slug}.md` using the record template. Tag with `handoff` plus any relevant topic tags.
 
-3. **Link related content.** Add `[[wikilinks]]` to the people involved, relevant conventions, and any prior records or decisions related to the work.
+3. **Link related content.** Add `[[wikilinks]]` in the body prose to the people involved, relevant conventions, and any prior records or decisions related to the work. Do **not** hand-write a `## Related` block — that block is derived and belongs to the `weave` skill. Run `weave` after filing to generate it.
 
 4. **Commit and push.** Commit with a message like: `records: handoff {slug} from {from} to {to}`. Push to the remote.
 
