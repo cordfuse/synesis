@@ -17,7 +17,7 @@ When triggered, re-verify a convention or record to confirm it's still accurate.
 
 3. **Ask for confirmation.** "Is this still accurate?" The user may:
    - **Confirm** — content is still correct as-is.
-   - **Edit** — user provides corrections. Apply them.
+   - **Edit** — user provides corrections. Apply them. **Conventions and people profiles only** — they are living documents. Records are append-only and cannot be edited (see Record immutability in `PROTOCOL.md`); if the user asks to edit a record, offer Supersede instead.
    - **Supersede** — the convention or decision is no longer valid. Trigger the `decide` skill to file a replacement, then mark this file `superseded`.
 
 4. **Bump the date.** Set `last-verified` to today's date in the file's frontmatter.
@@ -28,3 +28,4 @@ When triggered, re-verify a convention or record to confirm it's still accurate.
 
 - This is the counterpart to `lint` — lint flags stale items, update resolves them.
 - Can be run on any file with a `last-verified` field, not just stale ones.
+- On a record, the only outcomes are Confirm (bump `last-verified`) and Supersede. Bumping the date is a frontmatter change, which immutability allows; changing the body is not.
