@@ -77,10 +77,19 @@ Rules:
 
 ## Regenerability
 
-The block is derived and disposable. Delete every `## Related` section in the vault, re-run `weave`, and the result is identical. If a link is wrong, fix the rule here — do not hand-edit the block, it will be overwritten on the next run.
+The block is derived and disposable. Delete every `## Related` section in the vault, re-run `weave`, and you get **the same set of links** — the rules pin down which files link, the alphabetical order, and the cap.
+
+**They do not pin down the wording after the em-dash.** That phrase is free prose, so a naive regeneration rewrites all of it and churns every woven file at once. Two rules keep that from happening:
+
+- **Preserve existing descriptions.** When regenerating, a link that was already there keeps the phrase it already had. Only genuinely new links get newly written prose.
+- **Rewrite a description only when the relationship itself changed** — or when the user asks for it directly.
+
+With those, weave is idempotent in practice: run it twice in a row and the second run produces no diff. A weave pass that touches files whose links did not change is a bug, not a refresh.
+
+If a link is wrong, fix the rule here — do not hand-edit the block, it will be overwritten on the next run.
 
 ## Notes
 
 - Weave feeds `lint` check 2 (broken links). Run `lint` after a weave pass to verify every link resolves.
 - Links in body prose are authored content. Weave never removes, moves, or dedupes them — a file may legitimately reference the same target in both places.
-- Weave is idempotent. Running it twice in a row produces no diff.
+- Weave is idempotent, given the preservation rule above. Running it twice in a row must produce no diff — if it does, the descriptions are being regenerated when they should have been kept.
