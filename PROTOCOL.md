@@ -132,7 +132,7 @@ The block is derived content and carries a marker so it is never mistaken for au
 ## Related
 
 <!-- weave:start -->
-- [[conventions/git-workflow]] — branching rules this decision assumes
+- [[conventions/branching]] — branching rules this decision assumes
 - [[records/2026-08-20-api-redesign]] — the decision this one revisits
 <!-- weave:end -->
 ```

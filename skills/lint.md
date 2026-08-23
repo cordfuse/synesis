@@ -36,6 +36,20 @@ Scan `records/`, `people/`, and `conventions/` for files that are still identica
 ### 6. Weave block integrity
 Check the derived `## Related` blocks in `records/` and `conventions/` (see Record linking in `PROTOCOL.md`). Report: links that are not reciprocated, unpaired or duplicated `weave:start` / `weave:end` markers, empty weave blocks (omit the section instead), and any `## Related` heading without markers (hand-written links belong in the body, not in derived space).
 
+### 7. Vault references in template files
+Template-scope files — `PROTOCOL.md`, `AGENTS.md`, `skills/*.md`, `*/_template.md` — ship to every vault created from this template. They must never reference **this** vault's content.
+
+Scan them for `[[wikilinks]]` pointing at `records/`, `conventions/` or `people/`, and **include links inside code blocks and inline code** — this is the one check where the skip-code rule in General rules does not apply, because a backticked example is exactly how these get written.
+
+Flag any such link **that resolves to a file in this vault**. The logic inverts check 2:
+
+- **Resolves here** → written against local content, and will dangle in a fresh vault. Report it.
+- **Resolves nowhere** → an illustrative placeholder like `[[records/2026-08-20-api-redesign]]`. Correct, leave it.
+
+Report as: `skills/weave.md — [[records/2026-08-22-decision]] resolves locally; template files need a placeholder`.
+
+Fix by replacing the link with a placeholder that names nothing real, or by rewriting the sentence to drop the link.
+
 ## Output format
 
 Report findings grouped by check, with file paths and a one-line description of each issue. If a check finds nothing, say so in one line. Example:
