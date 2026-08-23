@@ -205,6 +205,8 @@ Read and follow PROTOCOL.md in the team's synesis vault at ~/team/synesis/
 
 Replace the path with wherever you cloned the vault. The agent opens in your project repo (sees your code) and reads team knowledge from the vault path (sees your conventions). One session, one agent, both contexts.
 
+> **Note:** The global config approach is confirmed working for Claude Code. Codex CLI and Copilot CLI support global instruction files, but cross-repo file access from those files has not been fully tested yet. If you test it, let us know.
+
 ### Scope boundary
 
 Vault conventions apply to the vault only. In a multi-root workspace or with global config, project repos keep their own rules. The agent never applies vault conventions (branching, commit style, merge strategy) to a project repo unless that project's own instructions say to.
