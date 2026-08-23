@@ -286,6 +286,8 @@ Checks stay agent-native: the skill is prose the agent executes, not a script. N
 
 Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by reading skill frontmatter (`name` + `description`). No separate VERBS.md index — single source of truth in `skills/`.
 
+**Field ownership.** Where two verbs touch the same frontmatter field, exactly one owns it. `last-seen` is owned by `catchup` — `hello` must not write it, or the "what changed since I was last here" baseline is destroyed on every greeting. Any future verb that wants a per-person timestamp gets its own field rather than sharing this one.
+
 ## Phases
 
 ### Phase 1 — Protocol scaffold
@@ -311,6 +313,10 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 - [x] Test with Antigravity CLI harness (hello verb, cross-repo via global GEMINI.md + --add-dir)
 - [x] Test with OpenCode CLI harness (hello verb, cross-repo via global skill + references config)
 - [x] Port proven cortex features — record immutability, `weave`, `reconcile`, verb precedence (protocol v0.2)
+- [x] Audit skill interactions after the port — three bugs found and fixed:
+  - `hello` overwrote `last-seen`, destroying the baseline `catchup` reads. `catchup` now owns the field alone.
+  - `decide` told the agent to hand-write links; the `## Related` block is derived and belongs to `weave`.
+  - `archive` left inbound links pointing at archived files. `weave` no longer links to them; `archive` re-runs it.
 
 ### Phase 3 — Polish
 - [ ] Lint verb implementation (agent-native, no shell scripts)
