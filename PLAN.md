@@ -18,7 +18,7 @@ Cortex proved the pattern for one person. Synesis is cortex for teams.
 
 1. **Files, not services.** Markdown in a repo. No server, no database, no API keys. Clone and go.
 2. **Agent-agnostic.** Works with any AI harness that reads project files. No vendor lock-in.
-3. **Brand-neutral internals.** `PROTOCOL.md`, not `SYNESIS.md`. The brand lives in the README and docs, never in the protocol files themselves. Zero rename cost.
+3. **Brand-neutral internals.** `PROTOCOL.md`, not `SYNESIS.md`. The brand lives in `README.md` and `EXAMPLE.md` only — never in the protocol files themselves. Zero rename cost.
 4. **Trust the team.** No review gates on knowledge contributions. Anyone can commit. Git history is the audit trail. Friction kills adoption.
 5. **Fork and own.** Teams fork the template and make it theirs. The protocol defines the structure; the team fills it with real knowledge. Upstream pulls are rare — git handles conflicts when they happen.
 6. **Obsidian-compatible.** The vault doubles as an Obsidian vault. `[[wikilinks]]` for internal linking, `aliases` and `tags` in frontmatter. `.obsidian/` is gitignored (per-user config).
@@ -64,7 +64,8 @@ synesis/
   CLAUDE.md                   # shim → PROTOCOL.md (Claude Code)
   .github/
     copilot-instructions.md   # shim → PROTOCOL.md (Copilot)
-  README.md                   # the only branded file
+  README.md                   # branded: the pitch and the reference
+  EXAMPLE.md                  # branded: a walkthrough of a vault first week; teams delete it
   synesis.code-workspace      # template multi-root workspace
   .gitignore                  # ignores .obsidian/ (per-user Obsidian config)
 ```
