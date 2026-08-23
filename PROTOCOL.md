@@ -1,5 +1,5 @@
 ---
-version: 0.2
+version: 0.3
 stale-days: 90
 ---
 
@@ -91,7 +91,7 @@ Precedence is not composition. Do not run both the parent's version and the vaul
 
 ## Versioning
 
-This protocol is at **v0.2**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
+This protocol is at **v0.3**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
 
 ## Freshness
 
