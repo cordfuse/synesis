@@ -58,6 +58,12 @@ git diff --name-status upstream/main HEAD -- PROTOCOL.md AGENTS.md 'skills/*.md'
 | present upstream, absent locally | template added it | **Behind** — upstream has something you don't |
 | present locally, absent upstream | you added it | **Ahead** — you have something the template doesn't |
 
+**2a. Discount expected drift.** The vault's `PROTOCOL.md` carries an `upstream:` frontmatter line that the template cannot have — the template *is* the upstream. A `PROTOCOL.md` whose only difference is that line is **in sync**; do not report it. Compare with the line filtered out:
+
+```sh
+diff <(git show upstream/main:PROTOCOL.md) <(sed '/^upstream: /d' PROTOCOL.md)
+```
+
 **3. Surface everything at once** before resolving anything. Counts per category, one line per file. The user sees the whole picture first, then decides.
 
 **4. Resolve per file**, asking each time:
