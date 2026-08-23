@@ -102,6 +102,8 @@ scales linearly. [[people/sarah]] evaluated all three over a week.
 - Follow-up: migrate the existing email/password prototype by EOW
 ```
 
+Records are **append-only**. Once committed, a record's body is not edited — to change a decision you file a new one and mark the old `superseded-by`. Both stay in the vault; the chain is the history. Frontmatter (`last-verified`, `status`, `archived`) is still maintained in place.
+
 ### People
 
 One markdown file per team member. Role, expertise, ownership areas. The agent uses these to answer "who should I ask about X?" and to detect new team members automatically via `git config user.email`.
@@ -172,6 +174,11 @@ Verbs are commands you give to the agent. Each verb maps to a skill file in `ski
 
 Skills are markdown files that define triggers and step-by-step instructions. See `skills/` for the full set.
 
+Two worth knowing about up front:
+
+- **`weave`** — cross-links related records and conventions so the flat vault becomes a navigable graph
+- **`reconcile`** — diffs your vault's protocol files against this template and surfaces what drifted, one file at a time. Vaults are created with "Use this template", so there is no fork relationship and nothing to merge; reconcile is a file-level diff, never a history operation.
+
 ## Using with your projects
 
 Synesis lives in its own repo. Your project repos are separate. The agent needs to see both — your code and your team knowledge. Two approaches, depending on your editor.
@@ -229,7 +236,7 @@ Both use a personal skill for instruction discovery plus `--add-dir` for file ac
 ```markdown
 ---
 name: synesis
-description: Team knowledge protocol — always active. Handles hello, status, catchup, decide, lint, search, sync, archive, update, onboard, handoff verbs.
+description: Team knowledge protocol — always active. Handles hello, status, catchup, decide, lint, search, sync, reconcile, archive, update, onboard, handoff, weave verbs.
 alwaysApply: true
 ---
 
@@ -260,7 +267,7 @@ OpenCode uses a global skill for instruction discovery plus a `references` entry
 ```markdown
 ---
 name: synesis
-description: Team knowledge protocol — always active. Handles hello, status, catchup, decide, lint, search, sync, archive, update, onboard, handoff verbs.
+description: Team knowledge protocol — always active. Handles hello, status, catchup, decide, lint, search, sync, reconcile, archive, update, onboard, handoff, weave verbs.
 ---
 
 At the start of every session, read and follow PROTOCOL.md in the team's synesis vault at ~/team/synesis/
@@ -307,6 +314,8 @@ Records and conventions carry a `last-verified` date. The `lint` skill flags any
 ## Obsidian-compatible
 
 The vault doubles as an Obsidian vault. `[[wikilinks]]` for internal cross-references, `aliases` and `tags` in frontmatter for filtering and linking. `.obsidian/` is gitignored so each user keeps their own Obsidian config.
+
+The `weave` verb is what fills the graph view. It backfills cross-links across your records and conventions, collecting them in a derived `## Related` block at the end of each file — generated, never hand-written, and safe to delete and rebuild. Links are conservative: a real relationship, not topical adjacency.
 
 ## Design principles
 
