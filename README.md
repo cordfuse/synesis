@@ -65,7 +65,7 @@ synesis/
 
 Decisions, ADRs, and anything the team agreed on. Each record captures *what* was decided, *why*, *who* decided, and *who* was consulted. Records can be marked `superseded` and linked to their replacement.
 
-```yaml
+```markdown
 ---
 title: Auth provider decision
 date: 2026-08-18
@@ -76,13 +76,35 @@ status: active
 superseded-by:
 tags: [auth, architecture]
 ---
+
+## Context
+
+We needed a managed auth provider for the SaaS launch. Rolling our own
+was ruled out — too much surface area for a two-person team.
+
+## Options considered
+
+- **Auth0** — mature, expensive at scale, complex dashboard
+- **Clerk** — modern DX, good Next.js integration, newer company
+- **Supabase Auth** — free tier, already using Supabase for DB
+
+## Decision
+
+Clerk. Best DX for our stack (Next.js + React), and the pricing model
+scales linearly. [[people/sarah]] evaluated all three over a week.
+
+## Consequences
+
+- Auth UI components come from Clerk's React SDK
+- Session tokens are JWTs — middleware validates on every request
+- Follow-up: migrate the existing email/password prototype by EOW
 ```
 
 ### People
 
 One markdown file per team member. Role, expertise, ownership areas. The agent uses these to answer "who should I ask about X?" and to detect new team members automatically via `git config user.email`.
 
-```yaml
+```markdown
 ---
 name: Sarah Chen
 initials: SC
@@ -92,18 +114,39 @@ role: Frontend developer
 joined: 2026-08-18
 tags: [frontend, auth]
 ---
+
+## Expertise
+
+- React, Next.js, TypeScript
+- Auth flows and session management
+- Accessibility (WCAG 2.1 AA)
+
+## Owns
+
+- Auth UI (login, signup, password reset)
+- Dashboard components
+- Design system tokens
 ```
 
 ### Conventions
 
 Your team's standards as markdown files. Git branching strategy, commit message format, coding standards, deployment process — all in one place, readable by both humans and agents. New devs and new agents get the same briefing.
 
-```yaml
+```markdown
 ---
 name: Git branching strategy
 last-verified: 2026-08-18
 tags: [git, workflow]
 ---
+
+All work happens on feature branches off `main`. Branch naming:
+`feat/short-description`, `fix/short-description`, `chore/short-description`.
+
+PRs require one approval before merge. Squash merge to keep `main` linear.
+Delete the branch after merge — no long-lived branches except `main`.
+
+Hotfixes branch directly from `main` and merge back with a regular PR.
+No cherry-picking between branches.
 ```
 
 ## Supported harnesses
