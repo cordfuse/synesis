@@ -213,7 +213,8 @@ No PR gate. Commit directly to synesis. Trust the team. Git blame + git log = fu
 **`PROTOCOL.md`**
 ```yaml
 ---
-version: 0.1
+version: 0.3
+stale-days: 90
 ---
 ```
 
@@ -239,11 +240,17 @@ last-verified: 2026-08-18
 status: active
 superseded-by:
 tags: [auth, architecture]
+archived: true          # optional; set by the archive verb
 ---
 ```
-`status` is `active` or `superseded`. When superseded, `superseded-by` links to the replacement record filename. The lint skill validates that `superseded-by` targets an existing file. `tags` enable Obsidian filtering and agent search.
+`status` is `active` or `superseded`. When superseded, `superseded-by` links to the replacement record filename. The lint skill validates that `superseded-by` targets an existing file. `tags` enable Obsidian filtering and agent search. `archived` is optional and set by the `archive` verb — archived files drop out of `hello`, `status`, `lint` and `weave`, but stay findable by `search`, which labels them.
 
-Use `[[wikilinks]]` in the body to cross-reference other files: `[[people/sarah]]`, `[[conventions/git]]`, `[[records/2026-08-20-api-redesign]]`.
+**Records are append-only** — the body is never edited after filing. Correct a decision by filing a replacement and setting `superseded-by` on the old one. Frontmatter fields above are still maintained in place; that is not a violation.
+
+Two kinds of link, not interchangeable:
+
+- **Authored** — `[[wikilinks]]` written by hand in body prose: `[[people/sarah]]`, `[[conventions/git]]`, `[[records/2026-08-20-api-redesign]]`. Yours to write anywhere.
+- **Derived** — the `## Related` block at the end of the file. Only `weave` writes it, never hand-written, even when filing.
 
 **`people/*.md`**
 ```yaml
@@ -258,7 +265,7 @@ last-seen: 2026-08-18
 tags: [frontend, auth]
 ---
 ```
-`email` is matched against `git config user.email` for automatic user detection during onboarding. `aliases` let Obsidian resolve `[[SC]]` to this profile. `tags` mark expertise areas.
+`email` is matched against `git config user.email` for automatic user detection during onboarding. `aliases` let Obsidian resolve `[[SC]]` to this profile. `tags` mark expertise areas. `last-seen` is owned by `catchup` alone — `onboard` seeds it, and nothing else writes it (see Field ownership under Verb definitions).
 
 **`conventions/*.md`**
 ```yaml
@@ -266,8 +273,10 @@ tags: [frontend, auth]
 name: Git branching strategy
 last-verified: 2026-08-18
 tags: [git, workflow]
+archived: true          # optional; set by the archive verb
 ---
 ```
+Conventions are living documents — edit them in place and bump `last-verified`. Unlike records, they carry no immutability rule. Keep a quirk in the file that owns the task it belongs to; a rule duplicated across two conventions goes stale in one of them.
 
 ## Verification method
 
