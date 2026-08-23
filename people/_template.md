@@ -5,6 +5,7 @@ aliases: []
 email:
 role:
 joined:
+last-seen:
 tags: []
 ---
 

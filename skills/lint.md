@@ -14,6 +14,7 @@ When triggered, scan the vault for hygiene issues. Report findings — do not au
 - **Skip `_template.md` files** in all checks. Templates have intentionally empty frontmatter.
 - **Skip `[[wikilinks]]` inside code blocks and inline code.** Fenced code blocks (triple backticks) and inline code (single backticks) contain examples, not live links.
 - **Skip protocol infrastructure files** (`PROTOCOL.md`, `AGENTS.md`) from stale-knowledge and attribution checks. These are protocol docs, not team content.
+- **Skip archived files** (frontmatter `archived: true`) from stale-knowledge checks. They're historical — staleness is expected.
 
 ## Checks
 

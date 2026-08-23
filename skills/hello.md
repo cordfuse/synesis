@@ -16,7 +16,7 @@ When triggered, identify the current user and deliver a team briefing.
 
 2. **If no profile exists:** Trigger the `onboard` skill instead. Do not continue with the briefing.
 
-3. **If a profile exists:** Deliver the briefing below.
+3. **If a profile exists:** Update `last-seen` in the user's profile to today's date, then deliver the briefing below.
 
 ## Briefing format
 
@@ -28,11 +28,12 @@ Greet the user by name, then cover these sections in order:
 
 ### Recent decisions
 - List the last 5-10 records by `date` in frontmatter (most recent first)
+- Skip records with `archived: true`
 - For each: title, date, decided-by, and status
 - If any are `superseded`, note the replacement
 
 ### Active conventions
-- List all files in `conventions/` (excluding `_template.md`)
+- List all files in `conventions/` (excluding `_template.md` and files with `archived: true`)
 - For each: name and a one-line summary of what it covers
 - Flag any with `last-verified` older than `stale-days` (from PROTOCOL.md frontmatter)
 

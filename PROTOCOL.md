@@ -54,6 +54,7 @@ aliases: [...]
 email: ...
 role: ...
 joined: YYYY-MM-DD
+last-seen: YYYY-MM-DD
 tags: [...]
 ```
 
@@ -86,7 +87,11 @@ This protocol is at **v0.1**. Minor bumps add conventions or verbs. Major bumps 
 
 ## Freshness
 
-Records and conventions carry a `last-verified` date. The `lint` skill flags anything older than the `stale-days` threshold in this file's frontmatter (default: 90 days).
+Records and conventions carry a `last-verified` date. The `lint` skill flags anything older than the `stale-days` threshold in this file's frontmatter (default: 90 days). The `update` skill resolves stale flags by re-verifying content and bumping the date.
+
+## Archiving
+
+Records and conventions can be marked `archived: true` in frontmatter. Archived files are skipped by `hello`, `status`, and `lint` but still discoverable via `search`. Use the `archive` skill to set the flag. Remove it to restore.
 
 ## Scope boundary
 
