@@ -42,11 +42,14 @@ Synesis gives your team a shared vault of decisions, conventions, people profile
 
 That's it. The agent now knows the protocol. As you add people, decisions, and conventions, every agent session inherits that knowledge.
 
+Not sure what that looks like in practice? [EXAMPLE.md](EXAMPLE.md) walks through a vault's first week.
+
 ## What lives in the vault
 
 ```
 synesis/
   PROTOCOL.md              # the protocol — teaches any agent the conventions
+  EXAMPLE.md               # walkthrough of a vault's first week (delete once you have your own)
   CLAUDE.md                # Claude Code shim → PROTOCOL.md
   AGENTS.md                # Codex shim → PROTOCOL.md
   GEMINI.md                # Gemini / Antigravity shim → PROTOCOL.md
@@ -65,94 +68,23 @@ synesis/
 
 ### Records
 
-Decisions, ADRs, and anything the team agreed on. Each record captures *what* was decided, *why*, *who* decided, and *who* was consulted. Records can be marked `superseded` and linked to their replacement.
-
-```markdown
----
-title: Auth provider decision
-date: 2026-08-18
-decided-by: [SC, MK]
-consulted: [JL]
-last-verified: 2026-08-18
-status: active
-superseded-by:
-tags: [auth, architecture]
----
-
-## Context
-
-We needed a managed auth provider for the SaaS launch. Rolling our own
-was ruled out — too much surface area for a two-person team.
-
-## Options considered
-
-- **Auth0** — mature, expensive at scale, complex dashboard
-- **Clerk** — modern DX, good Next.js integration, newer company
-- **Supabase Auth** — free tier, already using Supabase for DB
-
-## Decision
-
-Clerk. Best DX for our stack (Next.js + React), and the pricing model
-scales linearly. [[people/sarah]] evaluated all three over a week.
-
-## Consequences
-
-- Auth UI components come from Clerk's React SDK
-- Session tokens are JWTs — middleware validates on every request
-- Follow-up: migrate the existing email/password prototype by EOW
-```
-
-Records are **append-only**. Once committed, a record's body is not edited — to change a decision you file a new one and mark the old `superseded-by`. Both stay in the vault; the chain is the history. Frontmatter (`last-verified`, `status`, `archived`) is still maintained in place.
+Decisions, ADRs, and anything the team agreed on — *what* was decided, *why*, *who* decided, and *who* was consulted. Records are **append-only**: to change a decision you file a new one and mark the old `superseded-by`. Both stay, and the chain is the history.
 
 ### People
 
-One markdown file per team member. Role, expertise, ownership areas. The agent uses these to answer "who should I ask about X?" and to detect new team members automatically via `git config user.email`.
-
-```markdown
----
-name: Sarah Chen
-initials: SC
-aliases: [SC, Sarah]
-email: sarah.chen@company.com
-role: Frontend developer
-joined: 2026-08-18
-last-seen: 2026-08-18
-tags: [frontend, auth]
----
-
-## Expertise
-
-- React, Next.js, TypeScript
-- Auth flows and session management
-- Accessibility (WCAG 2.1 AA)
-
-## Owns
-
-- Auth UI (login, signup, password reset)
-- Dashboard components
-- Design system tokens
-```
+One markdown file per team member — role, expertise, ownership. The agent uses these to answer "who should I ask about X?" and to spot new team members automatically via `git config user.email`.
 
 ### Conventions
 
-Your team's standards as markdown files. Git branching strategy, commit message format, coding standards, deployment process — all in one place, readable by both humans and agents. New devs and new agents get the same briefing.
+Your team's standards as files. Branching strategy, commit format, deployment process — read by every agent, in every session, before it touches anything.
 
-```markdown
----
-name: Git branching strategy
-last-verified: 2026-08-18
-tags: [git, workflow]
 ---
 
-All work happens on feature branches off `main`. Branch naming:
-`feat/short-description`, `fix/short-description`, `chore/short-description`.
+## See it working
 
-PRs require one approval before merge. Squash merge to keep `main` linear.
-Delete the branch after merge — no long-lived branches except `main`.
+**[EXAMPLE.md](EXAMPLE.md) walks through a vault's first week** — two developers, one agent, from empty repo to a linked graph of decisions. Real file contents, real agent output, every verb in the order you'd actually hit it.
 
-Hotfixes branch directly from `main` and merge back with a regular PR.
-No cherry-picking between branches.
-```
+Start there if you'd rather see the loop than read the spec.
 
 ## Supported harnesses
 
