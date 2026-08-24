@@ -27,7 +27,9 @@ Only these paths are compared. Everything else is vault-local and is **never** t
 | `*/_template.md` | frontmatter shapes |
 | `AGENTS.md` | agent entry point |
 
-Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments/`, `tools/`, `README.md`, `CLAUDE.md`, `LICENSE`, `.synesis-version`, and any other agent instruction file. That content is the team's, not the template's. `README.md` and `CLAUDE.md` are expected to diverge immediately and permanently — flagging them every run would train the user to ignore the report.
+Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments/`, `tools/`, `README.md`, `CLAUDE.md`, `LICENSE`, `.synesis-version`, `PLAN.md`, `EXAMPLE.md`, and any other agent instruction file. That content is the team's, not the template's. `README.md` and `CLAUDE.md` are expected to diverge immediately and permanently — flagging them every run would train the user to ignore the report.
+
+`PLAN.md` and `EXAMPLE.md` are the template's own files and a vault should not be carrying them at all. `EXAMPLE.md` says to delete it once the team has its own history; `PLAN.md` is the framework's execution plan, not shipped knowledge. If your vault still has them, delete them rather than keeping them in sync.
 
 `.synesis-version` is operator state, not protocol — it records where *this* vault stands and is written by reconcile itself at the end of a run. Diffing it would report drift on every vault that is behind, which is the condition it exists to describe.
 
