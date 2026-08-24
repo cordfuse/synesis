@@ -1,5 +1,6 @@
 ---
 version: 0.6
+upstream: cordfuse/synesis@v0.6
 stale-days: 90
 ---
 

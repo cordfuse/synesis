@@ -31,7 +31,9 @@ Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments
 
 ## Setup
 
-Vaults are created with GitHub's "Use this template", so there is **no fork relationship and no upstream remote by default**. Add one if missing:
+Your vault inherits an `upstream:` field in `PROTOCOL.md` frontmatter naming the template it came from and the protocol version it was created at. That is provenance, not configuration — nothing reads it automatically.
+
+What you do need is a remote. Vaults are created with GitHub's "Use this template", so there is **no fork relationship and no upstream remote by default**:
 
 ```sh
 git remote add upstream <template-repo-url>
@@ -68,7 +70,7 @@ comm -23 /tmp/up.txt /tmp/local.txt   # upstream only  -> Behind
 comm -13 /tmp/up.txt /tmp/local.txt   # vault only     -> Ahead
 ```
 
-**2a. Discount expected drift.** The vault's `PROTOCOL.md` carries an `upstream:` frontmatter line that the template cannot have — the template *is* the upstream. A `PROTOCOL.md` whose only difference is that line is **in sync**; do not report it. Compare with the line filtered out:
+**2a. Discount expected drift.** The `upstream:` line in `PROTOCOL.md` frontmatter carries the version your vault was created at, so it lags behind the template as the protocol moves. That is expected and is not drift. A `PROTOCOL.md` whose only difference is that line is **in sync** — mention the version gap in one line, then move on. Compare with the line filtered out:
 
 ```sh
 diff <(git show upstream/main:PROTOCOL.md) <(sed '/^upstream: /d' PROTOCOL.md)
