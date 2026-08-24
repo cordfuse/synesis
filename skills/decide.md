@@ -7,7 +7,16 @@ triggers:
 
 # Decide
 
-When triggered, guide the developer through filing a decision record.
+When triggered, resolve an open proposal — or, if there is none, file the decision directly.
+
+## Resolve or create
+
+**First, look for an open proposal.** Search `records/` for `status: proposed` covering this question.
+
+- **Found one** → resolve it. Write `## Decision` and `## Consequences` into that record, set `decided-by`, set `last-verified` to today, and flip `status` to `active`. Do not open a second record; the question and its answer belong in one file, and the git history shows it becoming one. From this point the record is frozen — normal immutability applies.
+- **Found none** → create the record as below. This is the common path when the decision was already made before anyone thought to write it down.
+
+If a proposal exists but the decision went somewhere its options never covered, say so in `## Decision` rather than quietly rewriting the options. What the team considered and rejected is the record's most valuable half.
 
 ## Steps
 
@@ -31,3 +40,4 @@ When triggered, guide the developer through filing a decision record.
 - If the decision supersedes a prior record, set `status: superseded` and `superseded-by: {new-filename}` on the old record in the same commit.
 - Keep the conversation natural. The prompts above are content to collect, not a rigid form.
 - If the user provides the decision context in their message (e.g. "decide: we're using X because Y"), extract the info from the message rather than prompting for each field. Only ask follow-up questions for missing fields.
+- If the question is still open and nobody has chosen yet, use `propose` instead — it files the question so the reasoning is captured while the options are still live.

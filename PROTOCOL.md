@@ -1,5 +1,5 @@
 ---
-version: 0.4
+version: 0.5
 stale-days: 90
 ---
 
@@ -41,7 +41,7 @@ date: YYYY-MM-DD
 decided-by: [initials]
 consulted: [initials]
 last-verified: YYYY-MM-DD
-status: active | superseded
+status: proposed | active | superseded
 superseded-by: filename (when superseded)
 tags: [...]
 ```
@@ -91,7 +91,15 @@ Precedence is not composition. Do not run both the parent's version and the vaul
 
 ## Versioning
 
-This protocol is at **v0.4**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
+This protocol is at **v0.5**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
+
+## Dates
+
+Every `date` and `last-verified` field uses the **machine local date**, not UTC. A record dated today should say what the person filing it would call today.
+
+**Never infer the date.** Run `date +%F` and use what it returns. Guessing produces records that are silently wrong by a day, and `catchup` and `lint` both do arithmetic on these fields. Near midnight the difference between `date` and `date -u` is a whole day.
+
+Across timezones a team will occasionally file two records a day apart that felt simultaneous. That is fine — dates here are for humans, and git holds the exact timestamp.
 
 ## Freshness
 
@@ -103,7 +111,17 @@ Records and conventions can be marked `archived: true` in frontmatter. Archived 
 
 ## Record immutability
 
-A record is a snapshot of what was decided, by whom, on a date. **Once a record is committed, its body is not edited.** A decision you can quietly rewrite is not a decision record — it is a draft, and the audit trail (`git blame`, `git log`) becomes worthless.
+A record moves through three states:
+
+| status | Meaning | Mutable? |
+|---|---|---|
+| `proposed` | an open question — options on the table, nobody has chosen | **Yes** — that is the point |
+| `active` | decided | No |
+| `superseded` | replaced by a later record | No |
+
+`propose` opens a record, `decide` accepts it, a later `decide` supersedes it.
+
+A record with `status: active` is a snapshot of what was decided, by whom, on a date. **Once accepted, its body is not edited.** A decision you can quietly rewrite is not a decision record — it is a draft, and the audit trail (`git blame`, `git log`) becomes worthless.
 
 To correct or change a decision, file a **new** record and set `superseded-by` on the old one. Both stay in the vault. The chain is the history.
 
@@ -115,7 +133,7 @@ To correct or change a decision, file a **new** record and set `superseded-by` o
 
 **The sole body exception** is the derived `## Related` block at the end of a record, which the `weave` skill owns. It is generated, never hand-written, and regenerable from scratch — delete it and `weave` rebuilds it identically. Nothing above that block is ever touched.
 
-**This applies to records only.** Conventions are living documents — how the team works now, not what it decided then. Edit them in place and bump `last-verified`. People profiles are likewise living.
+**This applies to accepted records only.** A `proposed` record is still being written — edit it freely until `decide` accepts it, at which point it freezes. Conventions are living documents — how the team works now, not what it decided then. Edit them in place and bump `last-verified`. People profiles are likewise living.
 
 ## Record linking (`weave`)
 

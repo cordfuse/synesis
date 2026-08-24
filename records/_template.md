@@ -4,7 +4,7 @@ date:
 decided-by: []
 consulted: []
 last-verified:
-status: active
+status: active   # proposed | active | superseded
 superseded-by:
 tags: []
 ---

@@ -28,6 +28,12 @@ Greet the user by name, then cover these sections in order:
 - How many people are on the team (count of `people/` profiles, excluding `_template.md`)
 - List each person: name, role, and expertise tags (from their profile)
 
+### Open questions
+- Any records with `status: proposed` — the questions the team has not answered yet
+- For each: title, date opened, who is `consulted`, and how long it has been open
+- Flag any older than `stale-days` as overdue. An open question nobody revisits is the failure mode this state exists to prevent
+- If there are none, say so in one line and move on
+
 ### Recent decisions
 - List the last 5-10 records by `date` in frontmatter (most recent first)
 - Skip records with `archived: true`

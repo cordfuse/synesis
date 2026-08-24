@@ -11,13 +11,15 @@ When triggered, report what's in flight and who's working on what.
 
 ## Steps
 
-1. **Recent activity.** List the last 5-10 records by `date` (most recent first), skipping records with `archived: true`. For each: title, date, decided-by, status.
+1. **Open questions.** Records with `status: proposed` — what the team is still deciding. For each: title, how long open, who is `consulted`. These lead the report: in-flight questions matter more than settled ones.
 
-2. **Active handoffs.** Find records whose **frontmatter `tags`** include `handoff` — not files that merely mention the word in body prose — and that are not `superseded` and not `archived: true`. For each: what's being handed off, from whom, to whom, and current state.
+2. **Recent activity.** List the last 5-10 records by `date` (most recent first), skipping records with `archived: true`. For each: title, date, decided-by, status.
 
-3. **Ownership map.** Scan `people/` profiles and summarize the "Owns" section from each. Show who owns what areas.
+3. **Active handoffs.** Find records whose **frontmatter `tags`** include `handoff` — not files that merely mention the word in body prose — and that are not `superseded` and not `archived: true`. For each: what's being handed off, from whom, to whom, and current state.
 
-4. **Stale items.** Check `records/` and `conventions/` (excluding `archived: true`) for anything with `last-verified` older than `stale-days`. List any stale items as a heads-up.
+4. **Ownership map.** Scan `people/` profiles and summarize the "Owns" section from each. Show who owns what areas.
+
+5. **Stale items.** Check `records/` and `conventions/` (excluding `archived: true`) for anything with `last-verified` older than `stale-days`. List any stale items as a heads-up.
 
 ## Notes
 
