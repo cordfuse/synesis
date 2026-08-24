@@ -7,11 +7,13 @@
       "Write",
       "Glob",
       "Grep",
-      "Bash(*)",
+      "Bash(git:*)",
       "WebSearch",
       "WebFetch"
     ],
     "deny": [
+      "Bash(git config --global:*)",
+      "Bash(git push --force*)",
       "Edit(PROTOCOL.md)",
       "Edit(CLAUDE.md)",
       "Edit(AGENTS.md)",
