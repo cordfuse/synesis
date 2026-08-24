@@ -70,7 +70,9 @@ synesis/
 
 Decisions, ADRs, and anything the team agreed on — *what* was decided, *why*, *who* decided, and *who* was consulted.
 
-A record moves through the ADR lifecycle: **proposed → active → superseded**. `propose` opens the question while the options are still live; `decide` writes the answer into that same record and accepts it. Once accepted a record is **append-only** — to change the decision you file a new one and mark the old `superseded-by`. Both stay, and the chain is the history.
+Records come in two kinds. A **decision** is what the team chose; a **note** is what the team found — a postmortem, a benchmark, a research result, the conclusion of a long debugging session. Notes carry no attribution, because nobody decided anything, and `lint` does not ask them for any. A record with no `type` is a decision, so the common case stays unannotated.
+
+A decision moves through the ADR lifecycle: **proposed → active → superseded**. `propose` opens the question while the options are still live; `decide` writes the answer into that same record and accepts it. Once accepted a record is **append-only** — to change the decision you file a new one and mark the old `superseded-by`. Both stay, and the chain is the history.
 
 ### People
 
@@ -78,7 +80,7 @@ One markdown file per team member — role, expertise, ownership. The agent uses
 
 ### Conventions
 
-Your team's standards as files. Branching strategy, commit format, deployment process — read by every agent, in every session, before it touches anything.
+Your team's standards as files. Branching strategy, commit format, deployment process — read by every agent, in every session, before it touches anything. Conventions are living documents, so anything that gets edited forever lives here: a standard, an index, a running catalogue. Records are snapshots; conventions are current state.
 
 ---
 
@@ -110,6 +112,7 @@ Skills are markdown files that define triggers and step-by-step instructions. Se
 
 Three worth knowing about up front:
 
+- **`note`** — records what the team learned when nothing was decided. Without it, findings get forced through the decision template and end up claiming someone chose something.
 - **`propose`** — files the *question* rather than the answer, so the reasoning is captured while options are still on the table. Without it a decision only enters the vault once someone remembers to record it, reconstructed from memory. `hello` and `status` lead with whatever is still open.
 - **`weave`** — cross-links related records and conventions so the flat vault becomes a navigable graph
 - **`reconcile`** — diffs your vault's protocol files against this template and surfaces what drifted, one file at a time. Vaults are created with "Use this template", so there is no fork relationship and nothing to merge; reconcile is a file-level diff, never a history operation. Your own records and conventions are never in scope — only the protocol files you inherited.
