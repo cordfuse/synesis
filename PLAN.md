@@ -41,6 +41,7 @@ synesis/
   skills/                     # agent capabilities — flat files, one per skill
     archive.md
     catchup.md
+    convention.md
     decide.md
     handoff.md
     hello.md
@@ -132,12 +133,12 @@ Terminal/CLI users set up cross-repo access once per developer. Each harness has
 
 ## Versioning
 
-Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v0.3**.
+Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v0.4**.
 
 - **Minor bump:** add/change a convention, new verb, new template
 - **Major bump:** breaking change to directory structure or PROTOCOL.md format
 
-Instances track upstream version: `upstream: cordfuse/synesis@v0.3` in their PROTOCOL.md frontmatter.
+Instances track upstream version: `upstream: cordfuse/synesis@v0.4` in their PROTOCOL.md frontmatter.
 
 ## What carries over from cortex
 
@@ -214,7 +215,7 @@ No PR gate. Commit directly to synesis. Trust the team. Git blame + git log = fu
 **`PROTOCOL.md`**
 ```yaml
 ---
-version: 0.3
+version: 0.4
 stale-days: 90
 ---
 ```
@@ -333,6 +334,7 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
   - `decide` told the agent to hand-write links; the `## Related` block is derived and belongs to `weave`.
   - `archive` left inbound links pointing at archived files. `weave` no longer links to them; `archive` re-runs it.
 - [x] Second spec pass — `PROTOCOL.md` still licensed hand-written Related blocks (and its example showed a link `weave` cannot make); `search` never labelled archived hits; `sync` looked like the answer for template drift.
+- [x] Add the `convention` verb (protocol v0.4). `decide` filed records and `onboard` filed profiles, but nothing authored a convention — the one artifact a user had to hand-write, frontmatter and all. Found while writing EXAMPLE.md, which had to fudge it as "plain files; no verb required".
 - [x] **Execute every verb rather than reading it** (protocol v0.3). Three further bugs, each in a file the spec passes had already cleared:
   - `weave` only *skipped* archived files, so an archived file kept a frozen block pointing at records that no longer pointed back.
   - `reconcile`'s categorization never mapped git's status letters — `D` means "upstream has it, you don't", which reads as "deleted" and resolves backwards.
