@@ -1,7 +1,7 @@
 # Synesis — Execution Plan
 
 > **Name:** Synesis (Greek: σύνεσις — "understanding, the faculty of putting things together")
-> **Repo:** cordfuse/synesis (public) — the framework/template
+> **Repo:** the public framework/template repo
 > **Dogfood:** steve-krisjanovs/synesis (private) — real team knowledge, dogfooding
 > **What it is:** A file-based, repo-embedded, agent-agnostic shared knowledge protocol for software teams.
 > **What it is not:** A SaaS product, an MCP server, an npm package, a database.
@@ -25,10 +25,10 @@ Cortex proved the pattern for one person. Synesis is cortex for teams.
 
 ## Repo model
 
-- **`cordfuse/synesis`** (public) — the framework/template. Protocol docs, example files, README. Teams use this as a GitHub template.
+- **The template repo** (public) — the framework. Protocol docs, example files, README. Teams use this as a GitHub template.
 - **`steve-krisjanovs/synesis`** (private) — Steve's instance. Real people, real decisions, real conventions. Dogfood repo.
 
-Same pattern as cortex: `cordfuse/cortex` = framework, `steve-krisjanovs/cortex` = personal instance.
+Same pattern as cortex: a public framework repo plus a private personal instance.
 
 ## Architecture
 
@@ -140,7 +140,7 @@ Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v0.6*
 - **Minor bump:** add/change a convention, new verb, new template
 - **Major bump:** breaking change to directory structure or PROTOCOL.md format
 
-Instances track upstream version: `upstream: cordfuse/synesis@v0.6` in their PROTOCOL.md frontmatter.
+Instances track upstream version: `upstream: <org>/synesis@v0.6` in their PROTOCOL.md frontmatter.
 
 ## What carries over from cortex
 

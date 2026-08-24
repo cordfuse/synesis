@@ -10,7 +10,7 @@ Everything below is real protocol behaviour — the verbs, the files, and what t
 
 ## Day 1 — Sarah creates the vault
 
-Sarah clicks **Use this template** on `cordfuse/synesis`, clones her team's new vault, opens it in her agent and types:
+Sarah clicks **Use this template** on the framework repo, clones her team's new vault, opens it in her agent and types:
 
 ```
 hello
