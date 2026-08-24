@@ -38,7 +38,7 @@ their call.
    | Harness | Present if | Instruction discovery | File access |
    |---|---|---|---|
    | Claude Code | `~/.claude/` | `~/.claude/CLAUDE.md` | covered by the path in that file |
-   | Antigravity | `~/.gemini/` | `~/.gemini/GEMINI.md` | `agy --add-dir <vault>` |
+   | Antigravity | `~/.gemini/antigravity-cli/` | `~/.gemini/GEMINI.md` | `agy --add-dir <vault>` |
    | Codex CLI | `~/.codex/` | `~/.codex/skills/synesis/SKILL.md` | `codex --add-dir <vault>` |
    | Copilot CLI | `~/.copilot/` | `~/.copilot/skills/synesis/SKILL.md` | `copilot --add-dir <vault>` |
    | OpenCode | `~/.config/opencode/` | `~/.config/opencode/skills/synesis/SKILL.md` | `references` entry in `~/.config/opencode/opencode.json` |
@@ -46,15 +46,18 @@ their call.
    If none are present, say so in one line and show the Claude Code snippet as the
    common case.
 
-   **Two detection caveats, verified on Windows 2026-08-24:**
+   **Antigravity is detected by the `antigravity-cli/` subdirectory, not by `~/.gemini/`
+   itself.** Gemini CLI uses the same parent directory, so its presence proves nothing.
+   Confirmed both ways on 2026-08-24: the subdirectory is present on a machine with
+   Antigravity installed and absent on a Windows machine that had only Gemini CLI.
 
-   `~/.config/opencode/` is a Unix convention and **is not confirmed on Windows** —
-   there is no `~/.config` directory on a Windows profile at all. If OpenCode is in
-   use, find its real config location before trusting this row.
-
-   `~/.gemini/` present does **not** prove Antigravity is installed. Gemini CLI uses
-   the same directory. Check for something Antigravity-specific before printing its
-   snippet, or say the detection is uncertain.
+   **OpenCode on Windows is unconfirmed.** The docs give `~/.config/opencode/` with no
+   platform variation, so this row should hold there as `%USERPROFILE%\.config\opencode\`,
+   but it has not been seen working — the Windows machine it was tested on did not have
+   OpenCode installed, which proves nothing either way. `OPENCODE_CONFIG_DIR` overrides
+   the location when set. If the directory is missing but the `opencode` binary is on
+   PATH, say the config location is uncertain rather than printing a path that may be
+   wrong.
 
 3. **Check what is already wired.** For each detected harness, look for the vault
    path in its instruction file. Report those as already wired and do not reprint
