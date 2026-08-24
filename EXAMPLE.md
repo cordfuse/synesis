@@ -220,6 +220,27 @@ He didn't read an onboarding doc. Nobody wrote one. The vault was the onboarding
 
 ---
 
+## Day 9 — Mike finds something
+
+Mike spends an afternoon working out why the API falls over under load. Nothing is being decided — he just knows something now that nobody else does:
+
+```
+note: rate limiting is per-process, not per-cluster — four pods means
+four times the limit we thought we had
+```
+
+> How did you establish that? I'd rather record the evidence than the conclusion.
+
+He points at the load test and the config. The agent files `records/2026-08-26-rate-limit-is-per-process.md` with `type: note` and `decided-by: []` — nobody decided this, it was simply true.
+
+The body follows the finding, not the decision template: what was observed, how it was established, what follows. No Options considered, because there were no options.
+
+> Filed. No attribution — `lint` won't ask a note for a decider.
+
+Six months from now somebody hits the same wall, searches "rate limit", and finds this instead of spending another afternoon on it. That is the whole return on notes.
+
+---
+
 ## Day 12 — Sarah comes back
 
 Sarah's been on other work for a week:
@@ -232,10 +253,11 @@ The agent reads `last-seen` from her profile, diffs git history since that date,
 
 > **Since 2026-08-18 — 11 commits**
 >
-> - **New records (1):** Rate limiting approach (2026-08-26, MK)
+> - **New decisions (1):** Auth provider (2026-08-22, SC/MK) — the question you opened, now answered
+> - **New notes (1):** Rate limiting is per-process, not per-cluster (2026-08-26, MK)
 > - **New conventions (2):** Commit message format, Deployment process
 > - **People:** Mike Kowalski joined 2026-08-24
-> - **Superseded (1):** Auth provider decision → replaced by Auth provider revisit
+> - **Open questions:** none
 
 Then it stamps `last-seen` to today. That field belongs to `catchup` alone — `hello` deliberately never touches it, because a greeting that stamped today's date would erase the very baseline this depends on.
 
