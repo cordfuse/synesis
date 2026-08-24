@@ -1,6 +1,8 @@
 {
+  // The vault itself. Keep this entry.
+  // Add your project repos below — one { "path": "..." } each, relative to this
+  // file. VS Code workspace files accept comments, so this note travels with it.
   "folders": [
-    { "path": "." },
-    { "path": "../my-project" }
+    { "path": "." }
   ]
 }
