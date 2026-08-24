@@ -240,13 +240,13 @@ date: 2026-08-18
 decided-by: [SC, MK]
 consulted: [JL]
 last-verified: 2026-08-18
-status: active
+status: active          # proposed | active | superseded
 superseded-by:
 tags: [auth, architecture]
 archived: true          # optional; set by the archive verb
 ---
 ```
-`status` is `active` or `superseded`. When superseded, `superseded-by` links to the replacement record filename. The lint skill validates that `superseded-by` targets an existing file. `tags` enable Obsidian filtering and agent search. `archived` is optional and set by the `archive` verb — archived files drop out of `hello`, `status`, `lint` and `weave`, but stay findable by `search`, which labels them.
+`status` is `proposed`, `active` or `superseded` — the ADR lifecycle. `propose` opens a record as `proposed` with the Decision section empty; `decide` writes the decision and flips it to `active`; a later `decide` supersedes it. A `proposed` record is mutable while the question is open; immutability applies from acceptance onward. When superseded, `superseded-by` links to the replacement record filename. The lint skill validates that `superseded-by` targets an existing file. `tags` enable Obsidian filtering and agent search. `archived` is optional and set by the `archive` verb — archived files drop out of `hello`, `status`, `lint` and `weave`, but stay findable by `search`, which labels them.
 
 **Records are append-only** — the body is never edited after filing. Correct a decision by filing a replacement and setting `superseded-by` on the old one. Frontmatter fields above are still maintained in place; that is not a violation.
 
