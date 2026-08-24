@@ -27,9 +27,17 @@ She answers in plain sentences — *"Sarah Chen, SC, frontend, I'll be on auth a
 > **Team** — 1 person. You.
 > **Recent decisions** — none yet.
 > **Active conventions** — none yet.
-> **Verbs** — hello, propose, decide, note, convention, search, status, catchup, lint, weave, archive, update, handoff, reconcile, sync, onboard.
+> **Verbs** — hello, propose, decide, note, convention, search, status, catchup, lint, weave, archive, update, handoff, reconcile, sync, onboard, wire.
 >
 > The vault is empty. File your first decision with `decide`, or write down how your team works with a convention.
+>
+> One more thing: this vault is only visible to sessions started in this folder.
+> Say `wire` and I will print what to paste to fix that.
+
+She says `wire`. The agent checks which harnesses are on her machine, resolves the
+vault's real path, and prints the two lines she needs — it does not write them.
+Those files load in every project on her machine, so that stays her call. She
+pastes them, and from her next session onward the vault answers from any repo.
 
 It produced this — she typed none of it:
 
@@ -312,7 +320,17 @@ That sets `archived: true`, then re-runs `weave` so nothing still links to it. I
 
 ## Later — the template moves on
 
-Synesis ships a new protocol version. Your vault was made with **Use this template**, so there's no fork relationship and nothing to merge:
+Synesis ships a new protocol version. Nobody has to notice — the next `hello` ends
+with one extra line in vault status:
+
+> Protocol v0.9 available upstream — say `reconcile` to review the changes.
+
+That line comes from comparing `.synesis-version` against the newest upstream tag.
+If the check cannot run — no network, no remote, no tags — it says nothing rather
+than holding up the briefing.
+
+Your vault was made with **Use this template**, so there is no fork relationship and
+nothing to merge:
 
 ```
 reconcile
@@ -326,7 +344,9 @@ reconcile
 >
 > Resolve each? (y/skip/abort)
 
-Every file is gated one at a time. Your records, conventions and people are never in scope — reconcile only ever looks at the protocol files you inherited.
+Every file is gated one at a time. Your records, conventions and people are never in scope — reconcile only ever looks at the protocol files you inherited. Neither is the template's `LICENSE`: this repo is public and MIT, your vault is probably neither, and copying it would put someone else's copyright on your team's decisions.
+
+When the run finishes, reconcile writes the version it synced to into `.synesis-version`, which is what silences the nudge until the template moves again.
 
 ---
 
@@ -350,5 +370,6 @@ Every file is gated one at a time. Your records, conventions and people are neve
 | `sync` | pull and push your own remote |
 | `reconcile` | drift check against the template |
 | `onboard` | interview and profile a new member |
+| `wire` | print the config that makes the vault visible outside its folder |
 
 No server. No database. No API keys. Markdown files in a git repo, and any agent that can read a file.

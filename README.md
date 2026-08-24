@@ -5,7 +5,7 @@
 Synesis (Greek: σύνεσις — *understanding, the faculty of putting things together*) is a file-based, repo-embedded, agent-agnostic shared knowledge protocol for software teams.
 
 > **Protocol source:** [cordfuse/synesis](https://github.com/cordfuse/synesis)
-> Your vault records which version it was created from in `PROTOCOL.md` frontmatter (`upstream:`). Run `reconcile` to see what has changed upstream since — it diffs the protocol files only, and never touches your records, conventions or people.
+> Your vault records which version it was created from in `PROTOCOL.md` frontmatter (`upstream:`), and which release it last synced to in `.synesis-version`. `hello` compares that against the newest upstream tag and mentions it in one line when something newer exists — say `reconcile` to review the changes. Reconcile diffs the protocol files only, and never touches your records, conventions, people or licence.
 
 ---
 
@@ -277,8 +277,18 @@ Weave is idempotent: run it twice and the second run changes nothing. Links that
 2. **Agent-agnostic.** Works with any harness that reads project files. No vendor lock-in.
 3. **Brand-neutral internals.** `PROTOCOL.md`, not `SYNESIS.md`. The brand lives here in the README, never in the protocol files.
 4. **Trust the team.** No PR gates. Anyone can commit. Git history is the audit trail.
-5. **Fork and own.** Use the template, make it yours. The protocol defines the structure; your team fills it with real knowledge.
+5. **Use the template and own it.** Make it yours — there is no fork relationship, and upstream changes arrive through `reconcile`, gated per file. The protocol defines the structure; your team fills it with real knowledge.
 6. **Obsidian-compatible.** Wikilinks, tags, aliases — the vault works in Obsidian out of the box.
+
+## Permissions
+
+The vault ships `.claude/settings.json` with a deliberately small grant: `Bash(git:*)`, plus the file tools. Every skill shells out to git and nothing else, so nothing wider is needed.
+
+That matters more here than in an ordinary repo. `reconcile` pulls protocol files from the template, so a third party writes the instructions your agent then follows — the ordinary exposure of any dependency, no hostile maintainer required. A blanket shell grant is the wrong default to pair with it. `git config --global` and `git push --force` are denied outright: one writes machine state from a repo-scoped skill, the other can destroy history that is your team's only copy of its decisions.
+
+This shrinks the target rather than closing it — `git -c` reaches outside git by design. The point is that the grant is now a decision rather than an inheritance, and widening it has to be argued for.
+
+The protocol files themselves (`PROTOCOL.md`, `skills/**`, the harness shims, `LICENSE`, `README.md`) are denied to `Edit`. They come from the template; change them upstream, or accept the drift knowingly.
 
 ## Contributing
 

@@ -20,7 +20,7 @@ Cortex proved the pattern for one person. Synesis is cortex for teams.
 2. **Agent-agnostic.** Works with any AI harness that reads project files. No vendor lock-in.
 3. **Brand-neutral internals.** `PROTOCOL.md`, not `SYNESIS.md`. The brand lives in `README.md` and `EXAMPLE.md` only — never in the protocol files themselves. Zero rename cost.
 4. **Trust the team.** No review gates on knowledge contributions. Anyone can commit. Git history is the audit trail. Friction kills adoption.
-5. **Fork and own.** Teams fork the template and make it theirs. The protocol defines the structure; the team fills it with real knowledge. Upstream pulls are rare — git handles conflicts when they happen.
+5. **Use the template and own it.** Teams create a vault with "Use this template" and make it theirs. The protocol defines the structure; the team fills it with real knowledge. There is **no fork relationship** — the histories are unrelated, so git cannot merge them. Upstream changes come down through `reconcile`, a file-level diff gated per file, never a merge or rebase.
 6. **Obsidian-compatible.** The vault doubles as an Obsidian vault. `[[wikilinks]]` for internal linking, `aliases` and `tags` in frontmatter. `.obsidian/` is gitignored (per-user config).
 
 ## Repo model
@@ -55,6 +55,7 @@ synesis/
     sync.md
     update.md
     weave.md
+    wire.md
   records/                    # institutional memory — decisions, ADRs
     _template.md
   people/                     # team member profiles
@@ -107,7 +108,7 @@ Developers using VS Code-based harnesses (Claude Code, Codex, Copilot — all ha
 }
 ```
 
-All four harnesses auto-discover their shim files from workspace folders in multi-root workspaces. Copilot had a bug with this ([vscode#264837](https://github.com/microsoft/vscode/issues/264837)) but it was fixed in September 2025.
+All harnesses except OpenCode auto-discover their shim files from workspace folders in multi-root workspaces; OpenCode reads `opencode.json` in the vault root. Copilot had a bug with this ([vscode#264837](https://github.com/microsoft/vscode/issues/264837)) but it was fixed in September 2025.
 
 The agent sees both synesis and the project. When working in the project and needing team context — conventions, ownership, past decisions — synesis is right there in the workspace.
 
@@ -123,6 +124,8 @@ Terminal/CLI users set up cross-repo access once per developer. Each harness has
 | Copilot CLI | Personal skill: `~/.copilot/skills/synesis/SKILL.md` with `alwaysApply: true` + `--add-dir` flag for file access |
 | OpenCode | Global skill: `~/.config/opencode/skills/synesis/SKILL.md` + `references` entry in `~/.config/opencode/opencode.json` for file access |
 
+The `wire` verb prints these, filled in with the vault's real absolute path and only for the harnesses actually installed. It never writes them — the files involved load in every project on the machine, so applying them stays the developer's call.
+
 ### Multi-root risks
 
 | Risk | Mitigation |
@@ -135,12 +138,16 @@ Terminal/CLI users set up cross-repo access once per developer. Each harness has
 
 ## Versioning
 
-Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v0.6**.
+Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v0.8**.
 
 - **Minor bump:** add/change a convention, new verb, new template
 - **Major bump:** breaking change to directory structure or PROTOCOL.md format
 
-Instances track upstream version: `upstream: <org>/synesis@v0.6` in their PROTOCOL.md frontmatter.
+Instances track upstream version: `upstream: <org>/synesis@v0.8` in their PROTOCOL.md frontmatter. That field is **provenance** — the version the vault was created at, and the repo `hello` derives its upstream remote from.
+
+What the vault last *synced to* is a different number, and lives in `.synesis-version` at the repo root. `reconcile` writes it at the end of a completed run; `hello` reads it, compares against the newest upstream tag, and appends one line when there is something newer. It is deliberately not frontmatter: `PROTOCOL.md` is in template scope, so a version written there would report as drift on every vault that is behind.
+
+**Releases are tagged.** A tag-based signal only exists if someone tags — an untagged release leaves every vault reporting itself current while the template moves.
 
 ## What carries over from cortex
 
@@ -217,7 +224,8 @@ No PR gate. Commit directly to synesis. Trust the team. Git blame + git log = fu
 **`PROTOCOL.md`**
 ```yaml
 ---
-version: 0.6
+version: 0.8
+upstream: <org>/synesis@v0.8
 stale-days: 90
 ---
 ```
@@ -298,9 +306,9 @@ The `lint` skill scans the repo for hygiene issues. No automated fixes — it re
 3. **Missing attribution** — records without `decided-by`
 4. **Orphaned profiles** — people profiles where `email` doesn't match any recent git author
 5. **Empty templates** — files that are still just the `_template.md` content, never filled in
-6a. **Unanswered proposals** — records with `status: proposed` older than `stale-days`. An open question nobody revisits is litter; resolve with `decide` or `archive` it.
-6. **Weave block integrity** — non-reciprocal links, unpaired or duplicated `weave:start`/`weave:end` markers, empty weave blocks, `## Related` headings without markers
-7. **Vault references in template files** — `[[wikilinks]]` in `PROTOCOL.md`, `AGENTS.md`, `skills/*.md` or `*/_template.md` that resolve to a real file in this vault. Inverts check 2: template files must use placeholders that resolve nowhere, since they ship to vaults that have none of this content. Scans inside code blocks too — that is where these get written.
+6. **Unanswered proposals** — records with `status: proposed` older than `stale-days`. An open question nobody revisits is litter; resolve with `decide` or `archive` it.
+7. **Weave block integrity** — non-reciprocal links, unpaired or duplicated `weave:start`/`weave:end` markers, empty weave blocks, `## Related` headings without markers
+8. **Vault references in template files** — `[[wikilinks]]` in `PROTOCOL.md`, `AGENTS.md`, `skills/*.md` or `*/_template.md` that resolve to a real file in this vault. Inverts check 2: template files must use placeholders that resolve nowhere, since they ship to vaults that have none of this content. Scans inside code blocks too — that is where these get written.
 
 Checks stay agent-native: the skill is prose the agent executes, not a script. No runtime, nothing to install.
 
@@ -349,7 +357,11 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
   - `weave` claimed regeneration was identical and idempotent. Link selection and order are pinned; the prose after the em-dash is not, so every run rewrote all 68 descriptions and churned 26 files.
 
 ### Phase 3 — Polish
-- [ ] Lint verb implementation (agent-native, no shell scripts)
+- [x] Lint verb implementation (agent-native, no shell scripts)
+- [x] Add the `wire` verb (protocol v0.7). A vault was invisible to any session started outside its folder, and setup was manual, README-only, and written with example paths no machine matches — so it did not happen, and the result read as "Synesis does not do much" rather than "Synesis was never switched on". `wire` prints the config rather than applying it: the files involved load in every project on the machine, and printing is idempotent by definition — no marker to manage, no JSON to merge, no per-OS write path. Its own verb, not an `onboard` step, because wiring is per-machine and profiles are per-person.
+- [x] Ship a LICENSE (protocol v0.7). The README had claimed MIT since the first commit and no LICENSE file existed, so GitHub detected none. `reconcile` names it out of scope: copying it into a private vault puts this repo's copyright on the team's own records.
+- [x] Version nudge (protocol v0.8). A vault only learned it was behind when someone ran `reconcile` on a hunch. `hello` now reads `.synesis-version` against the newest upstream tag and says one line when there is something newer, bounded with git's own ssh and http options so a briefing never stalls on a fetch.
+- [x] Narrow the shell grant (protocol v0.8). The template shipped `Bash(*)` — unrestricted shell, pre-approved for anyone who opens a vault, inherited rather than chosen. Every skill shells out to git and nothing else. Narrowing it to `Bash(git:*)` surfaced three skills that quietly depended on `sort`, `comm`, `diff` and `sed`; all now use git-only equivalents.
 - [ ] Onboarding flow testing with a real new developer
 - [ ] Documentation site (if warranted)
 
@@ -361,6 +373,6 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 ---
 
 *Filed: 2026-08-22*
-*Updated: 2026-08-23*
+*Updated: 2026-08-24*
 *Name: Synesis*
-*Status: Phase 2 complete — five harnesses tested, cortex feature port shipped, every verb executed against the dogfood vault. Protocol v0.3. Phase 3 next*
+*Status: Phase 3 substantially complete — five harnesses tested, cortex feature port shipped, every verb executed against the dogfood vault, `wire` and the version nudge shipped, the shell grant narrowed to git. Protocol v0.8. Remaining: onboarding flow with a real new developer, then announce.*
