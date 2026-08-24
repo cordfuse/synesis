@@ -103,27 +103,47 @@ Conventions are **living documents**. When the team stops squash-merging, Sarah 
 
 ---
 
-## Day 3 — a real decision
+## Day 3 — an open question
 
-The team picks an auth provider. Sarah doesn't want to write the record by hand:
+The team needs an auth provider and hasn't picked one. The decision is a week out, but the reasoning is happening now:
+
+```
+propose: we need to pick an auth provider — Auth0, Clerk or Supabase Auth
+```
+
+> What's forcing the timing, and who should weigh in? I'll file this open so it shows up in briefings until it's answered.
+
+The agent runs `date +%F`, gets 2026-08-20, and writes `records/2026-08-20-auth-provider.md` with `status: proposed`, `decided-by: []`, the context and all three options — and **an empty Decision section**. Nobody has decided anything yet, and the record says so.
+
+From now until it's answered, `hello` leads with it:
+
+> **Open questions** — Auth provider (opened 2026-08-20, today, consulted MK)
+
+That's the point. A question that only exists in someone's head gets re-litigated; a question in the vault gets answered.
+
+---
+
+## Day 5 — deciding it
+
+The team picks. Sarah doesn't open a second record:
 
 ```
 decide: we're going with Clerk for auth, evaluated against Auth0 and Supabase Auth
 ```
 
-The agent extracts what it can from that sentence and asks only for what's missing:
+The agent finds the open proposal covering this question and **resolves it in place** — it does not create a new record. First it asks for what's missing:
 
 > Who else was in on this, and who did you consult? And what killed Auth0 and Supabase — I'd rather record the reasoning than just the winner.
 
-Sarah answers in two sentences. The agent picks the filename, stamps today's date, matches `SC` and `MK` against `people/`, and writes `records/2026-08-18-auth-provider.md`:
+Sarah answers in two sentences. The agent writes `## Decision` and `## Consequences` into the record that already existed, sets `decided-by`, and flips `status` from `proposed` to `active`. The question and its answer live in one file, and `git log` shows one becoming the other:
 
 ```markdown
 ---
 title: Auth provider decision
-date: 2026-08-18
+date: 2026-08-20          # opened
 decided-by: [SC, MK]
 consulted: [JL]
-last-verified: 2026-08-18
+last-verified: 2026-08-22  # accepted
 status: active
 superseded-by:
 tags: [auth, architecture]
@@ -158,9 +178,11 @@ The `[[people/sarah-chen]]` link in the Decision section is an **authored** link
 
 There is no `## Related` block. That block is **derived**, and only `weave` writes it. The record is filed first; the graph comes next.
 
+The record is now frozen. While it was `proposed` it could be edited freely — that is how options got added as the discussion moved. From acceptance onward it is append-only, and changing this decision means filing a new record, not editing this one.
+
 ---
 
-## Day 3, later — weave
+## Day 5, later — weave
 
 ```
 weave
@@ -168,7 +190,7 @@ weave
 
 > Scanned 2 files. Wrote 1 block, 2 links.
 >
-> `records/2026-08-18-auth-provider` ↔ `conventions/git-branching` — the branching rules this work follows
+> `records/2026-08-20-auth-provider` ↔ `conventions/git-branching` — the branching rules this work follows
 
 Weave appends a block at the end of each file:
 
@@ -186,12 +208,12 @@ Run it twice in a row and the second run changes nothing.
 
 ---
 
-## Day 5 — Mike joins
+## Day 7 — Mike joins
 
 Mike clones the vault and types `hello`. No profile matches his email, so he gets the same interview Sarah did — and then a briefing that now has content:
 
 > **Team** — 2 people. Sarah Chen (Frontend, owns auth UI), you.
-> **Recent decisions** — Auth provider decision (2026-08-18, SC/MK, active).
+> **Recent decisions** — Auth provider decision (2026-08-20, SC/MK, active).
 > **Active conventions** — Git branching strategy.
 
 He didn't read an onboarding doc. Nobody wrote one. The vault was the onboarding doc.
@@ -208,11 +230,11 @@ catchup
 
 The agent reads `last-seen` from her profile, diffs git history since that date, and groups what changed:
 
-> **Since 2026-08-18 — 9 commits**
+> **Since 2026-08-18 — 11 commits**
 >
-> - **New records (1):** Rate limiting approach (2026-08-24, MK)
+> - **New records (1):** Rate limiting approach (2026-08-26, MK)
 > - **New conventions (2):** Commit message format, Deployment process
-> - **People:** Mike Kowalski joined 2026-08-20
+> - **People:** Mike Kowalski joined 2026-08-24
 > - **Superseded (1):** Auth provider decision → replaced by Auth provider revisit
 
 Then it stamps `last-seen` to today. That field belongs to `catchup` alone — `hello` deliberately never touches it, because a greeting that stamped today's date would erase the very baseline this depends on.
@@ -231,7 +253,7 @@ The agent files a new record for the reversal, then — without being asked, bec
 
 ```yaml
 status: superseded
-superseded-by: records/2026-09-17-auth-provider-revisit
+superseded-by: records/2026-09-16-auth-provider-revisit
 ```
 
 The original stays exactly as written. Both records live in the vault, and the chain shows what the team believed in August and what changed in September. `search` finds both and points from the old one to its replacement.
@@ -247,7 +269,7 @@ lint
 ```
 
 > **Stale knowledge:**
->   `conventions/deployment.md` — last verified 2026-08-19 (91 days ago)
+>   `conventions/deployment.md` — last verified 2026-08-16 (91 days ago)
 >
 > **Missing attribution:**
 >   `records/2026-09-02-cache-strategy.md` — no decided-by
