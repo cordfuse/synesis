@@ -2,7 +2,7 @@
 
 > **Name:** Synesis (Greek: σύνεσις — "understanding, the faculty of putting things together")
 > **Repo:** the public framework/template repo
-> **Dogfood:** steve-krisjanovs/synesis (private) — real team knowledge, dogfooding
+> **Dogfood:** a private instance — real team knowledge, dogfooding
 > **What it is:** A file-based, repo-embedded, agent-agnostic shared knowledge protocol for software teams.
 > **What it is not:** A SaaS product, an MCP server, an npm package, a database.
 
@@ -26,7 +26,7 @@ Cortex proved the pattern for one person. Synesis is cortex for teams.
 ## Repo model
 
 - **The template repo** (public) — the framework. Protocol docs, example files, README. Teams use this as a GitHub template.
-- **`steve-krisjanovs/synesis`** (private) — Steve's instance. Real people, real decisions, real conventions. Dogfood repo.
+- **The dogfood instance** (private) — real people, real decisions, real conventions.
 
 Same pattern as cortex: a public framework repo plus a private personal instance.
 
@@ -325,7 +325,7 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 - [x] Write README.md (the only branded file)
 
 ### Phase 2 — Dogfood
-- [x] Fork to steve-krisjanovs/synesis (private)
+- [x] Create the private dogfood instance from the template
 - [x] Populate with real team knowledge (conventions, people, architecture)
 - [x] Test with Claude Code (hello, lint, decide verbs — 6 bugs found and fixed)
 - [x] Test multi-root workspace scope boundary (convention bleed test passed)
