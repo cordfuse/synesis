@@ -27,7 +27,9 @@ Only these paths are compared. Everything else is vault-local and is **never** t
 | `*/_template.md` | frontmatter shapes |
 | `AGENTS.md` | agent entry point |
 
-Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments/`, `tools/`, `README.md`, `CLAUDE.md`, and any other agent instruction file. That content is the team's, not the template's. `README.md` and `CLAUDE.md` are expected to diverge immediately and permanently — flagging them every run would train the user to ignore the report.
+Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments/`, `tools/`, `README.md`, `CLAUDE.md`, `LICENSE`, and any other agent instruction file. That content is the team's, not the template's. `README.md` and `CLAUDE.md` are expected to diverge immediately and permanently — flagging them every run would train the user to ignore the report.
+
+`LICENSE` never comes down, and the reason is worth stating plainly: the template is a public MIT repo, and most vaults built from it are not. Copying its licence onto a private vault puts the template author's copyright line on the team's own conventions, decisions, people profiles and whatever else the vault holds, and offers all of it under MIT. If a vault needs a licence it writes its own.
 
 ## Setup
 
@@ -91,3 +93,4 @@ diff <(git show upstream/main:PROTOCOL.md) <(sed '/^upstream: /d' PROTOCOL.md)
 - Run after any upstream version bump, and before promoting local protocol work into the template.
 - `PROTOCOL.md` frontmatter carries `upstream: <repo>@<version>` for awareness. Reconcile does not read or update it automatically — the version there is a label, not a lockfile.
 - If the diff is empty, say so in one line. A clean reconcile is the common case and does not need a report.
+- **Parity means the protocol matches, not that every file matches.** A vault at parity still differs from the template in its README, its `tools/` index, its licence and all of its content — that is the design, not drift left unfinished. Restoring parity by hand, outside this skill, is where that distinction gets lost: work file by file against the scope table above, never by making the two trees identical.
