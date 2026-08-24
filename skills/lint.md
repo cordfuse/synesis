@@ -30,7 +30,7 @@ Scan `records/` for files missing the `decided-by` frontmatter field (empty arra
 **Decisions only.** Skip records with `type: note` — a note records what was found, not what was chosen, so it has nobody to attribute. Also skip `status: proposed`: an open question has not been decided yet, and `decided-by` is filled in when `decide` accepts it.
 
 ### 4. Orphaned profiles
-Scan `people/` profiles and check each `email` field against recent git authors (`git log --format='%ae' --since='6 months ago' | sort -u`). Report profiles where the email doesn't appear in recent git history.
+Scan `people/` profiles and check each `email` field against recent git authors (`git log --format='%ae' --since='6 months ago'`). Report profiles where the email doesn't appear in recent git history. Dedupe the author list yourself rather than piping through `sort -u` — a pipe falls outside the vault's `Bash(git:*)` grant and would prompt mid-lint.
 
 ### 5. Empty templates
 Scan `records/`, `people/`, and `conventions/` for files that are still identical to (or trivially different from) their `_template.md`. Report any unfilled templates.
