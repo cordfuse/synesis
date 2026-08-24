@@ -27,7 +27,7 @@ She answers in plain sentences — *"Sarah Chen, SC, frontend, I'll be on auth a
 > **Team** — 1 person. You.
 > **Recent decisions** — none yet.
 > **Active conventions** — none yet.
-> **Verbs** — hello, propose, decide, convention, search, status, catchup, lint, weave, archive, update, handoff, reconcile, sync, onboard.
+> **Verbs** — hello, propose, decide, note, convention, search, status, catchup, lint, weave, archive, update, handoff, reconcile, sync, onboard.
 >
 > The vault is empty. File your first decision with `decide`, or write down how your team works with a convention.
 
@@ -315,6 +315,7 @@ Every file is gated one at a time. Your records, conventions and people are neve
 | `hello` | briefing, or onboarding if you're new |
 | `propose` | open a question that needs deciding |
 | `decide` | resolve a proposal, or file a decision directly |
+| `note` | record what the team found, with no decision attached |
 | `convention` | write down how the team does something |
 | `weave` | link related files into a navigable graph |
 | `catchup` | what changed since you were last here |

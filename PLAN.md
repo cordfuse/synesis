@@ -46,6 +46,7 @@ synesis/
     handoff.md
     hello.md
     lint.md
+    note.md
     onboard.md
     propose.md
     reconcile.md
@@ -134,12 +135,12 @@ Terminal/CLI users set up cross-repo access once per developer. Each harness has
 
 ## Versioning
 
-Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v0.5**.
+Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v0.6**.
 
 - **Minor bump:** add/change a convention, new verb, new template
 - **Major bump:** breaking change to directory structure or PROTOCOL.md format
 
-Instances track upstream version: `upstream: cordfuse/synesis@v0.5` in their PROTOCOL.md frontmatter.
+Instances track upstream version: `upstream: cordfuse/synesis@v0.6` in their PROTOCOL.md frontmatter.
 
 ## What carries over from cortex
 
@@ -216,7 +217,7 @@ No PR gate. Commit directly to synesis. Trust the team. Git blame + git log = fu
 **`PROTOCOL.md`**
 ```yaml
 ---
-version: 0.5
+version: 0.6
 stale-days: 90
 ---
 ```
@@ -240,6 +241,7 @@ date: 2026-08-18
 decided-by: [SC, MK]
 consulted: [JL]
 last-verified: 2026-08-18
+type: decision          # decision | note — omit for decision
 status: active          # proposed | active | superseded
 superseded-by:
 tags: [auth, architecture]
@@ -336,6 +338,7 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
   - `decide` told the agent to hand-write links; the `## Related` block is derived and belongs to `weave`.
   - `archive` left inbound links pointing at archived files. `weave` no longer links to them; `archive` re-runs it.
 - [x] Second spec pass — `PROTOCOL.md` still licensed hand-written Related blocks (and its example showed a link `weave` cannot make); `search` never labelled archived hits; `sync` looked like the answer for template drift.
+- [x] Add the `note` record type and verb (protocol v0.6). `records/` was decision-shaped: everything that wrote one assumed a choice had been made, so a postmortem or a benchmark had to fake `decided-by` to pass lint. `type: decision | note`, defaulting to decision. Surfaced by the dogfood vault, where the ideas index carried invented attribution and — being a living list — also broke immutability. It moved to `conventions/`.
 - [x] Add the `propose` verb and the `proposed` record state (protocol v0.5). `decide` only ever filed finished decisions, so the reasoning while options were live had nowhere to live — the missing half of the standard ADR lifecycle. `decide` is now resolve-or-create; immutability is scoped to accepted records. Dogfooding it immediately exposed that `PROTOCOL.md` never said whether dates are local or UTC.
 - [x] Add the `convention` verb (protocol v0.4). `decide` filed records and `onboard` filed profiles, but nothing authored a convention — the one artifact a user had to hand-write, frontmatter and all. Found while writing EXAMPLE.md, which had to fudge it as "plain files; no verb required".
 - [x] **Execute every verb rather than reading it** (protocol v0.3). Three further bugs, each in a file the spec passes had already cleared:
