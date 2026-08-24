@@ -4,6 +4,9 @@
 
 Synesis (Greek: σύνεσις — *understanding, the faculty of putting things together*) is a file-based, repo-embedded, agent-agnostic shared knowledge protocol for software teams.
 
+> **Protocol source:** [cordfuse/synesis](https://github.com/cordfuse/synesis)
+> Your vault records which version it was created from in `PROTOCOL.md` frontmatter (`upstream:`). Run `reconcile` to see what has changed upstream since — it diffs the protocol files only, and never touches your records, conventions or people.
+
 ---
 
 ## Why this exists
