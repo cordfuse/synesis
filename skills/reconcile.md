@@ -86,8 +86,13 @@ you can read directly.
 **2a. Discount expected drift.** The `upstream:` line in `PROTOCOL.md` frontmatter carries the version your vault was created at, so it lags behind the template as the protocol moves. That is expected and is not drift. A `PROTOCOL.md` whose only difference is that line is **in sync** — mention the version gap in one line, then move on. Compare with the line filtered out:
 
 ```sh
-diff <(git show upstream/main:PROTOCOL.md) <(sed '/^upstream: /d' PROTOCOL.md)
+git show upstream/main:PROTOCOL.md
 ```
+
+Read that against the local `PROTOCOL.md` and ignore the `upstream:` line in the
+comparison. Keep it to `git show` rather than piping through `diff`/`sed`: those
+fall outside the vault's `Bash(git:*)` grant, and a two-file frontmatter
+comparison does not need them.
 
 **3. Surface everything at once** before resolving anything. Counts per category, one line per file. The user sees the whole picture first, then decides.
 
