@@ -1,1 +1,7 @@
 .obsidian/
+
+# Secrets — never commit, at any depth
+.env
+.env.*
+!.env.example
+**/.env
