@@ -248,6 +248,8 @@ tags: [auth, architecture]
 archived: true          # optional; set by the archive verb
 ---
 ```
+`type` is `decision` (the default, omitted in practice) or `note`. A note records what was found rather than what was chosen — a postmortem, a benchmark, a research result — and carries no `decided-by`, which lint check 3 skips for it. A running list that is edited forever is neither, and belongs in `conventions/`.
+
 `status` is `proposed`, `active` or `superseded` — the ADR lifecycle. `propose` opens a record as `proposed` with the Decision section empty; `decide` writes the decision and flips it to `active`; a later `decide` supersedes it. A `proposed` record is mutable while the question is open; immutability applies from acceptance onward. When superseded, `superseded-by` links to the replacement record filename. The lint skill validates that `superseded-by` targets an existing file. `tags` enable Obsidian filtering and agent search. `archived` is optional and set by the `archive` verb — archived files drop out of `hello`, `status`, `lint` and `weave`, but stay findable by `search`, which labels them.
 
 **Records are append-only** — the body is never edited after filing. Correct a decision by filing a replacement and setting `superseded-by` on the old one. Frontmatter fields above are still maintained in place; that is not a violation.
