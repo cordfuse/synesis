@@ -48,6 +48,11 @@ Greet the user by name, then cover these sections in order:
 ### Vault status
 - Protocol version (from PROTOCOL.md frontmatter)
 - Upstream tracking (if `upstream` field exists in PROTOCOL.md frontmatter)
+- Whether this machine is wired up — check the global instruction file of each
+  installed harness for this vault's absolute path. If none carry it, say so in one
+  line and name `wire`: the vault is invisible to sessions started outside this
+  folder, and that reads as "Synesis does not do much" when the truth is it was
+  never switched on. Do not configure anything — `wire` prints, the developer applies.
 - Any active handoff records (records tagged `handoff` with no superseding record)
 - Count of tools in `tools/` (if any beyond README.md)
 

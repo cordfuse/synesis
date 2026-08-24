@@ -113,11 +113,12 @@ Verbs are commands you give to the agent. Each verb maps to a skill file in `ski
 
 Skills are markdown files that define triggers and step-by-step instructions. See `skills/` for the full set.
 
-Three worth knowing about up front:
+A few worth knowing about up front:
 
 - **`note`** — records what the team learned when nothing was decided. Without it, findings get forced through the decision template and end up claiming someone chose something.
 - **`propose`** — files the *question* rather than the answer, so the reasoning is captured while options are still on the table. Without it a decision only enters the vault once someone remembers to record it, reconstructed from memory. `hello` and `status` lead with whatever is still open.
 - **`weave`** — cross-links related records and conventions so the flat vault becomes a navigable graph
+- **`wire`** — prints the exact config that makes the vault visible to agents in sessions started outside its folder, filled in with the real path and only for the harnesses you actually have installed. It never writes to your machine; setup files load in every project, so applying them stays your call.
 - **`reconcile`** — diffs your vault's protocol files against this template and surfaces what drifted, one file at a time. Vaults are created with "Use this template", so there is no fork relationship and nothing to merge; reconcile is a file-level diff, never a history operation. Your own records and conventions are never in scope — only the protocol files you inherited.
 
 ## Using with your projects
@@ -143,6 +144,8 @@ All harnesses except OpenCode auto-discover their shim files from workspace fold
 ### CLI — cross-repo setup (one-time)
 
 Each harness has a user-level config mechanism that loads in every session, regardless of which repo you open. Point it to your vault and every project inherits team knowledge automatically.
+
+Run `wire` in the vault to have these snippets printed with your real path already filled in, for the harnesses you actually have installed. It shows what to paste; it never writes to your machine.
 
 #### Claude Code and Antigravity
 
@@ -177,7 +180,7 @@ Both use a personal skill for instruction discovery plus `--add-dir` for file ac
 ```markdown
 ---
 name: synesis
-description: Team knowledge protocol — always active. Handles hello, status, catchup, propose, decide, note, convention, lint, search, sync, reconcile, archive, update, onboard, handoff, weave verbs.
+description: Team knowledge protocol — always active. Handles hello, status, catchup, propose, decide, note, convention, lint, search, sync, reconcile, archive, update, onboard, handoff, weave, wire verbs.
 alwaysApply: true
 ---
 
@@ -208,7 +211,7 @@ OpenCode uses a global skill for instruction discovery plus a `references` entry
 ```markdown
 ---
 name: synesis
-description: Team knowledge protocol — always active. Handles hello, status, catchup, propose, decide, note, convention, lint, search, sync, reconcile, archive, update, onboard, handoff, weave verbs.
+description: Team knowledge protocol — always active. Handles hello, status, catchup, propose, decide, note, convention, lint, search, sync, reconcile, archive, update, onboard, handoff, weave, wire verbs.
 ---
 
 At the start of every session, read and follow PROTOCOL.md in the team's synesis vault at ~/team/synesis/
