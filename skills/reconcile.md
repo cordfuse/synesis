@@ -27,7 +27,9 @@ Only these paths are compared. Everything else is vault-local and is **never** t
 | `*/_template.md` | frontmatter shapes |
 | `AGENTS.md` | agent entry point |
 
-Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments/`, `tools/`, `README.md`, `CLAUDE.md`, `LICENSE`, and any other agent instruction file. That content is the team's, not the template's. `README.md` and `CLAUDE.md` are expected to diverge immediately and permanently — flagging them every run would train the user to ignore the report.
+Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments/`, `tools/`, `README.md`, `CLAUDE.md`, `LICENSE`, `.synesis-version`, and any other agent instruction file. That content is the team's, not the template's. `README.md` and `CLAUDE.md` are expected to diverge immediately and permanently — flagging them every run would train the user to ignore the report.
+
+`.synesis-version` is operator state, not protocol — it records where *this* vault stands and is written by reconcile itself at the end of a run. Diffing it would report drift on every vault that is behind, which is the condition it exists to describe.
 
 `LICENSE` never comes down, and the reason is worth stating plainly: the template is a public MIT repo, and most vaults built from it are not. Copying its licence onto a private vault puts the template author's copyright line on the team's own conventions, decisions, people profiles and whatever else the vault holds, and offers all of it under MIT. If a vault needs a licence it writes its own.
 
@@ -41,6 +43,11 @@ What you do need is a remote. Vaults are created with GitHub's "Use this templat
 git remote add upstream <template-repo-url>
 git fetch upstream
 ```
+
+`hello` adds this remote automatically the first time it runs a version check,
+deriving the URL from the `upstream:` field and matching the form `origin` already
+uses. The commands above are the fallback for anyone who never runs `hello`, or
+whose vault came from a fork or private mirror the derivation cannot guess.
 
 The two repos have unrelated histories — a template copy starts with a fresh commit. `git diff` works fine across them; `git merge-base` returns nothing. Never attempt a merge, rebase, or pull from upstream. Reconcile is a file-level diff-and-copy, never a history operation.
 
@@ -87,6 +94,17 @@ diff <(git show upstream/main:PROTOCOL.md) <(sed '/^upstream: /d' PROTOCOL.md)
 - **Ahead** — surface only, never auto-resolve. Ask: promote it upstream, keep it local, or delete. **Ahead is the normal state for a vault that is dogfooding the protocol** — it is where new protocol features get proven before they go into the template. Do not treat it as an error.
 
 **5. Report and commit.** One commit per resolved file, following this vault's commit message convention. Never commit a resolution the user did not approve.
+
+**6. Record the version synced to.** Write the upstream tag you reconciled against
+into `.synesis-version` at the repo root, and commit it. That file is what `hello`
+reads to decide whether to nudge, and nothing else writes it — if reconcile skips
+this, every future briefing reports the vault as behind when it is not.
+
+Only write it when the run actually finished. A reconcile the user abandoned
+halfway has not synced to anything.
+
+`.synesis-version` is tracked, not ignored. Committing it is how other clones and
+other machines know where the vault stands.
 
 ## Notes
 

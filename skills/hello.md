@@ -55,9 +55,55 @@ Greet the user by name, then cover these sections in order:
   never switched on. Do not configure anything — `wire` prints, the developer applies.
 - Any active handoff records (records tagged `handoff` with no superseding record)
 - Count of tools in `tools/` (if any beyond README.md)
+- Whether a newer protocol version is available upstream — see **Version check**
+  below. One line, and only when there is something to say.
 
 ### Available verbs
 - List all verbs by reading `skills/*.md` frontmatter (`name` + `description`)
+
+## Version check
+
+Part of vault status. **It must never block, prompt, or fail the briefing.** A
+briefing that stalls on a network call is worse than one that never mentions
+versions.
+
+1. **Read `.synesis-version`** at the repo root — the framework version this vault
+   last synced to. Missing means never synced: treat the vault as behind and nudge.
+
+2. **Ensure an `upstream` remote exists.** Vaults are created with "Use this
+   template", so a fresh clone has none — remotes are per-clone and do not travel
+   with the repo. If it is missing, derive it from the `upstream:` field in
+   `PROTOCOL.md` frontmatter, **matching the form `origin` already uses**:
+
+   ```sh
+   git remote get-url origin
+   ```
+
+   If `origin` is `git@host:owner/repo.git`, build the upstream URL the same way with
+   the same host. That host is often an SSH alias from the developer's ssh config, and
+   it is the only thing that authenticates on machines juggling several accounts. Fall
+   back to `https://github.com/<repo>.git` only when `origin` is itself https. Never
+   hardcode a URL — every vault comes from its own template, and some are forks or
+   private mirrors.
+
+3. **Fetch tags, bounded.** A fetch against an unreachable host hangs; one against a
+   private repo without cached credentials prompts, which hangs worse:
+
+   ```sh
+   timeout 5s git -c credential.helper= fetch --tags --quiet upstream
+   ```
+
+   The empty credential helper makes a private remote fail fast instead of asking.
+   Where the shell has no `timeout`, skip the check rather than risk the stall.
+
+4. **Compare the newest tag against `.synesis-version`.** If it is newer, append one
+   line to vault status:
+
+   > Protocol v0.7 available upstream — say `reconcile` to review the changes.
+
+5. **Otherwise say nothing.** No file, no remote, no network, no tags, fetch timed
+   out, already current — every one of those is silent. Never nudge twice for the
+   same version in a session, and do not fetch again if the check already ran today.
 
 ## Notes
 
