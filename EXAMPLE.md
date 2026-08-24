@@ -4,6 +4,8 @@ A vault's first week, start to finish. Two developers, one agent, no setup docs.
 
 Everything below is real protocol behaviour — the verbs, the files, and what the agent says back. Delete this file once your team has its own history; it ships with the template so your first week has something to imitate.
 
+**Nobody types YAML.** Every file shown here was written by the agent from a sentence someone said to it. The frontmatter, the filename, the date, the structure — all of it is the agent's job. You describe the thing; it files it. The file contents are shown so you can see what you're getting, not so you can copy them.
+
 ---
 
 ## Day 1 — Sarah creates the vault
@@ -20,14 +22,16 @@ The agent reads `PROTOCOL.md`, then checks `people/` for a profile matching `git
 >
 > What's your name, and what initials should attribute your decisions?
 
-Four questions later (name, initials, role, areas of work) it writes `people/sarah-chen.md`, commits it, and delivers a briefing that is honest about having nothing to say yet:
+She answers in plain sentences — *"Sarah Chen, SC, frontend, I'll be on auth and the design system."* From that, the agent writes `people/sarah-chen.md`, commits it, and delivers a briefing that is honest about having nothing to say yet:
 
 > **Team** — 1 person. You.
 > **Recent decisions** — none yet.
 > **Active conventions** — none yet.
-> **Verbs** — hello, decide, search, status, catchup, lint, weave, archive, update, handoff, reconcile, sync, onboard.
+> **Verbs** — hello, decide, convention, search, status, catchup, lint, weave, archive, update, handoff, reconcile, sync, onboard.
 >
 > The vault is empty. File your first decision with `decide`, or write down how your team works with a convention.
+
+It produced this — she typed none of it:
 
 ```markdown
 ---
@@ -60,7 +64,21 @@ tags: [frontend, auth]
 
 ## Day 2 — the first convention
 
-Before deciding anything, Sarah writes down how the team already works. Conventions are plain files; no verb required.
+Before deciding anything, Sarah writes down how the team already works:
+
+```
+convention: we work on feature branches off main, PRs need one approval,
+squash merge, delete the branch after
+```
+
+The agent has what it needs for the rule itself, so it asks only about the edges:
+
+> Two questions:
+>
+> 1. What should this be called? (I'll file it as `conventions/{slug}.md`)
+> 2. Anything different for hotfixes?
+
+She names it *Git branching strategy* and mentions hotfixes branch from `main` and merge back normally. The agent writes:
 
 ```markdown
 ---
@@ -81,6 +99,8 @@ No cherry-picking between branches.
 
 From now on, every agent session — hers, her teammate's, whichever harness they use — reads this before touching a branch.
 
+Conventions are **living documents**. When the team stops squash-merging, Sarah says so and the agent edits this file in place and bumps `last-verified`. No superseding, no new file — that's records, and they work differently.
+
 ---
 
 ## Day 3 — a real decision
@@ -91,7 +111,11 @@ The team picks an auth provider. Sarah doesn't want to write the record by hand:
 decide: we're going with Clerk for auth, evaluated against Auth0 and Supabase Auth
 ```
 
-The agent extracts what it can from that sentence and asks only for what's missing — who decided, who was consulted, what the trade-offs were. Then it writes `records/2026-08-18-auth-provider.md`:
+The agent extracts what it can from that sentence and asks only for what's missing:
+
+> Who else was in on this, and who did you consult? And what killed Auth0 and Supabase — I'd rather record the reasoning than just the winner.
+
+Sarah answers in two sentences. The agent picks the filename, stamps today's date, matches `SC` and `MK` against `people/`, and writes `records/2026-08-18-auth-provider.md`:
 
 ```markdown
 ---
@@ -203,7 +227,7 @@ Clerk didn't work out. Records are **append-only**, so nobody edits the old one:
 decide: moving off Clerk to Supabase Auth, the pricing changed
 ```
 
-The agent files a new record and sets two fields on the old one:
+The agent files a new record for the reversal, then — without being asked, because the protocol requires it — sets two fields on the old one:
 
 ```yaml
 status: superseded
@@ -268,6 +292,7 @@ Every file is gated one at a time. Your records, conventions and people are neve
 |---|---|
 | `hello` | briefing, or onboarding if you're new |
 | `decide` | file a decision with attribution |
+| `convention` | write down how the team does something |
 | `weave` | link related files into a navigable graph |
 | `catchup` | what changed since you were last here |
 | `search` | find anything, including archived |

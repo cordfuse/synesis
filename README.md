@@ -168,7 +168,7 @@ Both use a personal skill for instruction discovery plus `--add-dir` for file ac
 ```markdown
 ---
 name: synesis
-description: Team knowledge protocol — always active. Handles hello, status, catchup, decide, lint, search, sync, reconcile, archive, update, onboard, handoff, weave verbs.
+description: Team knowledge protocol — always active. Handles hello, status, catchup, decide, convention, lint, search, sync, reconcile, archive, update, onboard, handoff, weave verbs.
 alwaysApply: true
 ---
 
@@ -199,7 +199,7 @@ OpenCode uses a global skill for instruction discovery plus a `references` entry
 ```markdown
 ---
 name: synesis
-description: Team knowledge protocol — always active. Handles hello, status, catchup, decide, lint, search, sync, reconcile, archive, update, onboard, handoff, weave verbs.
+description: Team knowledge protocol — always active. Handles hello, status, catchup, decide, convention, lint, search, sync, reconcile, archive, update, onboard, handoff, weave verbs.
 ---
 
 At the start of every session, read and follow PROTOCOL.md in the team's synesis vault at ~/team/synesis/
