@@ -87,14 +87,24 @@ versions.
    private mirrors.
 
 3. **Fetch tags, bounded.** A fetch against an unreachable host hangs; one against a
-   private repo without cached credentials prompts, which hangs worse:
+   private repo without cached credentials prompts, which hangs worse. Bound it with
+   git's own options rather than an external wrapper:
 
    ```sh
-   timeout 5s git -c credential.helper= fetch --tags --quiet upstream
+   git -c core.sshCommand="ssh -o ConnectTimeout=5 -o BatchMode=yes" \
+       -c credential.helper= \
+       -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=5 \
+       fetch --tags --quiet upstream
    ```
 
-   The empty credential helper makes a private remote fail fast instead of asking.
-   Where the shell has no `timeout`, skip the check rather than risk the stall.
+   `BatchMode=yes` stops ssh asking for a passphrase, the empty credential helper
+   stops https asking for a password, and the low-speed options cap a stalled
+   transfer. Every one of these is a `git` option, so the whole check stays inside
+   the `Bash(git:*)` grant in `.claude/settings.json`.
+
+   **Do not reach for `timeout` here.** Allowing `Bash(timeout:*)` to make that work
+   would permit `timeout 1 <anything>`, which is arbitrary command execution wearing
+   a wrapper — a far wider grant than the one it was meant to support.
 
 4. **Compare the newest tag against `.synesis-version`.** If it is newer, append one
    line to vault status:
