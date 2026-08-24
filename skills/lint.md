@@ -27,6 +27,8 @@ Scan all markdown files for `[[wikilinks]]` in body text (not inside code blocks
 ### 3. Missing attribution
 Scan `records/` for files missing the `decided-by` frontmatter field (empty array or absent). Report each unattributed record.
 
+**Decisions only.** Skip records with `type: note` — a note records what was found, not what was chosen, so it has nobody to attribute. Also skip `status: proposed`: an open question has not been decided yet, and `decided-by` is filled in when `decide` accepts it.
+
 ### 4. Orphaned profiles
 Scan `people/` profiles and check each `email` field against recent git authors (`git log --format='%ae' --since='6 months ago' | sort -u`). Report profiles where the email doesn't appear in recent git history.
 

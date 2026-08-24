@@ -1,5 +1,5 @@
 ---
-version: 0.5
+version: 0.6
 stale-days: 90
 ---
 
@@ -37,8 +37,9 @@ Every content file has YAML frontmatter. See `_template.md` files in each direct
 ### Records
 ```yaml
 title: ...
+type: decision | note        # optional; decision if absent
 date: YYYY-MM-DD
-decided-by: [initials]
+decided-by: [initials]       # decisions only
 consulted: [initials]
 last-verified: YYYY-MM-DD
 status: proposed | active | superseded
@@ -91,7 +92,7 @@ Precedence is not composition. Do not run both the parent's version and the vaul
 
 ## Versioning
 
-This protocol is at **v0.5**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
+This protocol is at **v0.6**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
 
 ## Dates
 
@@ -109,6 +110,21 @@ Records and conventions carry a `last-verified` date. The `lint` skill flags any
 
 Records and conventions can be marked `archived: true` in frontmatter. Archived files are skipped by `hello`, `status`, and `lint` but still discoverable via `search`. Use the `archive` skill to set the flag. Remove it to restore.
 
+## Record types
+
+`records/` holds two kinds of file, distinguished by `type`:
+
+| type | Is | Filed by | Needs `decided-by` |
+|---|---|---|---|
+| `decision` (default) | what the team **chose** | `propose` → `decide`, or `handoff` | Yes |
+| `note` | what the team **found** — a postmortem, a benchmark, a research finding | `note` | No |
+
+A record with no `type` is a decision. That keeps every existing record valid and means the common case stays unannotated.
+
+Both are immutable once filed, and both supersede the same way. The difference is that a note has no options, no attribution and no decision to make — forcing a finding through the decision template produces a record that lies about how it came to exist.
+
+**A running list that gets edited forever is neither.** An index, a backlog, a catalogue — anything appended to and revised — belongs in `conventions/`, which is living by design. Records are snapshots.
+
 ## Record immutability
 
 A record moves through three states:
@@ -121,7 +137,7 @@ A record moves through three states:
 
 `propose` opens a record, `decide` accepts it, a later `decide` supersedes it.
 
-A record with `status: active` is a snapshot of what was decided, by whom, on a date. **Once accepted, its body is not edited.** A decision you can quietly rewrite is not a decision record — it is a draft, and the audit trail (`git blame`, `git log`) becomes worthless.
+A record with `status: active` is a snapshot — of what was decided, by whom, on a date; or for a `note`, of what was found and how. **Once accepted, its body is not edited.** A decision you can quietly rewrite is not a decision record — it is a draft, and the audit trail (`git blame`, `git log`) becomes worthless.
 
 To correct or change a decision, file a **new** record and set `superseded-by` on the old one. Both stay in the vault. The chain is the history.
 
@@ -130,6 +146,8 @@ To correct or change a decision, file a **new** record and set `superseded-by` o
 - `last-verified` — bumped by the `update` skill
 - `status` / `superseded-by` — set when a record is replaced
 - `archived` — set by the `archive` skill
+
+**Moved link targets may be repointed.** If a file a record links to is renamed or moved, update the link. Immutability protects the record's *claims*, not its *pointers* — leaving a stale link makes the record wrong, which is the opposite of what the rule is for. The sentence around the link must not change.
 
 **The sole body exception** is the derived `## Related` block at the end of a record, which the `weave` skill owns. It is generated, never hand-written, and regenerable from scratch — delete it and `weave` rebuilds it identically. Nothing above that block is ever touched.
 

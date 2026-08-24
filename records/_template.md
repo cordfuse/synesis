@@ -1,5 +1,6 @@
 ---
 title:
+type: decision   # decision | note — omit for decision
 date:
 decided-by: []
 consulted: []

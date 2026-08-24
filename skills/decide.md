@@ -40,4 +40,5 @@ If a proposal exists but the decision went somewhere its options never covered, 
 - If the decision supersedes a prior record, set `status: superseded` and `superseded-by: {new-filename}` on the old record in the same commit.
 - Keep the conversation natural. The prompts above are content to collect, not a rigid form.
 - If the user provides the decision context in their message (e.g. "decide: we're using X because Y"), extract the info from the message rather than prompting for each field. Only ask follow-up questions for missing fields.
+- If nothing was actually chosen — a finding, a postmortem, a measurement — use `note` instead. Records that document what was learned do not need attribution or a decision.
 - If the question is still open and nobody has chosen yet, use `propose` instead — it files the question so the reasoning is captured while the options are still live.
