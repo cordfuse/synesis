@@ -73,11 +73,15 @@ The diff is written `upstream/main HEAD`, so the letters are **from the template
 If that mapping ever looks wrong, confirm it directly rather than guessing:
 
 ```sh
-git ls-tree -r --name-only upstream/main | sort > /tmp/up.txt
-git ls-tree -r --name-only HEAD | sort > /tmp/local.txt
-comm -23 /tmp/up.txt /tmp/local.txt   # upstream only  -> Behind
-comm -13 /tmp/up.txt /tmp/local.txt   # vault only     -> Ahead
+git ls-tree -r --name-only upstream/main
+git ls-tree -r --name-only HEAD
 ```
+
+Compare the two listings yourself: a path in the first and not the second is
+**Behind**, one in the second and not the first is **Ahead**. Do not pipe these
+through `sort`/`comm` into `/tmp` — that needs a shell grant beyond `Bash(git:*)`
+and writes scratch files outside the vault, for a comparison of a few dozen paths
+you can read directly.
 
 **2a. Discount expected drift.** The `upstream:` line in `PROTOCOL.md` frontmatter carries the version your vault was created at, so it lags behind the template as the protocol moves. That is expected and is not drift. A `PROTOCOL.md` whose only difference is that line is **in sync** — mention the version gap in one line, then move on. Compare with the line filtered out:
 
