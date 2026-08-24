@@ -68,7 +68,9 @@ synesis/
 
 ### Records
 
-Decisions, ADRs, and anything the team agreed on — *what* was decided, *why*, *who* decided, and *who* was consulted. Records are **append-only**: to change a decision you file a new one and mark the old `superseded-by`. Both stay, and the chain is the history.
+Decisions, ADRs, and anything the team agreed on — *what* was decided, *why*, *who* decided, and *who* was consulted.
+
+A record moves through the ADR lifecycle: **proposed → active → superseded**. `propose` opens the question while the options are still live; `decide` writes the answer into that same record and accepts it. Once accepted a record is **append-only** — to change the decision you file a new one and mark the old `superseded-by`. Both stay, and the chain is the history.
 
 ### People
 
@@ -106,8 +108,9 @@ Verbs are commands you give to the agent. Each verb maps to a skill file in `ski
 
 Skills are markdown files that define triggers and step-by-step instructions. See `skills/` for the full set.
 
-Two worth knowing about up front:
+Three worth knowing about up front:
 
+- **`propose`** — files the *question* rather than the answer, so the reasoning is captured while options are still on the table. Without it a decision only enters the vault once someone remembers to record it, reconstructed from memory. `hello` and `status` lead with whatever is still open.
 - **`weave`** — cross-links related records and conventions so the flat vault becomes a navigable graph
 - **`reconcile`** — diffs your vault's protocol files against this template and surfaces what drifted, one file at a time. Vaults are created with "Use this template", so there is no fork relationship and nothing to merge; reconcile is a file-level diff, never a history operation. Your own records and conventions are never in scope — only the protocol files you inherited.
 
