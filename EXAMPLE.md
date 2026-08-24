@@ -10,7 +10,7 @@ Everything below is real protocol behaviour — the verbs, the files, and what t
 
 ## Day 1 — Sarah creates the vault
 
-Sarah clicks **Use this template** on the framework repo, clones her team's new vault, opens it in her agent and types:
+Sarah signs in to GitHub, clicks **Use this template** on the framework repo (the button is hidden when signed out), clones her team's new vault, opens it in her agent and types:
 
 ```
 hello

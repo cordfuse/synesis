@@ -35,7 +35,7 @@ Synesis gives your team a shared vault of decisions, conventions, people profile
 
 ## Quick start
 
-1. Click **"Use this template"** to create your team's vault
+1. Click **"Use this template"** to create your team's vault — the button only appears when you're signed in to GitHub
 2. Clone it locally
 3. Open it in your AI coding agent (Claude Code, Codex, Copilot, OpenCode — all supported)
 4. Say `hello` — the agent reads the protocol and offers to onboard you
