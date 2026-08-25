@@ -21,7 +21,7 @@ When triggered, mark a record or convention as no longer active without deleting
 
 4. **Re-run `weave`.** Other files may still link to this one. Regenerating drops those links, since weave never links to archived files.
 
-5. **Commit.** Commit the flag and any weave changes together.
+5. **Commit and push.** Commit the flag and any weave changes together, then push. A vault change that stays local is invisible to the rest of the team.
 
 ## Effect
 

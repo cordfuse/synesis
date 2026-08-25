@@ -104,7 +104,7 @@ comparison does not need them.
 - **Drifted** — show what differs, then ask which direction wins. Never guess. A drifted `PROTOCOL.md` usually means the template gained a section you want and also lacks a local rule you need; the answer is often a merge by hand, not either whole file.
 - **Ahead** — surface only, never auto-resolve. Ask: promote it upstream, keep it local, or delete. **Ahead is the normal state for a vault that is dogfooding the protocol** — it is where new protocol features get proven before they go into the template. Do not treat it as an error.
 
-**5. Report and commit.** One commit per resolved file, following this vault's commit message convention. Never commit a resolution the user did not approve.
+**5. Report, commit and push.** One commit per resolved file, following this vault's commit message convention. Never commit a resolution the user did not approve. Push when the run finishes — a reconciled vault that never leaves the machine leaves every other clone still drifted.
 
 **6. Record the version synced to.** Write the upstream tag you reconciled against
 into `.synesis-version` at the repo root, and commit it. That file is what `hello`

@@ -23,7 +23,7 @@ When triggered, summarize what changed in the vault since the current user's las
    - **People changes** — new profiles, updated roles
    - **Skill changes** — new or modified agent capabilities
 
-5. **Update last-seen.** Set `last-seen` in the user's people profile to today's date. Commit the update.
+5. **Update last-seen.** Set `last-seen` in the user's people profile to today's date. Commit and push it — an unpushed `last-seen` leaves your next catchup on another machine diffing from the wrong baseline.
 
 ## Output
 

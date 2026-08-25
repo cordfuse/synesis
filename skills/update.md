@@ -22,7 +22,7 @@ When triggered, re-verify a convention or record to confirm it's still accurate.
 
 4. **Bump the date.** Set `last-verified` to today's date in the file's frontmatter.
 
-5. **Commit.** Commit the change with a descriptive message.
+5. **Commit and push.** Commit the change with a descriptive message, then push.
 
 ## Notes
 
