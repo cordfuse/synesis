@@ -138,14 +138,16 @@ The `wire` verb prints these, filled in with the vault's real absolute path and 
 
 ## Versioning
 
-Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v1.1**.
+Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v1.2**.
 
 - **Minor bump:** add/change a convention, new verb, new template
 - **Major bump:** breaking change to directory structure or PROTOCOL.md format
 
 Instances track upstream version: `upstream: <org>/synesis@v1.1` in their PROTOCOL.md frontmatter. That field is **provenance** — the version the vault was created at, and the repo `hello` derives its upstream remote from.
 
-What the vault last *synced to* is a different number, and lives in `.synesis-version` at the repo root. `reconcile` writes it at the end of a completed run; `hello` reads it, compares against the newest upstream tag, and appends one line when there is something newer. It is deliberately not frontmatter: `PROTOCOL.md` is in template scope, so a version written there would report as drift on every vault that is behind.
+What protocol a vault currently holds is `version:` in that same frontmatter. `hello` compares it against the newest upstream tag and appends one line when there is something newer.
+
+**Two numbers, not three.** The version lives in the file it describes, so pulling `PROTOCOL.md` updates it and nothing has to remember to write it separately. A vault behind the template shows `version:` as drifted, which is true rather than noise. The only duplication left is that a release tag has to be named the same number as the protocol it tags, and git gives no way around that.
 
 **Releases are tagged.** A tag-based signal only exists if someone tags — an untagged release leaves every vault reporting itself current while the template moves.
 
@@ -364,9 +366,10 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 - [x] Lint verb implementation (agent-native, no shell scripts)
 - [x] Add the `wire` verb (protocol v0.7). A vault was invisible to any session started outside its folder, and setup was manual, README-only, and written with example paths no machine matches — so it did not happen, and the result read as "Synesis does not do much" rather than "Synesis was never switched on". `wire` prints the config rather than applying it: the files involved load in every project on the machine, and printing is idempotent by definition — no marker to manage, no JSON to merge, no per-OS write path. Its own verb, not an `onboard` step, because wiring is per-machine and profiles are per-person.
 - [x] Ship a LICENSE (protocol v0.7). The README had claimed MIT since the first commit and no LICENSE file existed, so GitHub detected none. `reconcile` names it out of scope: copying it into a private vault puts this repo's copyright on the team's own records.
-- [x] Version nudge (protocol v0.8). A vault only learned it was behind when someone ran `reconcile` on a hunch. `hello` now reads `.synesis-version` against the newest upstream tag and says one line when there is something newer, bounded with git's own ssh and http options so a briefing never stalls on a fetch.
+- [x] Version nudge (protocol v0.8). A vault only learned it was behind when someone ran `reconcile` on a hunch. `hello` now reads the vault's protocol version against the newest upstream tag and says one line when there is something newer, bounded with git's own ssh and http options so a briefing never stalls on a fetch.
 - [x] Narrow the shell grant (protocol v0.8). The template shipped `Bash(*)` — unrestricted shell, pre-approved for anyone who opens a vault, inherited rather than chosen. Every skill shells out to git and nothing else. Narrowing it to `Bash(git:*)` surfaced three skills that quietly depended on `sort`, `comm`, `diff` and `sed`; all now use git-only equivalents.
 - [x] Rework the record lifecycle (protocol v1.0). `status` was answering two independent questions with one field — what did we decide, and is it still current — and there was no way to record a no. A rejection had to be left `proposed` (reported forever as open litter), decided to `active` with a body saying no (frontmatter announcing the opposite of what happened), or archived (which means nobody ever answered). `status` now records only the answer; supersession is the `superseded-by` pointer alone; `active` becomes `accepted`; notes carry no `status`. Ported from a downstream vault where two proposals sat open 168 and 133 days for want of a way to say no.
+- [x] Collapse the version bookkeeping (protocol v1.2). Three numbers had to be kept in step by hand — `PROTOCOL.md` frontmatter, a `.synesis-version` dotfile, and the release tag — and the dotfile could silently disagree with both. It is deleted: `version:` travels with the file it describes, so pulling `PROTOCOL.md` updates it and nothing has to remember. One duplication remains, between the protocol version and the tag naming it, which git offers no way around.
 - [ ] Onboarding flow testing with a real new developer
 - [ ] Documentation site (if warranted)
 
@@ -380,4 +383,4 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 *Filed: 2026-08-22*
 *Updated: 2026-08-25*
 *Name: Synesis*
-*Status: Phase 3 substantially complete — five harnesses tested, cortex feature port shipped, every verb executed against the dogfood vault, `wire` and the version nudge shipped, the shell grant narrowed to git, and the record lifecycle reworked into orthogonal fields. Protocol v1.1. v1.0 was the first stable release; v1.1 corrects the branded docs to match it. Remaining: onboarding flow with a real new developer, then announce.*
+*Status: Phase 3 substantially complete — five harnesses tested, cortex feature port shipped, every verb executed against the dogfood vault, `wire` and the version nudge shipped, the shell grant narrowed to git, and the record lifecycle reworked into orthogonal fields. Protocol v1.2. v1.0 was the first stable release; v1.1 corrected the branded docs; v1.2 collapsed the version bookkeeping to one number. Remaining: onboarding flow with a real new developer, then announce.*

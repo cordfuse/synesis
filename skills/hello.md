@@ -84,8 +84,11 @@ Part of vault status. **It must never block, prompt, or fail the briefing.** A
 briefing that stalls on a network call is worse than one that never mentions
 versions.
 
-1. **Read `.synesis-version`** at the repo root — the framework version this vault
-   last synced to. Missing means never synced: treat the vault as behind and nudge.
+1. **Read `version:` from `PROTOCOL.md` frontmatter** — the protocol this vault
+   currently holds. It travels with the file it describes: when `reconcile` pulls
+   `PROTOCOL.md`, the number comes with it, so it cannot drift from the protocol
+   actually in the vault. If the field is missing, say nothing — a vault with no
+   version is not a vault this check can reason about.
 
 2. **Ensure an `upstream` remote exists.** Vaults are created with "Use this
    template", so a fresh clone has none — remotes are per-clone and do not travel
@@ -123,7 +126,7 @@ versions.
    would permit `timeout 1 <anything>`, which is arbitrary command execution wearing
    a wrapper — a far wider grant than the one it was meant to support.
 
-4. **Compare the newest tag against `.synesis-version`.** If it is newer, append one
+4. **Compare the newest tag against that version.** If the tag is newer, append one
    line to vault status:
 
    > Protocol v0.7 available upstream — say `reconcile` to review the changes.

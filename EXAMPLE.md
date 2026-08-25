@@ -355,7 +355,7 @@ with one extra line in vault status:
 
 > Protocol v1.2 available upstream — say `reconcile` to review the changes.
 
-That line comes from comparing `.synesis-version` against the newest upstream tag.
+That line comes from comparing the `version:` in your own `PROTOCOL.md` against the newest upstream tag.
 If the check cannot run — no network, no remote, no tags — it says nothing rather
 than holding up the briefing.
 
@@ -376,7 +376,7 @@ reconcile
 
 Every file is gated one at a time. Your records, conventions and people are never in scope — reconcile only ever looks at the protocol files you inherited. Neither is the template's `LICENSE`: this repo is public and MIT, your vault is probably neither, and copying it would put someone else's copyright on your team's decisions.
 
-When the run finishes, reconcile writes the version it synced to into `.synesis-version`, which is what silences the nudge until the template moves again.
+Pulling `PROTOCOL.md` brings its `version:` with it, which is what silences the nudge until the template moves again. There is no separate version file to keep in step.
 
 ---
 

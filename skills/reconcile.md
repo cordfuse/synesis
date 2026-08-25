@@ -27,11 +27,9 @@ Only these paths are compared. Everything else is vault-local and is **never** t
 | `*/_template.md` | frontmatter shapes |
 | `AGENTS.md` | agent entry point |
 
-Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments/`, `tools/`, `README.md`, `CLAUDE.md`, `LICENSE`, `.synesis-version`, `PLAN.md`, `EXAMPLE.md`, and any other agent instruction file. That content is the team's, not the template's. `README.md` and `CLAUDE.md` are expected to diverge immediately and permanently — flagging them every run would train the user to ignore the report.
+Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments/`, `tools/`, `README.md`, `CLAUDE.md`, `LICENSE`, `PLAN.md`, `EXAMPLE.md`, and any other agent instruction file. That content is the team's, not the template's. `README.md` and `CLAUDE.md` are expected to diverge immediately and permanently — flagging them every run would train the user to ignore the report.
 
 `PLAN.md` and `EXAMPLE.md` are the template's own files and a vault should not be carrying them at all. `EXAMPLE.md` says to delete it once the team has its own history; `PLAN.md` is the framework's execution plan, not shipped knowledge. If your vault still has them, delete them rather than keeping them in sync.
-
-`.synesis-version` is operator state, not protocol — it records where *this* vault stands and is written by reconcile itself at the end of a run. Diffing it would report drift on every vault that is behind, which is the condition it exists to describe.
 
 `LICENSE` never comes down, and the reason is worth stating plainly: the template is a public MIT repo, and most vaults built from it are not. Copying its licence onto a private vault puts the template author's copyright line on the team's own conventions, decisions, people profiles and whatever else the vault holds, and offers all of it under MIT. If a vault needs a licence it writes its own.
 
@@ -106,16 +104,13 @@ comparison does not need them.
 
 **5. Report, commit and push.** One commit per resolved file, following this vault's commit message convention. Never commit a resolution the user did not approve. Push when the run finishes — a reconciled vault that never leaves the machine leaves every other clone still drifted.
 
-**6. Record the version synced to.** Write the upstream tag you reconciled against
-into `.synesis-version` at the repo root, and commit it. That file is what `hello`
-reads to decide whether to nudge, and nothing else writes it — if reconcile skips
-this, every future briefing reports the vault as behind when it is not.
+**6. Nothing else to record.** Pulling `PROTOCOL.md` updates the vault's `version:`
+by itself, and that is what `hello` reads to decide whether to nudge. There is no
+separate version file to write — a number kept in two places is a number free to
+disagree with itself.
 
-Only write it when the run actually finished. A reconcile the user abandoned
-halfway has not synced to anything.
-
-`.synesis-version` is tracked, not ignored. Committing it is how other clones and
-other machines know where the vault stands.
+A vault that skips `PROTOCOL.md` during a run keeps nudging afterwards. That is
+correct: it is not fully synced.
 
 ## Notes
 
