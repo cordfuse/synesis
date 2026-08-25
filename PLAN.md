@@ -138,12 +138,12 @@ The `wire` verb prints these, filled in with the vault's real absolute path and 
 
 ## Versioning
 
-Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v0.8**.
+Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v1.0**.
 
 - **Minor bump:** add/change a convention, new verb, new template
 - **Major bump:** breaking change to directory structure or PROTOCOL.md format
 
-Instances track upstream version: `upstream: <org>/synesis@v0.8` in their PROTOCOL.md frontmatter. That field is **provenance** — the version the vault was created at, and the repo `hello` derives its upstream remote from.
+Instances track upstream version: `upstream: <org>/synesis@v1.0` in their PROTOCOL.md frontmatter. That field is **provenance** — the version the vault was created at, and the repo `hello` derives its upstream remote from.
 
 What the vault last *synced to* is a different number, and lives in `.synesis-version` at the repo root. `reconcile` writes it at the end of a completed run; `hello` reads it, compares against the newest upstream tag, and appends one line when there is something newer. It is deliberately not frontmatter: `PROTOCOL.md` is in template scope, so a version written there would report as drift on every vault that is behind.
 
@@ -202,7 +202,7 @@ Agent: Got it. I've created your profile and pushed it.
 `skills/` folder with flat markdown files — one per skill. Each skill defines its own triggers and instructions. No actor wrapper layer. The agent reads skill files to know what it can do and when to activate.
 
 ### 4. Decision log with attribution
-Records include who decided, who was consulted, and why. Prevents relitigating settled decisions. Records can be marked `superseded` and linked to their replacement via `superseded-by`.
+Records include who decided, who was consulted, and why. Prevents relitigating settled decisions. Records are pointed at their replacement via `superseded-by`; supersession is that pointer, never a status.
 
 ### 5. Knowledge freshness
 Each record carries a `last-verified` date in frontmatter. The `lint` skill flags records older than N days (configurable in PROTOCOL.md) as stale. No automated deletion — just visibility.
@@ -224,8 +224,8 @@ No PR gate. Commit directly to synesis. Trust the team. Git blame + git log = fu
 **`PROTOCOL.md`**
 ```yaml
 ---
-version: 0.8
-upstream: <org>/synesis@v0.8
+version: 1.0
+upstream: <org>/synesis@v1.0
 stale-days: 90
 ---
 ```
@@ -250,15 +250,17 @@ decided-by: [SC, MK]
 consulted: [JL]
 last-verified: 2026-08-18
 type: decision          # decision | note — omit for decision
-status: active          # proposed | active | superseded
-superseded-by:
+status: accepted        # decisions only — proposed | accepted | rejected. Omit on a note.
+superseded-by:          # set when a later record replaces this one; status stays as it was
 tags: [auth, architecture]
 archived: true          # optional; set by the archive verb
 ---
 ```
 `type` is `decision` (the default, omitted in practice) or `note`. A note records what was found rather than what was chosen — a postmortem, a benchmark, a research result — and carries no `decided-by`, which lint check 3 skips for it. A running list that is edited forever is neither, and belongs in `conventions/`.
 
-`status` is `proposed`, `active` or `superseded` — the ADR lifecycle. `propose` opens a record as `proposed` with the Decision section empty; `decide` writes the decision and flips it to `active`; a later `decide` supersedes it. A `proposed` record is mutable while the question is open; immutability applies from acceptance onward. When superseded, `superseded-by` links to the replacement record filename. The lint skill validates that `superseded-by` targets an existing file. `tags` enable Obsidian filtering and agent search. `archived` is optional and set by the `archive` verb — archived files drop out of `hello`, `status`, `lint` and `weave`, but stay findable by `search`, which labels them.
+`status` is `proposed`, `accepted` or `rejected`, and records only **what was decided**. `propose` opens a record as `proposed` with the Decision section empty; `decide` writes the answer and flips it to `accepted` or `rejected`. A no is a decision and stays visible — archiving is for questions nobody ever answered. Notes carry **no `status` field at all**: nothing was proposed and nothing was accepted.
+
+Whether a record is still **current** is a separate question, answered by `superseded-by` alone. A record carrying that pointer has been replaced; its `status` does not change, because what the team decided then is still what it decided. There is no `superseded` status — it duplicated the pointer, the two could disagree, and it made a reversed rejection inexpressible. A `proposed` record is mutable while the question is open; immutability applies from the moment `decide` answers it, yes or no. The lint skill validates that `superseded-by` targets an existing file. `tags` enable Obsidian filtering and agent search. `archived` is optional and set by the `archive` verb — archived files drop out of `hello`, `status`, `lint` and `weave`, but stay findable by `search`, which labels them.
 
 **Records are append-only** — the body is never edited after filing. Correct a decision by filing a replacement and setting `superseded-by` on the old one. Frontmatter fields above are still maintained in place; that is not a violation.
 
@@ -309,6 +311,8 @@ The `lint` skill scans the repo for hygiene issues. No automated fixes — it re
 6. **Unanswered proposals** — records with `status: proposed` older than `stale-days`. An open question nobody revisits is litter; resolve with `decide` or `archive` it.
 7. **Weave block integrity** — non-reciprocal links, unpaired or duplicated `weave:start`/`weave:end` markers, empty weave blocks, `## Related` headings without markers
 8. **Vault references in template files** — `[[wikilinks]]` in `PROTOCOL.md`, `AGENTS.md`, `skills/*.md` or `*/_template.md` that resolve to a real file in this vault. Inverts check 2: template files must use placeholders that resolve nowhere, since they ship to vaults that have none of this content. Scans inside code blocks too — that is where these get written.
+
+9. **Lifecycle field integrity** — six invariants over `status` and `superseded-by`: no `status: superseded` or `status: active` anywhere (both removed at v1.0, so either is migration residue), notes carry no `status`, decisions carry only `proposed`/`accepted`/`rejected`, a `proposed` record has neither `decided-by` nor `superseded-by`, and an answered record has a decider whether the answer was yes or no
 
 Checks stay agent-native: the skill is prose the agent executes, not a script. No runtime, nothing to install.
 
@@ -362,6 +366,7 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 - [x] Ship a LICENSE (protocol v0.7). The README had claimed MIT since the first commit and no LICENSE file existed, so GitHub detected none. `reconcile` names it out of scope: copying it into a private vault puts this repo's copyright on the team's own records.
 - [x] Version nudge (protocol v0.8). A vault only learned it was behind when someone ran `reconcile` on a hunch. `hello` now reads `.synesis-version` against the newest upstream tag and says one line when there is something newer, bounded with git's own ssh and http options so a briefing never stalls on a fetch.
 - [x] Narrow the shell grant (protocol v0.8). The template shipped `Bash(*)` — unrestricted shell, pre-approved for anyone who opens a vault, inherited rather than chosen. Every skill shells out to git and nothing else. Narrowing it to `Bash(git:*)` surfaced three skills that quietly depended on `sort`, `comm`, `diff` and `sed`; all now use git-only equivalents.
+- [x] Rework the record lifecycle (protocol v1.0). `status` was answering two independent questions with one field — what did we decide, and is it still current — and there was no way to record a no. A rejection had to be left `proposed` (reported forever as open litter), decided to `active` with a body saying no (frontmatter announcing the opposite of what happened), or archived (which means nobody ever answered). `status` now records only the answer; supersession is the `superseded-by` pointer alone; `active` becomes `accepted`; notes carry no `status`. Ported from a downstream vault where two proposals sat open 168 and 133 days for want of a way to say no.
 - [ ] Onboarding flow testing with a real new developer
 - [ ] Documentation site (if warranted)
 
@@ -373,6 +378,6 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 ---
 
 *Filed: 2026-08-22*
-*Updated: 2026-08-24*
+*Updated: 2026-08-25*
 *Name: Synesis*
-*Status: Phase 3 substantially complete — five harnesses tested, cortex feature port shipped, every verb executed against the dogfood vault, `wire` and the version nudge shipped, the shell grant narrowed to git. Protocol v0.8. Remaining: onboarding flow with a real new developer, then announce.*
+*Status: Phase 3 substantially complete — five harnesses tested, cortex feature port shipped, every verb executed against the dogfood vault, `wire` and the version nudge shipped, the shell grant narrowed to git, and the record lifecycle reworked into orthogonal fields. Protocol v1.0, the first stable release. Remaining: onboarding flow with a real new developer, then announce.*

@@ -75,7 +75,9 @@ Decisions, ADRs, and anything the team agreed on — *what* was decided, *why*, 
 
 Records come in two kinds. A **decision** is what the team chose; a **note** is what the team found — a postmortem, a benchmark, a research result, the conclusion of a long debugging session. Notes carry no attribution, because nobody decided anything, and `lint` does not ask them for any. A record with no `type` is a decision, so the common case stays unannotated.
 
-A decision moves through the ADR lifecycle: **proposed → active → superseded**. `propose` opens the question while the options are still live; `decide` writes the answer into that same record and accepts it. Once accepted a record is **append-only** — to change the decision you file a new one and mark the old `superseded-by`. Both stay, and the chain is the history.
+A decision moves through the ADR lifecycle: **proposed → accepted**, or **proposed → rejected**. `propose` opens the question while the options are still live; `decide` writes the answer into that same record either way. A rejection is a decision and stays visible — its whole value is stopping the same idea returning in six months.
+
+`status` records only *what was decided*. Whether a record is still current is a separate question, answered by `superseded-by` alone. Once answered a record is **append-only** — to change the decision you file a new one and point the old at it, leaving its `status` as it was. Both stay, and the chain is the history. That separation is what lets a rejection later reversed stay `rejected` and gain a pointer.
 
 ### People
 

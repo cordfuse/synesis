@@ -143,7 +143,7 @@ The agent finds the open proposal covering this question and **resolves it in pl
 
 > Who else was in on this, and who did you consult? And what killed Auth0 and Supabase — I'd rather record the reasoning than just the winner.
 
-Sarah answers in two sentences. The agent writes `## Decision` and `## Consequences` into the record that already existed, sets `decided-by`, and flips `status` from `proposed` to `active`. The question and its answer live in one file, and `git log` shows one becoming the other:
+Sarah answers in two sentences. The agent writes `## Decision` and `## Consequences` into the record that already existed, sets `decided-by`, and flips `status` from `proposed` to `accepted`. The question and its answer live in one file, and `git log` shows one becoming the other:
 
 ```markdown
 ---
@@ -152,7 +152,7 @@ date: 2026-08-20          # opened
 decided-by: [SC, MK]
 consulted: [JL]
 last-verified: 2026-08-22  # accepted
-status: active
+status: accepted
 superseded-by:
 tags: [auth, architecture]
 ---
@@ -221,7 +221,7 @@ Run it twice in a row and the second run changes nothing.
 Mike clones the vault and types `hello`. No profile matches his email, so he gets the same interview Sarah did — and then a briefing that now has content:
 
 > **Team** — 2 people. Sarah Chen (Frontend, owns auth UI), you.
-> **Recent decisions** — Auth provider decision (2026-08-20, SC/MK, active).
+> **Recent decisions** — Auth provider decision (2026-08-20, SC/MK, accepted).
 > **Active conventions** — Git branching strategy.
 
 He didn't read an onboarding doc. Nobody wrote one. The vault was the onboarding doc.
@@ -271,6 +271,35 @@ Then it stamps `last-seen` to today. That field belongs to `catchup` alone — `
 
 ---
 
+## Day 20 — saying no
+
+Mike proposes moving the team to a monorepo. It gets discussed for a week and the
+answer is no — the deploy tooling assumes separate repos and nobody wants to
+rewrite it this quarter.
+
+```
+decide: no to the monorepo, the deploy pipeline assumes separate repos
+```
+
+The agent resolves the proposal that already exists. Same file, same fields,
+`## Decision` explaining what was turned down and why — and `status: rejected`:
+
+```yaml
+title: Monorepo migration
+decided-by: [SC, MK]
+status: rejected
+```
+
+**A no is a decision, and it stays visible.** It is not archived. In February
+someone will suggest a monorepo again, `search` will find this record, and the
+reasoning will be right there with the names of the people who weighed it.
+
+Archiving is the other thing entirely: it is for a question nobody ever answered
+and nobody intends to. Using it to record a no hides the answer exactly where the
+next person goes looking.
+
+---
+
 ## Day 30 — the decision changes
 
 Clerk didn't work out. Records are **append-only**, so nobody edits the old one:
@@ -279,12 +308,13 @@ Clerk didn't work out. Records are **append-only**, so nobody edits the old one:
 decide: moving off Clerk to Supabase Auth, the pricing changed
 ```
 
-The agent files a new record for the reversal, then — without being asked, because the protocol requires it — sets two fields on the old one:
+The agent files a new record for the reversal, then — without being asked, because the protocol requires it — sets one field on the old one:
 
 ```yaml
-status: superseded
 superseded-by: records/2026-09-16-auth-provider-revisit
 ```
+
+`status` stays `accepted`. What the team decided in August has not changed; only whether it is still current, and that is what the pointer says. There is no `superseded` status — it was removed precisely because it duplicated the pointer and the two could disagree.
 
 The original stays exactly as written. Both records live in the vault, and the chain shows what the team believed in August and what changed in September. `search` finds both and points from the old one to its replacement.
 
@@ -323,7 +353,7 @@ That sets `archived: true`, then re-runs `weave` so nothing still links to it. I
 Synesis ships a new protocol version. Nobody has to notice — the next `hello` ends
 with one extra line in vault status:
 
-> Protocol v0.9 available upstream — say `reconcile` to review the changes.
+> Protocol v1.1 available upstream — say `reconcile` to review the changes.
 
 That line comes from comparing `.synesis-version` against the newest upstream tag.
 If the check cannot run — no network, no remote, no tags — it says nothing rather
@@ -356,7 +386,7 @@ When the run finishes, reconcile writes the version it synced to into `.synesis-
 |---|---|
 | `hello` | briefing, or onboarding if you're new |
 | `propose` | open a question that needs deciding |
-| `decide` | resolve a proposal, or file a decision directly |
+| `decide` | resolve a proposal — yes or no — or file a decision directly |
 | `note` | record what the team found, with no decision attached |
 | `convention` | write down how the team does something |
 | `weave` | link related files into a navigable graph |
