@@ -12,11 +12,28 @@ When triggered, identify the current user and deliver a team briefing.
 
 ## Steps
 
-1. **Identify the user.** Read `git config user.name` and `git config user.email`. Check `people/` for a profile where `email` matches.
+1. **Check whether the vault is behind its own remote.** A briefing built on stale files reports the team's state as it was, not as it is.
 
-2. **If no profile exists:** Trigger the `onboard` skill instead. Do not continue with the briefing.
+   ```sh
+   git -c core.sshCommand="ssh -o ConnectTimeout=5 -o BatchMode=yes" \
+       -c credential.helper= \
+       -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=5 \
+       fetch --quiet origin
+   git rev-list --count HEAD..origin/main
+   ```
 
-3. **If a profile exists:** Deliver the briefing below.
+   If the count is above zero, say how many commits behind and suggest `sync`
+   before continuing. **Do not pull, commit or push** — this step reads.
+
+   Bounded for the same reason the version check is: an unreachable host hangs and
+   a credential prompt hangs worse. If the fetch fails or times out, continue with
+   the briefing silently. Being unable to check is not worth blocking on.
+
+2. **Identify the user.** Read `git config user.name` and `git config user.email`. Check `people/` for a profile where `email` matches.
+
+3. **If no profile exists:** Trigger the `onboard` skill instead. Do not continue with the briefing.
+
+4. **If a profile exists:** Deliver the briefing below.
 
 **Do not touch `last-seen`.** It is owned by `catchup`, which uses it to work out what changed since you last asked. Overwriting it here silently destroys that baseline — `hello` followed by `catchup` would report no changes no matter how much had happened.
 
