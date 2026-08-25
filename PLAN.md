@@ -138,12 +138,12 @@ The `wire` verb prints these, filled in with the vault's real absolute path and 
 
 ## Versioning
 
-Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v1.0**.
+Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v1.1**.
 
 - **Minor bump:** add/change a convention, new verb, new template
 - **Major bump:** breaking change to directory structure or PROTOCOL.md format
 
-Instances track upstream version: `upstream: <org>/synesis@v1.0` in their PROTOCOL.md frontmatter. That field is **provenance** — the version the vault was created at, and the repo `hello` derives its upstream remote from.
+Instances track upstream version: `upstream: <org>/synesis@v1.1` in their PROTOCOL.md frontmatter. That field is **provenance** — the version the vault was created at, and the repo `hello` derives its upstream remote from.
 
 What the vault last *synced to* is a different number, and lives in `.synesis-version` at the repo root. `reconcile` writes it at the end of a completed run; `hello` reads it, compares against the newest upstream tag, and appends one line when there is something newer. It is deliberately not frontmatter: `PROTOCOL.md` is in template scope, so a version written there would report as drift on every vault that is behind.
 
@@ -224,8 +224,8 @@ No PR gate. Commit directly to synesis. Trust the team. Git blame + git log = fu
 **`PROTOCOL.md`**
 ```yaml
 ---
-version: 1.0
-upstream: <org>/synesis@v1.0
+version: 1.1
+upstream: <org>/synesis@v1.1
 stale-days: 90
 ---
 ```
@@ -380,4 +380,4 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 *Filed: 2026-08-22*
 *Updated: 2026-08-25*
 *Name: Synesis*
-*Status: Phase 3 substantially complete — five harnesses tested, cortex feature port shipped, every verb executed against the dogfood vault, `wire` and the version nudge shipped, the shell grant narrowed to git, and the record lifecycle reworked into orthogonal fields. Protocol v1.0, the first stable release. Remaining: onboarding flow with a real new developer, then announce.*
+*Status: Phase 3 substantially complete — five harnesses tested, cortex feature port shipped, every verb executed against the dogfood vault, `wire` and the version nudge shipped, the shell grant narrowed to git, and the record lifecycle reworked into orthogonal fields. Protocol v1.1. v1.0 was the first stable release; v1.1 corrects the branded docs to match it. Remaining: onboarding flow with a real new developer, then announce.*

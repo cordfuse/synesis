@@ -353,7 +353,7 @@ That sets `archived: true`, then re-runs `weave` so nothing still links to it. I
 Synesis ships a new protocol version. Nobody has to notice — the next `hello` ends
 with one extra line in vault status:
 
-> Protocol v1.1 available upstream — say `reconcile` to review the changes.
+> Protocol v1.2 available upstream — say `reconcile` to review the changes.
 
 That line comes from comparing `.synesis-version` against the newest upstream tag.
 If the check cannot run — no network, no remote, no tags — it says nothing rather
