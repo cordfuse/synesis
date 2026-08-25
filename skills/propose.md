@@ -15,7 +15,11 @@ When triggered, file the **question** — not the answer. A proposed record capt
 The front half of the lifecycle: `propose` opens it, `decide` closes it.
 
 ```
-propose  ──►  status: proposed  ──►  decide  ──►  status: active  ──►  superseded
+                                                  ┌──►  status: accepted
+propose  ──►  status: proposed  ──►  decide  ──►  │
+                                                  └──►  status: rejected
+
+either one may later gain a superseded-by pointer; the status does not change
 ```
 
 ## Why this exists
@@ -54,8 +58,11 @@ This is the one exception to record immutability, and it is bounded: the moment 
 
 ## Closing it
 
-- **Decided** — run `decide`. It writes the Decision and Consequences, sets `decided-by`, and flips `status` to `active`.
-- **Dropped** — the question stopped mattering, or answered itself. Run `archive`. Do not delete it: a question the team chose not to answer is knowledge, and someone will raise it again.
+- **Answered yes** — run `decide`. It writes the Decision and Consequences, sets `decided-by`, and flips `status` to `accepted`.
+- **Answered no** — run `decide`. Same file, same fields, `status: rejected`. The record stays visible; that is the point of it.
+- **Dropped** — the question stopped mattering, or answered itself, and nobody ever answered it. Run `archive`. Do not delete it: a question the team chose not to answer is knowledge, and someone will raise it again.
+
+The difference between the last two matters. `rejected` means *we said no*. Archived-and-still-`proposed` means *we never said anything and stopped caring*. Do not use `archive` to record a decision.
 
 ## Notes
 

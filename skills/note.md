@@ -46,13 +46,14 @@ When triggered, file a **note** — a dated record of something learned, observe
    decided-by: []        # empty — nothing was decided
    consulted: []
    last-verified: YYYY-MM-DD
-   status: active
-   superseded-by:
+   superseded-by:        # set only when a later note corrects this one
    tags: [...]
    ---
    ```
 
-   `type: note` is what distinguishes it. Without that field a record is a decision, and `lint` will flag it for having no `decided-by`.
+   **A note carries no `status` field.** Nothing was proposed and nothing was accepted, so there is no answer to record. Whether the finding still stands is answered by `superseded-by` alone.
+
+   `type: note` is what distinguishes it. Without that field a record is a decision, and `lint` will flag it for having no `decided-by` and no `status`.
 
    Structure the body around the finding rather than the decision template: what was observed, how it was established, what follows from it. Do not force it into Context / Options / Decision / Consequences — there were no options.
 
@@ -65,5 +66,5 @@ When triggered, file a **note** — a dated record of something learned, observe
 ## Notes
 
 - Notes are **immutable once filed**, exactly like accepted decisions. A finding that turns out to be wrong is corrected by filing a new note and setting `superseded-by` on the old one — the wrong finding stays, because someone will otherwise redo the work and reach the same wrong answer.
-- Notes carry no `decided-by`, and `lint` does not ask for one.
+- Notes carry no `decided-by` and no `status`, and `lint` asks for neither. A note with a `status` field is a lint error, not a harmless extra.
 - `hello` and `status` lead with decisions and open questions. Notes surface through `search` and through the links `weave` builds — they are reference material, not headlines.

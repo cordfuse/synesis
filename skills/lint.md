@@ -27,7 +27,9 @@ Scan all markdown files for `[[wikilinks]]` in body text (not inside code blocks
 ### 3. Missing attribution
 Scan `records/` for files missing the `decided-by` frontmatter field (empty array or absent). Report each unattributed record.
 
-**Decisions only.** Skip records with `type: note` — a note records what was found, not what was chosen, so it has nobody to attribute. Also skip `status: proposed`: an open question has not been decided yet, and `decided-by` is filled in when `decide` accepts it.
+**Decisions only.** Skip records with `type: note` — a note records what was found, not what was chosen, so it has nobody to attribute. Also skip `status: proposed`: an open question has not been decided yet, and `decided-by` is filled in when `decide` answers it.
+
+**`rejected` records are not skipped.** A no is a decision and has a decider. An unattributed rejection is the same defect as an unattributed acceptance.
 
 ### 4. Orphaned profiles
 Scan `people/` profiles and check each `email` field against recent git authors (`git log --format='%ae' --since='6 months ago'`). Report profiles where the email doesn't appear in recent git history. Dedupe the author list yourself rather than piping through `sort -u` — a pipe falls outside the vault's `Bash(git:*)` grant and would prompt mid-lint.
@@ -41,7 +43,9 @@ Check the derived `## Related` blocks in `records/` and `conventions/` (see Reco
 ### 7. Unanswered proposals
 Records with `status: proposed` whose `date` is older than `stale-days`. Report each with its age and who is listed in `consulted`.
 
-An open question is only useful while someone is still looking at it. Past the threshold it is either forgotten — resolve it with `decide` — or it stopped mattering, in which case `archive` it. A proposal that has been open for a year is not an open question; it is litter.
+An open question is only useful while someone is still looking at it. Past the threshold it is either still live — answer it with `decide`, yes or no — or it stopped mattering, in which case `archive` it. A proposal that has been open for a year is not an open question; it is litter.
+
+**Do not suggest `archive` for a question the team actually turned down.** That is `decide` with `status: rejected`, and it stays visible. Archiving is for questions nobody ever answered.
 
 Report as: `records/2026-08-20-cache-strategy.md — proposed 118 days ago, consulted [MK]`.
 
@@ -58,6 +62,23 @@ Flag any such link **that resolves to a file in this vault**. The logic inverts 
 Report as: `skills/weave.md — [[records/2026-08-22-decision]] resolves locally; template files need a placeholder`.
 
 Fix by replacing the link with a placeholder that names nothing real, or by rewriting the sentence to drop the link.
+
+### 9. Lifecycle field integrity
+
+`status` records what a decision answered. `superseded-by` records whether it is still current. They are independent, and each of these breaks that separation. Scan `records/` and report any violation:
+
+| # | Invariant | Why |
+|---|---|---|
+| 1 | `status: superseded` appears nowhere | Removed at v1.0 — supersession is a pointer, not a state. A file still carrying it predates the change |
+| 2 | `status: active` appears nowhere | Renamed to `accepted` at v1.0 |
+| 3 | `type: note` ⇒ no `status` field | Nothing was proposed and nothing was accepted |
+| 4 | decisions ⇒ `status` is one of `proposed`, `accepted`, `rejected` | No other value is valid |
+| 5 | `status: proposed` ⇒ empty `decided-by` **and** no `superseded-by` | A proposal is answered or archived, never superseded |
+| 6 | `status: accepted` or `rejected` ⇒ `decided-by` non-empty | A no has a decider too (this is check 3 restated for rejections) |
+
+Report as: `records/2026-08-20-cache-strategy.md — type: note carries status: accepted (invariant 3)`.
+
+Invariants 1 and 2 are migration residue: if either fires, a record was written against the old contract and needs converting, not patching.
 
 ## Output format
 

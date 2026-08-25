@@ -15,7 +15,7 @@ When triggered, report what's in flight and who's working on what.
 
 2. **Recent activity.** List the last 5-10 records by `date` (most recent first), skipping records with `archived: true`. For each: title, date, decided-by, status.
 
-3. **Active handoffs.** Find records whose **frontmatter `tags`** include `handoff` — not files that merely mention the word in body prose — and that are not `superseded` and not `archived: true`. For each: what's being handed off, from whom, to whom, and current state.
+3. **Active handoffs.** Find records whose **frontmatter `tags`** include `handoff` — not files that merely mention the word in body prose — and that carry no `superseded-by` pointer and no `archived: true`. For each: what's being handed off, from whom, to whom, and current state.
 
 4. **Ownership map.** Scan `people/` profiles and summarize the "Owns" section from each. Show who owns what areas.
 

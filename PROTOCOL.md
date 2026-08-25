@@ -1,6 +1,6 @@
 ---
-version: 0.8
-upstream: cordfuse/synesis@v0.8
+version: 1.0
+upstream: cordfuse/synesis@v1.0
 stale-days: 90
 ---
 
@@ -40,11 +40,11 @@ Every content file has YAML frontmatter. See `_template.md` files in each direct
 title: ...
 type: decision | note        # optional; decision if absent
 date: YYYY-MM-DD
-decided-by: [initials]       # decisions only
+decided-by: [initials]       # decisions only; required once accepted or rejected
 consulted: [initials]
 last-verified: YYYY-MM-DD
-status: proposed | active | superseded
-superseded-by: filename (when superseded)
+status: proposed | accepted | rejected   # decisions only; omit entirely on a note
+superseded-by: filename (when a later record replaces this one)
 tags: [...]
 ```
 
@@ -93,7 +93,7 @@ Precedence is not composition. Do not run both the parent's version and the vaul
 
 ## Versioning
 
-This protocol is at **v0.6**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
+This protocol is at **v1.0**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
 
 ## Dates
 
@@ -111,48 +111,53 @@ Records and conventions carry a `last-verified` date. The `lint` skill flags any
 
 Records and conventions can be marked `archived: true` in frontmatter. Archived files are skipped by `hello`, `status`, and `lint` but still discoverable via `search`. Use the `archive` skill to set the flag. Remove it to restore.
 
+**Archiving is not rejection.** An archived proposal is one that stopped mattering before anyone answered it. A `rejected` record is one the team deliberately turned down, and it stays visible — its whole value is stopping the same idea returning in six months. Never archive a proposal to record a no.
+
 ## Record types
 
 `records/` holds two kinds of file, distinguished by `type`:
 
-| type | Is | Filed by | Needs `decided-by` |
-|---|---|---|---|
-| `decision` (default) | what the team **chose** | `propose` → `decide`, or `handoff` | Yes |
-| `note` | what the team **found** — a postmortem, a benchmark, a research finding | `note` | No |
+| type | Is | Filed by | `decided-by` | `status` |
+|---|---|---|---|---|
+| `decision` (default) | what the team **chose** | `propose` → `decide`, or `handoff` | Yes | Yes |
+| `note` | what the team **found** — a postmortem, a benchmark, a research finding | `note` | No | **No field at all** |
 
 A record with no `type` is a decision. That keeps every existing record valid and means the common case stays unannotated.
 
-Both are immutable once filed, and both supersede the same way. The difference is that a note has no options, no attribution and no decision to make — forcing a finding through the decision template produces a record that lies about how it came to exist.
+Both are immutable once filed, and both supersede the same way. The difference is that a note has no options, no attribution, no decision to make and therefore no `status` — forcing a finding through the decision template produces a record that lies about how it came to exist.
 
 **A running list that gets edited forever is neither.** An index, a backlog, a catalogue — anything appended to and revised — belongs in `conventions/`, which is living by design. Records are snapshots.
 
 ## Record immutability
 
-A record moves through three states:
+A decision moves through three states, and `status` records only which one it reached:
 
 | status | Meaning | Mutable? |
 |---|---|---|
 | `proposed` | an open question — options on the table, nobody has chosen | **Yes** — that is the point |
-| `active` | decided | No |
-| `superseded` | replaced by a later record | No |
+| `accepted` | answered yes | No |
+| `rejected` | answered no | No |
 
-`propose` opens a record, `decide` accepts it, a later `decide` supersedes it.
+`propose` opens a record and `decide` answers it, either way. Notes carry no `status` at all — nothing was proposed and nothing was accepted.
 
-A record with `status: active` is a snapshot — of what was decided, by whom, on a date; or for a `note`, of what was found and how. **Once accepted, its body is not edited.** A decision you can quietly rewrite is not a decision record — it is a draft, and the audit trail (`git blame`, `git log`) becomes worthless.
+**Whether a record is still current is a separate question, and `superseded-by` answers it.** A record carrying that field has been replaced by a later one. Its `status` does not change, because what the team decided then is still what it decided. "Superseded" is derived from the pointer and never stored as a state — which is what lets a rejection that is later reversed stay `rejected` and gain a pointer, a pair one field could not express.
+
+A record with `status: accepted` or `status: rejected` is a snapshot — of what was decided, by whom, on a date; or for a `note`, of what was found and how. **Once accepted, its body is not edited.** A decision you can quietly rewrite is not a decision record — it is a draft, and the audit trail (`git blame`, `git log`) becomes worthless.
 
 To correct or change a decision, file a **new** record and set `superseded-by` on the old one. Both stay in the vault. The chain is the history.
 
 **Frontmatter is not body.** These fields are maintained in place, and doing so is not a violation:
 
 - `last-verified` — bumped by the `update` skill
-- `status` / `superseded-by` — set when a record is replaced
+- `status` — set by `decide` when a proposal is answered
+- `superseded-by` — set when a later record replaces this one
 - `archived` — set by the `archive` skill
 
 **Moved link targets may be repointed.** If a file a record links to is renamed or moved, update the link. Immutability protects the record's *claims*, not its *pointers* — leaving a stale link makes the record wrong, which is the opposite of what the rule is for. The sentence around the link must not change.
 
 **The sole body exception** is the derived `## Related` block at the end of a record, which the `weave` skill owns. It is generated, never hand-written, and regenerable from scratch — delete it and `weave` rebuilds it identically. Nothing above that block is ever touched.
 
-**This applies to accepted records only.** A `proposed` record is still being written — edit it freely until `decide` accepts it, at which point it freezes. Conventions are living documents — how the team works now, not what it decided then. Edit them in place and bump `last-verified`. People profiles are likewise living.
+**This applies to answered records only.** A `proposed` record is still being written — edit it freely until `decide` answers it, at which point it freezes, whether the answer was yes or no. Conventions are living documents — how the team works now, not what it decided then. Edit them in place and bump `last-verified`. People profiles are likewise living.
 
 ## Record linking (`weave`)
 
@@ -193,3 +198,5 @@ Tags are conventions, not enforcement — agents use them as guidance for what t
 ## Contributing
 
 No PR gate on this vault. Commit directly. Trust the team. Git blame + git log = full audit trail. The `lint` skill handles hygiene.
+
+**Every commit must be pushed immediately.** The vault is shared memory — a commit that stays local is invisible to the rest of the team and to agents running on other machines. Any skill that commits must push before it returns.

@@ -2,11 +2,11 @@
 title:
 type: decision   # decision | note — omit for decision
 date:
-decided-by: []
+decided-by: []          # decisions only — required once accepted or rejected
 consulted: []
 last-verified:
-status: active   # proposed | active | superseded
-superseded-by:
+status: accepted        # decisions only — proposed | accepted | rejected. Omit entirely on a note.
+superseded-by:          # set when a later record replaces this one; status stays as it was
 tags: []
 ---
 
@@ -20,7 +20,7 @@ tags: []
 
 ## Decision
 
-<!-- What did we decide and why? -->
+<!-- What did we decide and why? A rejection goes here too — say what was turned down and on what grounds. -->
 
 ## Consequences
 

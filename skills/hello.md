@@ -37,8 +37,8 @@ Greet the user by name, then cover these sections in order:
 ### Recent decisions
 - List the last 5-10 records by `date` in frontmatter (most recent first)
 - Skip records with `archived: true`
-- For each: title, date, decided-by, and status
-- If any are `superseded`, note the replacement
+- For each: title, date, decided-by, and status (`accepted` or `rejected`; notes carry none)
+- If any carry a `superseded-by` pointer, show them as superseded and name the replacement. "Superseded" is derived from that field, never from `status`
 
 ### Active conventions
 - List all files in `conventions/` (excluding `_template.md` and files with `archived: true`)

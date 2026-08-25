@@ -9,6 +9,8 @@ triggers:
 
 When triggered, mark a record or convention as no longer active without deleting it.
 
+**Archiving means it stopped mattering.** It is not how you record a decision. A proposal the team deliberately turned down goes through `decide` and becomes `status: rejected`, which stays visible — archiving it would hide the answer exactly where the next person would look for it. Archive a proposal only when nobody ever answered it and nobody intends to.
+
 ## Steps
 
 1. **Identify the target.** The user specifies a file by name or path (e.g. `archive conventions/old-deploy-process`).
