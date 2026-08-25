@@ -138,12 +138,12 @@ The `wire` verb prints these, filled in with the vault's real absolute path and 
 
 ## Versioning
 
-Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v1.2**.
+Major.minor in `PROTOCOL.md` frontmatter. Started at **v0.1**; currently **v1.3**.
 
 - **Minor bump:** add/change a convention, new verb, new template
 - **Major bump:** breaking change to directory structure or PROTOCOL.md format
 
-Instances track upstream version: `upstream: <org>/synesis@v1.1` in their PROTOCOL.md frontmatter. That field is **provenance** — the version the vault was created at, and the repo `hello` derives its upstream remote from.
+Vaults carry `upstream: <org>/synesis` in their PROTOCOL.md frontmatter — the repo alone. `hello` derives the upstream remote from it, which is the only thing about the relationship anything reads. It carries no version: a version there would have to be bumped at every release in the template (as the seed new vaults inherit) while staying frozen in a vault (as history), and one field with opposite rules on each side is how the last piece of duplication survived this long. What a vault started at is in its git history.
 
 What protocol a vault currently holds is `version:` in that same frontmatter. `hello` compares it against the newest upstream tag and appends one line when there is something newer.
 
@@ -226,8 +226,8 @@ No PR gate. Commit directly to synesis. Trust the team. Git blame + git log = fu
 **`PROTOCOL.md`**
 ```yaml
 ---
-version: 1.1
-upstream: <org>/synesis@v1.1
+version: 1.3
+upstream: <org>/synesis
 stale-days: 90
 ---
 ```
@@ -370,6 +370,7 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 - [x] Narrow the shell grant (protocol v0.8). The template shipped `Bash(*)` — unrestricted shell, pre-approved for anyone who opens a vault, inherited rather than chosen. Every skill shells out to git and nothing else. Narrowing it to `Bash(git:*)` surfaced three skills that quietly depended on `sort`, `comm`, `diff` and `sed`; all now use git-only equivalents.
 - [x] Rework the record lifecycle (protocol v1.0). `status` was answering two independent questions with one field — what did we decide, and is it still current — and there was no way to record a no. A rejection had to be left `proposed` (reported forever as open litter), decided to `active` with a body saying no (frontmatter announcing the opposite of what happened), or archived (which means nobody ever answered). `status` now records only the answer; supersession is the `superseded-by` pointer alone; `active` becomes `accepted`; notes carry no `status`. Ported from a downstream vault where two proposals sat open 168 and 133 days for want of a way to say no.
 - [x] Collapse the version bookkeeping (protocol v1.2). Three numbers had to be kept in step by hand — `PROTOCOL.md` frontmatter, a `.synesis-version` dotfile, and the release tag — and the dotfile could silently disagree with both. It is deleted: `version:` travels with the file it describes, so pulling `PROTOCOL.md` updates it and nothing has to remember. One duplication remains, between the protocol version and the tag naming it, which git offers no way around.
+- [x] Drop the version from `upstream:` (protocol v1.3). v1.2 left one field with opposite rules on each side: the template had to bump it at every release, since new vaults inherit it as their provenance seed, while a vault had to freeze it, since it records history. The repo is the only part anything reads — `hello` derives the remote from it — so the version is gone. Releasing is now one edit and a tag. It also removes reconcile step 2a entirely: with no expected difference in the line, `PROTOCOL.md` drift is simply drift.
 - [ ] Onboarding flow testing with a real new developer
 - [ ] Documentation site (if warranted)
 
@@ -383,4 +384,4 @@ Each verb maps 1:1 to a skill file in `skills/`. The agent discovers verbs by re
 *Filed: 2026-08-22*
 *Updated: 2026-08-25*
 *Name: Synesis*
-*Status: Phase 3 substantially complete — five harnesses tested, cortex feature port shipped, every verb executed against the dogfood vault, `wire` and the version nudge shipped, the shell grant narrowed to git, and the record lifecycle reworked into orthogonal fields. Protocol v1.2. v1.0 was the first stable release; v1.1 corrected the branded docs; v1.2 collapsed the version bookkeeping to one number. Remaining: onboarding flow with a real new developer, then announce.*
+*Status: Phase 3 substantially complete — five harnesses tested, cortex feature port shipped, every verb executed against the dogfood vault, `wire` and the version nudge shipped, the shell grant narrowed to git, and the record lifecycle reworked into orthogonal fields. Protocol v1.2. v1.0 was the first stable release; v1.1 corrected the branded docs; v1.2 collapsed the version bookkeeping to one number; v1.3 finished the job by dropping the version from `upstream:`. Remaining: onboarding flow with a real new developer, then announce.*

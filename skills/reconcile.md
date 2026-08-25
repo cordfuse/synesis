@@ -35,7 +35,7 @@ Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments
 
 ## Setup
 
-Your vault inherits an `upstream:` field in `PROTOCOL.md` frontmatter naming the template it came from and the protocol version it was created at. That is provenance, not configuration — nothing reads it automatically.
+Your vault inherits an `upstream:` field in `PROTOCOL.md` frontmatter naming the template repo it came from. That is the one thing about the relationship worth storing: `hello` derives the upstream remote from it. It carries no version — what protocol the vault holds is `version:`, and what it started with is in the vault's git history.
 
 What you do need is a remote. Vaults are created with GitHub's "Use this template", so there is **no fork relationship and no upstream remote by default**:
 
@@ -83,16 +83,7 @@ through `sort`/`comm` into `/tmp` — that needs a shell grant beyond `Bash(git:
 and writes scratch files outside the vault, for a comparison of a few dozen paths
 you can read directly.
 
-**2a. Discount expected drift.** The `upstream:` line in `PROTOCOL.md` frontmatter carries the version your vault was created at, so it lags behind the template as the protocol moves. That is expected and is not drift. A `PROTOCOL.md` whose only difference is that line is **in sync** — mention the version gap in one line, then move on. Compare with the line filtered out:
-
-```sh
-git show upstream/main:PROTOCOL.md
-```
-
-Read that against the local `PROTOCOL.md` and ignore the `upstream:` line in the
-comparison. Keep it to `git show` rather than piping through `diff`/`sed`: those
-fall outside the vault's `Bash(git:*)` grant, and a two-file frontmatter
-comparison does not need them.
+**2a. `PROTOCOL.md` drift is real drift.** There is no expected-difference line to discount. `upstream:` names only the repo, which does not change as the protocol moves, and `version:` differing means the vault genuinely holds an older protocol. Resolve it like any other drifted file.
 
 **3. Surface everything at once** before resolving anything. Counts per category, one line per file. The user sees the whole picture first, then decides.
 
@@ -115,6 +106,6 @@ correct: it is not fully synced.
 ## Notes
 
 - Run after any upstream version bump, and before promoting local protocol work into the template.
-- `PROTOCOL.md` frontmatter carries `upstream: <repo>@<version>` for awareness. Reconcile does not read or update it automatically — the version there is a label, not a lockfile.
+- `PROTOCOL.md` frontmatter carries `upstream: <repo>`. Reconcile never rewrites it: the repo a vault came from does not change, and a vault whose remote moved should have that edited by hand.
 - If the diff is empty, say so in one line. A clean reconcile is the common case and does not need a report.
 - **Parity means the protocol matches, not that every file matches.** A vault at parity still differs from the template in its README, its `tools/` index, its licence and all of its content — that is the design, not drift left unfinished. Restoring parity by hand, outside this skill, is where that distinction gets lost: work file by file against the scope table above, never by making the two trees identical.
