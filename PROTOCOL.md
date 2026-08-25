@@ -181,6 +181,16 @@ The block is derived content and carries a marker so it is never mistaken for au
 
 Links are conservative: a real relationship, not topical adjacency. `weave` covers `records/` and `conventions/`; it skips `people/` profiles, since every record carries `decided-by` and linking people would put the same profile in every block. Archived files are handled in both directions — nothing links to them, and any block they still carry is removed rather than left frozen. See `skills/weave.md` for the rules.
 
+## Working in this vault
+
+**Read files with your file tools, not through a shell.** Reading many files at once is still reading, and every harness has tools for it. Do not shell out to PowerShell, bash or anything else to read, list, grep or parse files here. Shell access in this vault is for `git` and nothing else — `.claude/settings.json` grants `Bash(git:*)` on purpose, and a skill that needs more than git is a skill that has gone wrong.
+
+**Run git plainly from the working directory** — `git config user.name`, `git log`, `git status`. Avoid the `git -C <path>` form: per-repo command approvals are matched on the command as written, so the `-C` form can be refused on machines where the plain form is allowed.
+
+**If something outside this repository cannot be read, say so and carry on.** A wiring check that hits a refused path is not a reason to retry it through a shell. Report what could not be confirmed and finish the briefing.
+
+**These rules are about this vault only.** A project repo has its own instructions, and shell scripting there is normal and unrestricted by anything written here. Nothing in this file governs how you work in someone else's repository.
+
 ## Scope boundary
 
 Conventions in this vault apply to **this vault only**. In a multi-root workspace, project repos have their own rules. Never apply vault conventions (branching, commit style, merge strategy) to a project repo unless that project's own instructions say to. Project repo instructions take precedence over this vault on any conflict.
