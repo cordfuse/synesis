@@ -117,9 +117,11 @@ four PowerShell pipelines reading frontmatter.
   invisible to sessions started outside this folder, and that reads as "this vault does
   not do much" when the truth is it was never switched on.
 - Whether any wiring has gone **stale** — one of those files naming a path that no
-  longer exists, or `trustedFolders` in `~/.copilot/config.json`,
+  longer exists, or a file-access key still pointing at a former vault:
+  `trustedFolders` in `~/.copilot/config.json`, `trustedWorkspaces` in
+  `~/.gemini/antigravity-cli/settings.json`,
   `permissions.additionalDirectories` in `~/.claude/settings.json`, or the
-  `[projects]` trust entry in `~/.codex/config.toml` still pointing at a former vault.
+  `[projects]` trust entry in `~/.codex/config.toml`.
   A missing Codex trust entry is worth reporting even when the skill is present: it
   makes the vault's own Codex config inert, so the wiring looks correct and prompts on
   every command. A renamed or moved vault leaves those behind and they fail silently.

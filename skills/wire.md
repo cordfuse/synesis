@@ -49,9 +49,9 @@ their call.
    | Harness | Present if | Instruction discovery | File access |
    |---|---|---|---|
    | Claude Code | `~/.claude/` | `~/.claude/CLAUDE.md` | `permissions.additionalDirectories` in `~/.claude/settings.json` |
-   | Antigravity | `~/.gemini/antigravity-cli/` | `~/.gemini/GEMINI.md` | `agy --add-dir <vault>` |
-   | Codex CLI | `~/.codex/` | `~/.codex/skills/<vault-name>/SKILL.md` | `codex --add-dir <vault>` |
-   | Copilot CLI | `~/.copilot/` | `~/.copilot/skills/<vault-name>/SKILL.md` | `copilot --add-dir <vault>` |
+   | Antigravity | `~/.gemini/antigravity-cli/` | `~/.gemini/GEMINI.md` | `trustedWorkspaces` in `~/.gemini/antigravity-cli/settings.json` |
+   | Codex CLI | `~/.codex/` | `~/.codex/skills/<vault-name>/SKILL.md` | none needed — reads outside the working directory by default |
+   | Copilot CLI | `~/.copilot/` | `~/.copilot/skills/<vault-name>/SKILL.md` | `trustedFolders` in `~/.copilot/config.json` |
    | OpenCode | `~/.config/opencode/` | `~/.config/opencode/skills/<vault-name>/SKILL.md` | `references` entry in `~/.config/opencode/opencode.json` |
 
    If none are present, say so in one line and show the Claude Code snippet as the
@@ -80,7 +80,8 @@ their call.
 
    - **Skills** — `SKILL.md` under `~/.codex/skills/<name>/`, `~/.copilot/skills/<name>/`
      and `~/.config/opencode/skills/<name>/`. Resolve the vault path each one names.
-   - **Harness config** — `trustedFolders` in `~/.copilot/config.json`,
+   - **Harness config** — `trustedFolders` in `~/.copilot/config.json`, `trustedWorkspaces` in
+     `~/.gemini/antigravity-cli/settings.json`,
      `permissions.additionalDirectories` in `~/.claude/settings.json`, and the
      `[projects.'<vault>']` trust entry in `~/.codex/config.toml`. A vault can be
      stale in one and current in the other.
@@ -149,11 +150,18 @@ their call.
    Both halves are required, and the failure without the second is silent: the
    session simply answers as if no vault existed.
 
-   **Antigravity** — the same text in `~/.gemini/GEMINI.md`, plus file access at launch:
+   **Antigravity** — the same text in `~/.gemini/GEMINI.md`, plus the vault's
+   absolute path in `trustedWorkspaces`:
 
+   ```json
+   {
+     "trustedWorkspaces": ["<VAULT>"]
+   }
    ```
-   agy --add-dir "<VAULT>"
-   ```
+
+   in `~/.gemini/antigravity-cli/settings.json` — merge, never overwrite. Note the
+   path: Antigravity's own settings live under `antigravity-cli/`, while
+   `~/.gemini/settings.json` belongs to Gemini CLI and is a different file.
 
    **Codex CLI** and **Copilot CLI** — a personal skill at
    `~/.codex/skills/<vault-name>/SKILL.md` or `~/.copilot/skills/<vault-name>/SKILL.md`:
@@ -180,34 +188,38 @@ their call.
    trust_level = "trusted"
    ```
 
-   Plus file access at launch — **both are required**:
+   **File access is a config key, not a launch flag.** Every one of the five
+   harnesses has a durable setting for this, and none of them needs a shell
+   wrapper. Read the key, and add the vault's absolute path if it is absent:
 
-   ```
-   codex   --add-dir "<VAULT>"
-   copilot --add-dir "<VAULT>"
-   ```
+   | Harness | Where file access is granted |
+   |---|---|
+   | Claude Code | `permissions.additionalDirectories` in `~/.claude/settings.json` |
+   | Antigravity | `trustedWorkspaces` in `~/.gemini/antigravity-cli/settings.json` |
+   | Copilot CLI | `trustedFolders` in `~/.copilot/config.json` |
+   | OpenCode | the `references` entry in `~/.config/opencode/opencode.json` |
+   | Codex CLI | nothing — reads outside the working directory by default |
 
-   A flag typed at launch is forgotten at launch. Offer a durable form — a shell
-   wrapper works everywhere:
+   Codex is the exception in both directions: it needs no access grant, and it is
+   the only one whose *trust* entry does separate work. Trust governs whether the
+   vault's own `.codex/config.toml` is read, not whether files can be. A vault can
+   be readable and untrusted at once, and that is the state where the vault ships
+   settings that are silently ignored.
 
-   ```powershell
-   # PowerShell profile ($PROFILE)
-   $VaultPath = '<VAULT>'
-   function codex   { & (Get-Command codex.cmd   -CommandType Application).Source --add-dir $VaultPath @args }
-   function copilot { & (Get-Command copilot.cmd -CommandType Application).Source --add-dir $VaultPath --allow-tool 'shell(git:*)' @args }
-   ```
+   **Do not print `--add-dir` as the answer, and do not offer a shell wrapper.** A
+   flag typed at launch is forgotten at launch, and a wrapper is a workaround for
+   a key that already exists — it survives only until someone runs the CLI from a
+   shell that does not have it, or from a script, or from an editor. Both were
+   prescribed here until 2026-08-27 for three harnesses that all had a config key,
+   two of which this skill already reads in step 3. `--add-dir` remains useful for
+   a one-off session against a vault you are not wiring; it is not wiring.
 
-   ```sh
-   # ~/.bashrc or ~/.zshrc
-   alias codex='codex --add-dir "<VAULT>"'
-   alias copilot='copilot --allow-tool="shell(git:*)" --add-dir "<VAULT>"'
-   ```
-
-   `--allow-tool 'shell(git:*)'` is the whole grant Copilot needs, because this
-   protocol already restricts vault shell use to git. Without it every git call in
-   `hello` asks for approval separately, per directory, and the briefing turns into a
-   consent form. If a CLI grows a config key for trusted directories, prefer it over
-   the wrapper.
+   **Copilot's shell grant is separate from file access and still worth setting.**
+   `--allow-tool 'shell(git:*)'` is the whole grant it needs, because this protocol
+   restricts vault shell use to git. Without it every git call in `hello` asks for
+   approval separately, per directory, and the briefing turns into a consent form.
+   Set it in Copilot's own config if it has a key for it; otherwise it is a
+   legitimate launch flag, because it grants a tool rather than a path.
 
    **OpenCode** — the same skill at `~/.config/opencode/skills/<vault-name>/SKILL.md`
    without the `alwaysApply` line, plus a `references` entry in
