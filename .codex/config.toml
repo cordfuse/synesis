@@ -1,3 +1,11 @@
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
 sandbox_permissions = ["disk-full-read-access"]
+
+# Network egress, scoped to sessions where this vault is the workspace.
+# hello runs two bounded git fetches -- one against origin for freshness, one for
+# upstream tags in the version check. Under workspace-write the sandbox blocks the
+# network by default, so both fail and the briefing reports that freshness could not
+# be verified. Everything else in the vault works offline; this is only what git needs.
+[sandbox_workspace_write]
+network_access = true

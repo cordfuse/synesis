@@ -57,11 +57,24 @@ Scan them for `[[wikilinks]]` pointing at `records/`, `conventions/` or `people/
 Flag any such link **that resolves to a file in this vault**. The logic inverts check 2:
 
 - **Resolves here** → written against local content, and will dangle in a fresh vault. Report it.
-- **Resolves nowhere** → an illustrative placeholder like `[[records/2026-08-20-api-redesign]]`. Correct, leave it.
+- **Resolves nowhere** → an illustrative placeholder. Probably correct — but read the next rule before leaving it.
 
 Report as: `skills/weave.md — [[records/2026-08-22-decision]] resolves locally; template files need a placeholder`.
 
 Fix by replacing the link with a placeholder that names nothing real, or by rewriting the sentence to drop the link.
+
+**Resolving nowhere is not sufficient, and in a template repo it proves nothing.** A template's `records/`, `conventions/` and `people/` are empty by design, so *every* link resolves nowhere and this check passes no matter how bad the placeholder is. The defect only appears downstream, in whichever vault happens to create a file with that name — and by then it has shipped everywhere.
+
+So the real test is whether the target is **implausible as a filename any vault would create**:
+
+| placeholder | verdict |
+|---|---|
+| `records/2026-08-20-api-redesign` | fine — a dated slug nobody will reproduce |
+| `conventions/example-workflow` | fine — nobody names a convention that |
+| `conventions/branching` | **bad** — many teams will have exactly this |
+| `people/sarah` | **bad** — someone will hire a Sarah |
+
+Judge the name, not the current filesystem. A plausible name that happens not to exist yet is a defect waiting for its vault.
 
 ### 9. Lifecycle field integrity
 
@@ -80,6 +93,16 @@ Report as: `records/2026-08-20-cache-strategy.md — type: note carries status: 
 
 Invariants 1 and 2 are migration residue: if either fires, a record was written against the old contract and needs converting, not patching.
 
+### 10. Dead permission rules
+
+Claude Code checks file permissions against `Edit(path)` and `Read(path)` rules **only**. A path rule written for `Write`, `NotebookEdit`, `Glob` or `MultiEdit` is accepted and then never consulted — it looks like a guard and enforces nothing, and Claude Code prints a warning at every session start until it is fixed.
+
+Read `.claude/settings.json` and report any entry in `allow`, `deny` or `ask` of the form `Write(...)`, `NotebookEdit(...)`, `Glob(...)` or `MultiEdit(...)`.
+
+Report as: `.claude/settings.json — deny rule Write(skills/**) is never consulted; use Edit(skills/**)`.
+
+**A bare tool name is not this defect.** `"Write"` or `"Glob"` with no parentheses matches at the tool level and works as written — the allow list is expected to contain them. Only a rule carrying a path is dead.
+
 ## Output format
 
 Report findings grouped by check, with file paths and a one-line description of each issue. If a check finds nothing, say so in one line. Example:
@@ -89,7 +112,7 @@ Stale knowledge:
   conventions/git.md — last verified 2026-03-15 (160 days ago)
 
 Broken links:
-  records/2026-08-18-auth-decision.md — [[people/mike]] not found
+  records/2026-08-18-auth-decision.md — [[people/example-person]] not found
 
 Missing attribution:
   records/2026-07-01-api-redesign.md — no decided-by

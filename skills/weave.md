@@ -63,14 +63,14 @@ The block goes at the **end of the file**, after all authored content:
 ## Related
 
 <!-- weave:start -->
-- [[conventions/ssh-keys]] — clone rules depend on the host aliases
+- [[conventions/example-setup]] — the rules this one depends on
 - [[records/2026-08-20-api-redesign]] — decided this approach
 <!-- weave:end -->
 ```
 
 Rules:
 
-- Path form, no `.md` extension: `[[conventions/branching]]`, `[[records/2026-08-20-api-redesign]]`
+- Path form, no `.md` extension: `[[conventions/example-workflow]]`, `[[records/2026-08-20-api-redesign]]`
 - One line per link, em-dash, then a short phrase saying **why** the two are related — not what the target is about
 - Alphabetical within the block, so regeneration is stable and diffs stay small
 - The `weave:start` / `weave:end` markers are required. They are how weave knows what it owns.
