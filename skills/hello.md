@@ -16,11 +16,16 @@ When triggered, identify the current user and deliver a team briefing.
 
    ```sh
    git -c core.sshCommand="ssh -o ConnectTimeout=5 -o BatchMode=yes" \
-       -c credential.helper= \
+       -c credential.interactive=false \
        -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=5 \
        fetch --quiet origin
    git rev-list --count HEAD..origin/main
    ```
+
+   From a session started outside the vault, prefix each of those with
+   `-C <vault-path>` rather than changing directory first — see **Working in this
+   vault** in `PROTOCOL.md`. A `cd ...; git ...` compound cannot be allow-listed,
+   because its stem is `cd`, and it turns the briefing into a consent form.
 
    If the count is above zero, say how many commits behind and suggest `sync`
    before continuing. **Do not pull, commit or push** — this step reads.
@@ -40,6 +45,20 @@ When triggered, identify the current user and deliver a team briefing.
 ## Briefing format
 
 Greet the user by name, then cover these sections in order:
+
+**Every section below is built from frontmatter, and you read it with your file
+tools.** This briefing touches most files in the vault, and batching them into one
+`Get-ChildItem`/`find`/`grep` pipeline is the obvious optimisation and the wrong one.
+Reading many files at once is still reading — use whatever bulk read or search your
+harness gives you.
+
+The cost is not stylistic. A shell pipeline that reads files is refused outright in a
+vault-rooted session, and in a wired session started elsewhere it becomes an approval
+prompt per command, so a briefing turns into a consent form. Both failures are
+recoverable — you fall back to the read tool and finish — which is exactly why the
+habit survives. Do not start there. Measured on Copilot CLI, 2026-08-26: every git
+call in this skill was permitted by a single narrow rule; the only refusals left were
+four PowerShell pipelines reading frontmatter.
 
 ### Team
 - How many people are on the team (count of `people/` profiles, excluding `_template.md`)
@@ -65,11 +84,47 @@ Greet the user by name, then cover these sections in order:
 ### Vault status
 - Protocol version (from PROTOCOL.md frontmatter)
 - Upstream tracking (if `upstream` field exists in PROTOCOL.md frontmatter)
-- Whether this machine is wired up — check the global instruction file of each
-  installed harness for this vault's absolute path. If none carry it, say so in one
-  line and name `wire`: the vault is invisible to sessions started outside this
-  folder, and that reads as "Synesis does not do much" when the truth is it was
-  never switched on. Do not configure anything — `wire` prints, the developer applies.
+- Whether this machine is wired up. **Start with the harness you are running in, and
+  answer that one without reading anything.** If this session loaded the vault's skill
+  or instruction file, that harness is wired — the session could not have begun this
+  way otherwise, and you are reading these words as the proof. Report it wired and
+  move on. Reading the file to confirm what already happened is the single most common
+  permission prompt a briefing produces, and it confirms nothing you do not already
+  know.
+
+  For the **other** harnesses, these five paths are the entire list. Read them by name
+  and look for this vault's absolute path inside:
+
+  | Harness | The one file to read |
+  |---|---|
+  | Claude Code | `~/.claude/CLAUDE.md` |
+  | Antigravity | `~/.gemini/GEMINI.md` |
+  | Copilot CLI | `~/.copilot/skills/<vault-name>/SKILL.md` |
+  | Codex CLI | `~/.codex/skills/<vault-name>/SKILL.md` |
+  | OpenCode | `~/.config/opencode/skills/<vault-name>/SKILL.md` |
+
+  **The skill-based harnesses have no global instruction file.** For Copilot, Codex
+  and OpenCode the `SKILL.md` *is* the wiring, and there is nothing else to find.
+
+  **A file that is not there is an answer: not wired.** Do not search a harness
+  directory for it, do not glob for a config file whose name you are guessing, and do
+  not widen the request when one is refused. Hunting for a file that does not exist
+  is how a briefing ends up reading an auth store — `~/.codex` holds `auth.json`,
+  `%APPDATA%\GitHub Copilot\hosts.json` holds an OAuth token, and a wiring check has
+  no business near either. Observed three times on 2026-08-26 before this list existed.
+
+  If none of the five carry the path, say so in one line and name `wire`: the vault is
+  invisible to sessions started outside this folder, and that reads as "this vault does
+  not do much" when the truth is it was never switched on.
+- Whether any wiring has gone **stale** — one of those files naming a path that no
+  longer exists, or `trustedFolders` in `~/.copilot/config.json`,
+  `permissions.additionalDirectories` in `~/.claude/settings.json`, or the
+  `[projects]` trust entry in `~/.codex/config.toml` still pointing at a former vault.
+  A missing Codex trust entry is worth reporting even when the skill is present: it
+  makes the vault's own Codex config inert, so the wiring looks correct and prompts on
+  every command. A renamed or moved vault leaves those behind and they fail silently.
+  Report it and name `wire`. Do not configure anything — `wire` prints, the developer
+  applies.
 - Any active handoff records (records tagged `handoff` with no superseding record)
 - Count of tools in `tools/` (if any beyond README.md)
 - Whether a newer protocol version is available upstream — see **Version check**
@@ -112,14 +167,19 @@ versions.
 
    ```sh
    git -c core.sshCommand="ssh -o ConnectTimeout=5 -o BatchMode=yes" \
-       -c credential.helper= \
+       -c credential.interactive=false \
        -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=5 \
        fetch --tags --quiet upstream
    ```
 
-   `BatchMode=yes` stops ssh asking for a passphrase, the empty credential helper
-   stops https asking for a password, and the low-speed options cap a stalled
-   transfer. Every one of these is a `git` option, so the whole check stays inside
+   `BatchMode=yes` stops ssh asking for a passphrase, `credential.interactive=false`
+   lets the credential manager use a cached token while refusing to prompt for one,
+   and the low-speed options cap a stalled transfer.
+
+   **Do not blank the helper with `-c credential.helper=`.** That suppresses the
+   prompt by removing the credentials, so a private vault fetched over https fails
+   every single time — `could not read Username` — and the vault reports itself as
+   uncheckable forever rather than occasionally. Confirmed 2026-08-26. Every one of these is a `git` option, so the whole check stays inside
    the `Bash(git:*)` grant in `.claude/settings.json`.
 
    **Do not reach for `timeout` here.** Allowing `Bash(timeout:*)` to make that work
