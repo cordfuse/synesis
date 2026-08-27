@@ -1,5 +1,5 @@
 ---
-version: 1.3
+version: 1.13
 upstream: cordfuse/synesis
 stale-days: 90
 ---
@@ -29,7 +29,7 @@ UPPERCASE filenames (`PROTOCOL.md`, `AGENTS.md`) are protocol infrastructure. Lo
 
 ## Linking
 
-Use `[[wikilinks]]` for all internal cross-references: `[[people/sarah]]`, `[[conventions/git]]`, `[[records/2026-08-20-api-redesign]]`. The lint skill validates that links resolve to real files.
+Use `[[wikilinks]]` for all internal cross-references: `[[people/example-person]]`, `[[conventions/example-workflow]]`, `[[records/2026-08-20-api-redesign]]`. The lint skill validates that links resolve to real files.
 
 ## Frontmatter
 
@@ -93,7 +93,7 @@ Precedence is not composition. Do not run both the parent's version and the vaul
 
 ## Versioning
 
-This protocol is at **v1.3**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
+This protocol is at **v1.13**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
 
 ## Dates
 
@@ -174,7 +174,7 @@ The block is derived content and carries a marker so it is never mistaken for au
 ## Related
 
 <!-- weave:start -->
-- [[conventions/branching]] — branching rules this decision assumes
+- [[conventions/example-workflow]] — the convention this decision assumes
 - [[records/2026-08-20-api-redesign]] — the decision this one revisits
 <!-- weave:end -->
 ```
@@ -185,7 +185,15 @@ Links are conservative: a real relationship, not topical adjacency. `weave` cove
 
 **Read files with your file tools, not through a shell.** Reading many files at once is still reading, and every harness has tools for it. Do not shell out to PowerShell, bash or anything else to read, list, grep or parse files here. Shell access in this vault is for `git` and nothing else — `.claude/settings.json` grants `Bash(git:*)` on purpose, and a skill that needs more than git is a skill that has gone wrong.
 
-**Run git plainly from the working directory** — `git config user.name`, `git log`, `git status`. Avoid the `git -C <path>` form: per-repo command approvals are matched on the command as written, so the `-C` form can be refused on machines where the plain form is allowed.
+**How you address the repo depends on where the session started.**
+
+When the vault **is** the working directory, run git plainly — `git config user.name`, `git log`, `git status`. No `-C`, no `cd`. Per-repo command approvals are matched on the command as written, and the plain form is what a vault-rooted session has already been granted.
+
+When the vault is **not** the working directory — a session started in a project repo that reached this vault through wiring — use `git -C <vault-path>`. **Never `cd <vault-path>; git ...`.**
+
+That last form looks equivalent and is not. Command approvals match on the *stem* of the command, and the stem of `cd <path>; git status` is `cd`, not `git`. No git allow-rule can match it, so every call falls through to a prompt — and the only rule that would cover it, `shell(cd:*)`, allows any command that follows a `cd`, which is a blanket shell grant wearing a disguise. `git -C` keeps the stem `git`, so one narrow rule covers every call the protocol makes. Measured on Copilot CLI, 2026-08-26.
+
+**Do not append shell redirections to git calls** — no `2>&1`, no `>`. A redirection creates or modifies a file, so approval systems classify the whole command as a *write* rather than as git, and the only rule broad enough to permit it is an allow-everything grant. Your harness already captures stderr and hands it to you. Measured on Copilot CLI, 2026-08-26: `git -C <vault> rev-list --count HEAD..origin/main` is permitted, and the same command with `2>&1` appended is refused.
 
 **If something outside this repository cannot be read, say so and carry on.** A wiring check that hits a refused path is not a reason to retry it through a shell. Report what could not be confirmed and finish the briefing.
 
