@@ -40,7 +40,7 @@ Synesis gives your team a shared vault of decisions, conventions, people profile
 
 1. Click **"Use this template"** to create your team's vault — the button only appears when you're signed in to GitHub
 2. Clone it locally
-3. Open it in your AI coding agent (Claude Code, Codex, Copilot, OpenCode — all supported)
+3. Open it in your AI coding agent (Claude Code, Codex, Copilot, Antigravity, OpenCode — all supported)
 4. Say `hello` — the agent reads the protocol and offers to onboard you
 
 That's it. The agent now knows the protocol. As you add people, decisions, and conventions, every agent session inherits that knowledge.
@@ -151,7 +151,7 @@ Run `wire` in the vault to have these snippets printed with your real path alrea
 
 #### Claude Code and Antigravity
 
-Both use a global instruction file that loads in every session. Add one line pointing to the vault:
+Both use a global instruction file that loads in every session. Point it at the vault:
 
 | Harness | Global config file |
 |---|---|
@@ -159,66 +159,100 @@ Both use a global instruction file that loads in every session. Add one line poi
 | Antigravity | `~/.gemini/GEMINI.md` |
 
 ```
-Read and follow PROTOCOL.md in the team's synesis vault at ~/team/synesis/
+Read and follow PROTOCOL.md in the team's knowledge vault at /absolute/path/to/your-vault
+
+When the user says "hello", run the hello skill from that vault's skills/ directory.
+Read the matching skills/<verb>.md before acting on any other verb.
 ```
 
-Replace the path with wherever you cloned the vault. Claude Code can access any path from the global file alone. Antigravity also needs `--add-dir` for file access:
+Use the vault's **absolute** path, not `~/…` — the config files below are JSON and do not expand a tilde.
 
+**The instruction file makes the vault discoverable. It does not make it readable.** Both harnesses need a second, separate grant, and without it the failure is silent: the session loads the path, every read is refused, and it answers as though no vault existed.
+
+For Claude Code, add the vault to `permissions.additionalDirectories` in `~/.claude/settings.json` — merge, never overwrite:
+
+```json
+{
+  "permissions": {
+    "additionalDirectories": ["/absolute/path/to/your-vault"]
+  }
+}
 ```
-agy --add-dir ~/team/synesis/
+
+For Antigravity, add it to `trustedWorkspaces` in `~/.gemini/antigravity-cli/settings.json`:
+
+```json
+{
+  "trustedWorkspaces": ["/absolute/path/to/your-vault"]
+}
 ```
+
+Note the path — Antigravity's settings live under `antigravity-cli/`. `~/.gemini/settings.json` is Gemini CLI's file and is not the same thing.
 
 #### Codex CLI and Copilot CLI
 
-Both use a personal skill for instruction discovery plus `--add-dir` for file access.
+Both use a personal skill for instruction discovery. Their file-access needs differ.
 
-**1. Personal skill** — create a `SKILL.md` in the harness's personal skills directory:
+**1. Personal skill** — create a `SKILL.md` in the harness's personal skills directory. Substitute your vault's folder name for `<vault-name>`:
 
 | Harness | Skill file path |
 |---|---|
-| Codex CLI | `~/.codex/skills/synesis/SKILL.md` |
-| Copilot CLI | `~/.copilot/skills/synesis/SKILL.md` |
+| Codex CLI | `~/.codex/skills/<vault-name>/SKILL.md` |
+| Copilot CLI | `~/.copilot/skills/<vault-name>/SKILL.md` |
 
 ```markdown
 ---
-name: synesis
+name: <vault-name>
 description: Team knowledge protocol — always active. Handles hello, status, catchup, propose, decide, note, convention, lint, search, sync, reconcile, archive, update, onboard, handoff, weave, wire verbs.
 alwaysApply: true
 ---
 
-At the start of every session, read and follow PROTOCOL.md in the team's synesis vault at ~/team/synesis/
+At the start of every session, read and follow PROTOCOL.md in the team's knowledge vault at /absolute/path/to/your-vault
 
 When the user says "hello", run the hello skill from that vault's skills/ directory.
+Read the matching skills/<verb>.md before acting on any other verb.
 ```
 
-**2. Directory access** — launch with `--add-dir` pointing to the vault:
+**2. File access.**
 
-```
-codex --add-dir ~/team/synesis/
-copilot --add-dir ~/team/synesis/
+**Codex needs none** — it reads outside its working directory by default.
+
+**Copilot** uses `trustedFolders` in `~/.copilot/config.json`. The vault's own path, or any parent of it, is enough:
+
+```json
+{
+  "trustedFolders": ["/absolute/path/to/your-vault"]
+}
 ```
 
-The personal skill tells the agent what to do; `--add-dir` gives it permission to read the vault files. Both are needed.
+**3. Codex also needs the vault trusted** — a separate thing from file access, and easy to miss. Codex reads a project-local `.codex/config.toml` *only* for projects it trusts, so an untrusted vault has its own shipped settings silently ignored and prompts on every command. Add to `~/.codex/config.toml`, path lowercased:
+
+```toml
+[projects."/absolute/path/to/your-vault"]
+trust_level = "trusted"
+```
+
+Optionally for Copilot, `--allow-tool 'shell(git:*)'` at launch. That is the whole shell grant the protocol needs, since vault shell use is restricted to git. Without it every git call in `hello` asks for approval separately and the briefing turns into a consent form. It grants a tool rather than a path, which is why it stays a flag.
 
 #### OpenCode
 
 OpenCode uses a global skill for instruction discovery plus a `references` entry for file access.
 
 **1. Global skill** — create a `SKILL.md` in OpenCode's global skills directory:
-
 | Path |
 |---|
-| `~/.config/opencode/skills/synesis/SKILL.md` |
+| `~/.config/opencode/skills/<vault-name>/SKILL.md` |
 
 ```markdown
 ---
-name: synesis
+name: <vault-name>
 description: Team knowledge protocol — always active. Handles hello, status, catchup, propose, decide, note, convention, lint, search, sync, reconcile, archive, update, onboard, handoff, weave, wire verbs.
 ---
 
-At the start of every session, read and follow PROTOCOL.md in the team's synesis vault at ~/team/synesis/
+At the start of every session, read and follow PROTOCOL.md in the team's knowledge vault at /absolute/path/to/your-vault
 
 When the user says "hello", run the hello skill from that vault's skills/ directory.
+Read the matching skills/<verb>.md before acting on any other verb.
 ```
 
 **2. Reference** — add a `references` entry in your global config (`~/.config/opencode/opencode.json`):
@@ -226,8 +260,8 @@ When the user says "hello", run the hello skill from that vault's skills/ direct
 ```json
 {
   "references": {
-    "synesis": {
-      "path": "~/team/synesis",
+    "<vault-name>": {
+      "path": "/absolute/path/to/your-vault",
       "description": "Team knowledge vault — conventions, decisions, people profiles. Read PROTOCOL.md for the protocol."
     }
   }
@@ -236,7 +270,9 @@ When the user says "hello", run the hello skill from that vault's skills/ direct
 
 The global skill tells the agent what to do; the `references` entry gives it permission to read the vault files. Both are needed.
 
-> **Tested:** All five harnesses are confirmed working cross-repo — Claude Code via global instruction file, Antigravity via global instruction file + `--add-dir`, Codex CLI and Copilot CLI via personal skill + `--add-dir`, OpenCode via global skill + `references` config.
+> **File access is a config key, not a launch flag.** Every harness above has a durable setting for it, so none of this needs a shell alias or wrapper. `--add-dir` still works for a one-off session against a vault you are not wiring, but it is forgotten at the next launch and is not wiring.
+
+> **Tested cross-repo, 2026-08-27:** Claude Code via global instruction file + `additionalDirectories`; Codex CLI via personal skill, with no access grant needed — verified by launching `codex exec` from `/tmp` and reading a vault elsewhere on disk; Antigravity via `GEMINI.md` + `trustedWorkspaces`; Copilot CLI via personal skill + `trustedFolders`; OpenCode via global skill + `references`.
 
 ### Scope boundary
 
@@ -290,7 +326,9 @@ That matters more here than in an ordinary repo. `reconcile` pulls protocol file
 
 This shrinks the target rather than closing it — `git -c` reaches outside git by design. The point is that the grant is now a decision rather than an inheritance, and widening it has to be argued for.
 
-The protocol files themselves (`PROTOCOL.md`, `skills/**`, the harness shims, `LICENSE`, `README.md`) are denied to `Edit`. They come from the template; change them upstream, or accept the drift knowingly.
+The files that steer the agent are denied to `Edit`: the harness shims (`CLAUDE.md`, `GEMINI.md`, `opencode.json`, the Copilot instructions) and `.claude/settings.json` itself. An agent that can rewrite its own instructions, or widen its own permissions, is not meaningfully constrained by either. `LICENSE`, `README.md` and `PLAN.md` are denied too — they are the template's or the team's, not the agent's to edit.
+
+`PROTOCOL.md`, `AGENTS.md` and `skills/**` are deliberately **not** denied, even though they are protocol rather than team content. `reconcile` has to write them to pull an update, and a deny there turns every protocol bump into a permissions detour. If your team wants the stronger guard, add them — just expect to lift them each time you reconcile.
 
 ## Contributing
 
