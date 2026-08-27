@@ -1,5 +1,5 @@
 ---
-version: 1.4
+version: 1.5
 upstream: cordfuse/synesis
 stale-days: 90
 ---
@@ -93,7 +93,7 @@ Precedence is not composition. Do not run both the parent's version and the vaul
 
 ## Versioning
 
-This protocol is at **v1.4**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
+This protocol is at **v1.5**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
 
 ## Dates
 
