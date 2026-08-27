@@ -334,7 +334,12 @@ lint
 > **Missing attribution:**
 >   `records/2026-09-02-cache-strategy.md` — no decided-by
 >
+> **Unanswered proposals:**
+>   `records/2026-09-14-queue-choice.md` — open 34 days, consulted: MW
+>
 > No broken links. No orphaned profiles. No unfilled templates. No weave problems.
+> No template files referencing vault content. No lifecycle field errors. No dead
+> permission rules.
 
 Nothing is deleted or auto-fixed — lint reports, the team decides. Sarah re-reads the deployment convention, confirms it's still right, and runs `update conventions/deployment` to bump the date.
 
@@ -353,7 +358,7 @@ That sets `archived: true`, then re-runs `weave` so nothing still links to it. I
 Synesis ships a new protocol version. Nobody has to notice — the next `hello` ends
 with one extra line in vault status:
 
-> Protocol v1.2 available upstream — say `reconcile` to review the changes.
+> Protocol v1.7 available upstream — say `reconcile` to review the changes.
 
 That line comes from comparing the `version:` in your own `PROTOCOL.md` against the newest upstream tag.
 If the check cannot run — no network, no remote, no tags — it says nothing rather
@@ -372,9 +377,14 @@ reconcile
 > **Drifted — 1 file:** `skills/lint.md` — content differs
 > **Ahead — 0 files**
 >
+> **Reported, not pulled — 1 file:** `.github/copilot-instructions.md` — the
+> template gained a line. Shown so you can apply it; reconcile will not write it.
+>
 > Resolve each? (y/skip/abort)
 
 Every file is gated one at a time. Your records, conventions and people are never in scope — reconcile only ever looks at the protocol files you inherited. Neither is the template's `LICENSE`: this repo is public and MIT, your vault is probably neither, and copying it would put someone else's copyright on your team's decisions.
+
+Five files are always *reported* and never pulled — `.claude/settings.json`, `.codex/config.toml` and the three harness shims. They are in scope so drift is visible, but they define what the agent is allowed to do, or are the instructions it follows, so it shows you the diff and you apply it. Expect that section to stay non-empty until someone acts on it; a shim one line behind the template is invisible until something names it.
 
 Pulling `PROTOCOL.md` brings its `version:` with it, which is what silences the nudge until the template moves again. There is no separate version file to keep in step.
 
