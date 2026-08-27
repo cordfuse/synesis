@@ -14,13 +14,10 @@
     "deny": [
       "Bash(git config --global:*)",
       "Bash(git push --force*)",
-      "Edit(PROTOCOL.md)",
       "Edit(CLAUDE.md)",
-      "Edit(AGENTS.md)",
       "Edit(GEMINI.md)",
       "Edit(opencode.json)",
       "Edit(.github/copilot-instructions.md)",
-      "Edit(skills/**)",
       "Edit(LICENSE)",
       "Edit(README.md)",
       "Edit(PLAN.md)",
