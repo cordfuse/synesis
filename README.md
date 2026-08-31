@@ -217,13 +217,13 @@ Read the matching skills/<verb>.md before acting on any other verb.
 
 **Codex needs none** — it reads outside its working directory by default.
 
-**Copilot** uses `trustedFolders` in `~/.copilot/config.json`. The vault's own path, or any parent of it, is enough:
+**Copilot needs `--add-dir` at launch, and no config key substitutes.** `trustedFolders` in `~/.copilot/config.json` is documented as "folders where permission to read or execute files has been granted" and does **not** govern path reads — tested 2026-08-31 with the vault's parent listed there, and the read was refused; the same read succeeded immediately under `--add-dir`.
 
-```json
-{
-  "trustedFolders": ["/absolute/path/to/your-vault"]
-}
 ```
+copilot --add-dir "/absolute/path/to/your-vault"
+```
+
+To avoid typing it every session, record the approval per location in `~/.copilot/permissions-config.json` instead — `wire` prints the full block, scoped to the vault and nowhere else. Do not wrap the `copilot` command in a shell alias: it redefines the CLI for every repo you open, and the same workaround would then be owed to every other harness.
 
 **3. Codex also needs the vault trusted** — a separate thing from file access, and easy to miss. Codex reads a project-local `.codex/config.toml` *only* for projects it trusts, so an untrusted vault has its own shipped settings silently ignored and prompts on every command. Add to `~/.codex/config.toml`, path lowercased:
 
@@ -272,7 +272,17 @@ The global skill tells the agent what to do; the `references` entry gives it per
 
 > **File access is a config key, not a launch flag.** Every harness above has a durable setting for it, so none of this needs a shell alias or wrapper. `--add-dir` still works for a one-off session against a vault you are not wiring, but it is forgotten at the next launch and is not wiring.
 
-> **Tested cross-repo, 2026-08-27:** Claude Code via global instruction file + `additionalDirectories`; Codex CLI via personal skill, with no access grant needed — verified by launching `codex exec` from `/tmp` and reading a vault elsewhere on disk; Antigravity via `GEMINI.md` + `trustedWorkspaces`; Copilot CLI via personal skill + `trustedFolders`; OpenCode via global skill + `references`.
+> **Verification status, 2026-08-31.** Wiring is the part of this vault that has needed the most correction, so it is worth saying plainly which harnesses have been exercised and which have only been read from config:
+>
+> | Harness | Cross-repo access | Status |
+> |---|---|---|
+> | Claude Code | `permissions.additionalDirectories` | **verified** |
+> | Codex CLI | none needed | **verified** — `codex exec` from `/tmp` read a vault elsewhere on disk |
+> | Copilot CLI | `--add-dir`, or `permissions-config.json` | **verified** — and `trustedFolders` disproved |
+> | Antigravity | `trustedWorkspaces` | untested — config read, never exercised |
+> | OpenCode | `references` | untested — config read, never exercised |
+>
+> The two untested rows are the same kind of evidence that produced the `trustedFolders` error: vendor wording plus a setup that appeared to work. Treat them as probable, not established.
 
 ### Scope boundary
 
@@ -312,7 +322,7 @@ Weave is idempotent: run it twice and the second run changes nothing. Links that
 ## Design principles
 
 1. **Files, not services.** Markdown in a repo. No server, no runtime, no API keys.
-2. **Agent-agnostic.** Works with any harness that reads project files. No vendor lock-in.
+2. **Agent-agnostic.** Works with any harness that reads project files. No vendor lock-in. Verified end to end on Claude Code, Codex CLI and Copilot CLI; Antigravity and OpenCode are wired from config but untested — see the verification table above.
 3. **Brand-neutral internals.** `PROTOCOL.md`, not `SYNESIS.md`. The brand lives here in the README, never in the protocol files.
 4. **Trust the team.** No PR gates. Anyone can commit. Git history is the audit trail.
 5. **Use the template and own it.** Make it yours — there is no fork relationship, and upstream changes arrive through `reconcile`, gated per file. The protocol defines the structure; your team fills it with real knowledge.

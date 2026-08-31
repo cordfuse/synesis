@@ -384,7 +384,7 @@ reconcile
 
 Every file is gated one at a time. Your records, conventions and people are never in scope — reconcile only ever looks at the protocol files you inherited. Neither is the template's `LICENSE`: this repo is public and MIT, your vault is probably neither, and copying it would put someone else's copyright on your team's decisions.
 
-Five files are always *reported* and never pulled — `.claude/settings.json`, `.codex/config.toml` and the three harness shims. They are in scope so drift is visible, but they define what the agent is allowed to do, or are the instructions it follows, so it shows you the diff and you apply it. Expect that section to stay non-empty until someone acts on it; a shim one line behind the template is invisible until something names it.
+Six files are always *reported* and never pulled — `.claude/settings.json`, `.codex/config.toml`, `.vscode/settings.json` and the three harness shims. They are in scope so drift is visible, but they define what the agent is allowed to do, or are the instructions it follows, so it shows you the diff and you apply it. Expect that section to stay non-empty until someone acts on it; a shim or a rule list one line behind the template is invisible until something names it.
 
 Pulling `PROTOCOL.md` brings its `version:` with it, which is what silences the nudge until the template moves again. There is no separate version file to keep in step.
 
