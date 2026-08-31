@@ -4,7 +4,7 @@ description: Show the exact config that makes this vault visible to agents outsi
 triggers:
   - wire verb
   - offered at the end of onboard
-  - hello reports the vault is not wired up
+  - hello names wire when reporting which harness this session is running in
 ---
 
 # Wire
@@ -49,9 +49,9 @@ their call.
    | Harness | Present if | Instruction discovery | File access |
    |---|---|---|---|
    | Claude Code | `~/.claude/` | `~/.claude/CLAUDE.md` | `permissions.additionalDirectories` in `~/.claude/settings.json` |
-   | Antigravity | `~/.gemini/antigravity-cli/` | `~/.gemini/GEMINI.md` | `trustedWorkspaces` in `~/.gemini/antigravity-cli/settings.json` |
+   | Antigravity | `~/.gemini/antigravity-cli/` | `~/.gemini/GEMINI.md` | `trustedWorkspaces` in `~/.gemini/antigravity-cli/settings.json` (untested) |
    | Codex CLI | `~/.codex/` | `~/.codex/skills/<vault-name>/SKILL.md` | none needed — reads outside the working directory by default |
-   | Copilot CLI | `~/.copilot/` | `~/.copilot/skills/<vault-name>/SKILL.md` | `trustedFolders` in `~/.copilot/config.json` |
+   | Copilot CLI | `~/.copilot/` | `~/.copilot/skills/<vault-name>/SKILL.md` | `--add-dir` at launch, or `permissions-config.json` — no config key grants path reads |
    | OpenCode | `~/.config/opencode/` | `~/.config/opencode/skills/<vault-name>/SKILL.md` | `references` entry in `~/.config/opencode/opencode.json` |
 
    If none are present, say so in one line and show the Claude Code snippet as the
@@ -105,6 +105,39 @@ their call.
    elsewhere may be told no, and that is the expected path — not a reason to retry
    through a shell or to widen the request. Report the harnesses you could not inspect
    and carry on, exactly as **Working in this vault** in `PROTOCOL.md` requires.
+
+   **This verb is where those refusals belong.** As of v1.15 `hello` no longer audits
+   the other harnesses — it reports the one it is running in, which costs nothing, and
+   names this verb for the rest. So a developer who sees an approval prompt here asked
+   for a config audit and is being asked about config; the same prompt during a
+   briefing was noise attached to the wrong verb.
+
+   **Under Copilot CLI these reads need `--add-dir`, and no setting substitutes.**
+   Copilot restricts file access to the working directory and below. `trustedFolders`
+   in `~/.copilot/config.json` is documented as "folders where permission to read or
+   execute files has been granted" and does **not** govern path reads — tested
+   2026-08-31 with `~/.claude` listed there, and the read was still refused with
+   *"Permission denied and could not request permission from user"*; the same read
+   succeeded immediately under `--add-dir`. The dialog's own "add these directories to
+   the allowed list" is session state and writes nothing, so it does not carry to the
+   next session either. If the developer wants this verb to run without prompts, the
+   flags are worth typing for the one run:
+
+   ```
+   copilot --add-dir "<VAULT>" --add-dir ~/.claude --add-dir ~/.codex --add-dir ~/.gemini --add-dir ~/.config/opencode
+   ```
+
+   Do not print a shell wrapper that bakes this in. A wrapper redefines `copilot` for
+   every repo the developer opens, to spare prompts in a verb they run monthly, and
+   the same workaround would then be owed to `codex` and `agy`. Claude Code needs none
+   of it: `permissions.additionalDirectories` takes the harness roots directly.
+
+   **This supersedes what this skill said at v1.6.** It named `trustedFolders` as
+   Copilot's file-access key, on the strength of the vendor's own wording and a
+   working setup that had the vault's parent listed. Both readings were wrong, and
+   the same test above disproves them. Config keys govern file access for Claude
+   Code, Antigravity and OpenCode; under Copilot they do not, and nothing but
+   `--add-dir` does.
 
    A renamed or moved vault leaves all of it behind, pointing nowhere, and the
    developer sees no error — the skill is still `alwaysApply: true`, it just
@@ -188,17 +221,23 @@ their call.
    trust_level = "trusted"
    ```
 
-   **File access is a config key, not a launch flag.** Every one of the five
-   harnesses has a durable setting for this, and none of them needs a shell
-   wrapper. Read the key, and add the vault's absolute path if it is absent:
+   **File access is a config key for four harnesses, and a launch flag for Copilot.**
+   Read the key, and add the vault's absolute path if it is absent. None of them
+   needs a shell wrapper:
 
-   | Harness | Where file access is granted |
-   |---|---|
-   | Claude Code | `permissions.additionalDirectories` in `~/.claude/settings.json` |
-   | Antigravity | `trustedWorkspaces` in `~/.gemini/antigravity-cli/settings.json` |
-   | Copilot CLI | `trustedFolders` in `~/.copilot/config.json` |
-   | OpenCode | the `references` entry in `~/.config/opencode/opencode.json` |
-   | Codex CLI | nothing — reads outside the working directory by default |
+   | Harness | Where file access is granted | Verified |
+   |---|---|---|
+   | Claude Code | `permissions.additionalDirectories` in `~/.claude/settings.json` | yes |
+   | Codex CLI | nothing — reads outside the working directory by default | yes, 2026-08-27 |
+   | Copilot CLI | `--add-dir` at launch, or `permissions-config.json` below | yes, 2026-08-31 |
+   | Antigravity | `trustedWorkspaces` in `~/.gemini/antigravity-cli/settings.json` | **untested** |
+   | OpenCode | the `references` entry in `~/.config/opencode/opencode.json` | **untested** |
+
+   **Say which rows are untested when you print this.** The two marked above are
+   read from config that looks correct and has never been exercised. That is exactly
+   the evidence that produced the `trustedFolders` error — vendor wording plus a
+   working setup, neither of which is a test. Do not upgrade a row because the
+   config looks right.
 
    Codex is the exception in both directions: it needs no access grant, and it is
    the only one whose *trust* entry does separate work. Trust governs whether the
@@ -206,20 +245,133 @@ their call.
    be readable and untrusted at once, and that is the state where the vault ships
    settings that are silently ignored.
 
-   **Do not print `--add-dir` as the answer, and do not offer a shell wrapper.** A
-   flag typed at launch is forgotten at launch, and a wrapper is a workaround for
-   a key that already exists — it survives only until someone runs the CLI from a
-   shell that does not have it, or from a script, or from an editor. Both were
-   prescribed here until 2026-08-27 for three harnesses that all had a config key,
-   two of which this skill already reads in step 3. `--add-dir` remains useful for
-   a one-off session against a vault you are not wiring; it is not wiring.
+   **Do not offer a shell wrapper, for any harness.** A wrapper redefines the CLI
+   for every repo the developer opens, to spare prompts in a verb they run monthly,
+   and the same workaround would then be owed to every other harness. Where a
+   durable config key exists, use it. Where one does not — Copilot — the flag is
+   typed for the run, or the per-location approvals below are written once.
 
    **Copilot's shell grant is separate from file access and still worth setting.**
-   `--allow-tool 'shell(git:*)'` is the whole grant it needs, because this protocol
-   restricts vault shell use to git. Without it every git call in `hello` asks for
-   approval separately, per directory, and the briefing turns into a consent form.
-   Set it in Copilot's own config if it has a key for it; otherwise it is a
-   legitimate launch flag, because it grants a tool rather than a path.
+   `--allow-tool 'shell(git:*)'` covers almost all of Copilot's shell calls, because
+   this protocol restricts vault shell use to `git` and `date` — the second only
+   because `note` and `propose` must read the date rather than infer it. Without the
+   flag every git call in `hello` asks for approval separately, per directory, and
+   the briefing turns into a consent form.
+
+   **Copilot CLI has a config key for this, and it covers more than the flag can.**
+   `~/.copilot/permissions-config.json` records approvals **per location**, so the grant
+   is scoped to the vault and nowhere else — no wrapper, no flag to forget, and nothing
+   granted to other repos. Prefer it. Read the file and merge; it is the developer's own:
+
+   ```json
+   {
+     "locations": {
+       "<VAULT>": {
+         "tool_approvals": [
+           { "kind": "commands", "commandIdentifiers": ["git status"] },
+           { "kind": "commands", "commandIdentifiers": ["git diff"] },
+           { "kind": "commands", "commandIdentifiers": ["git log"] },
+           { "kind": "commands", "commandIdentifiers": ["git show"] },
+           { "kind": "commands", "commandIdentifiers": ["git config"] },
+           { "kind": "commands", "commandIdentifiers": ["git add"] },
+           { "kind": "commands", "commandIdentifiers": ["git commit"] },
+           { "kind": "commands", "commandIdentifiers": ["git push"] },
+           { "kind": "commands", "commandIdentifiers": ["git pull"] },
+           { "kind": "commands", "commandIdentifiers": ["git fetch"] },
+           { "kind": "commands", "commandIdentifiers": ["git rev-list"] },
+           { "kind": "commands", "commandIdentifiers": ["git remote"] },
+           { "kind": "commands", "commandIdentifiers": ["git tag"] },
+           { "kind": "commands", "commandIdentifiers": ["git ls-tree"] },
+           { "kind": "commands", "commandIdentifiers": ["git rev-parse"] },
+           { "kind": "commands", "commandIdentifiers": ["git checkout"] },
+           { "kind": "commands", "commandIdentifiers": ["git -C"] },
+           { "kind": "commands", "commandIdentifiers": ["git -c"] },
+           { "kind": "commands", "commandIdentifiers": ["date"] },
+           { "kind": "write" }
+         ]
+       }
+     }
+   }
+   ```
+
+   **`write` is the half the shell flag never covered.** `--allow-tool 'shell(git:*)'`
+   grants shell calls only, so `note`, `decide`, `convention` and `weave` — the verbs whose
+   whole purpose is writing files — still prompt on every write. A vault that prompts
+   hardest while doing its actual job reads as not worth using. Observed 2026-08-29.
+
+   **The list is derived from what the skills actually run.** `git config` for the
+   identity read in `hello`, `git -c` for the bounded fetches in `hello`, `git ls-tree`
+   and `git checkout` for `reconcile`, `git rev-parse` for this skill's own step 1, and
+   `date` for the `date +%F` that `note` and `propose` require. An entry missing from
+   this list costs a prompt in the middle of a verb, and `git config` — step 2 of the
+   first verb of every session — is the one developers meet first. Observed on a list
+   that had the other thirteen, 2026-08-31.
+
+   **This list is not a security boundary, and must not be presented as one.**
+   Identifiers match the leading tokens of a command, so `git -C` and `git -c` admit
+   *any* git subcommand — the tokens after them are unconstrained. Demonstrated
+   2026-08-31 in one session, one directory:
+
+   ```
+   git stash list                     ->  refused, git stash is not on the list
+   git -c core.pager=cat stash list   ->  ran
+   ```
+
+   So the real grant is **git, in a directory the developer approved** — which is what
+   `--allow-tool 'shell(git:*)'` says outright, and what `PROTOCOL.md` assumes when it
+   requires `git -C` over `cd`. The enumeration exists because this config file has no
+   wildcard, not because the subcommands are being restricted.
+
+   **Never tell a developer that removing an entry blocks that command.** Dropping
+   `git push` does not prevent `git push --force`: the `git -c` and `git -C` entries
+   still reach it. A deny rule at the CLI — `--deny-tool 'shell(git push)'`, which
+   takes precedence over any allow — is the mechanism that expresses an exclusion, and
+   whether it catches the `-c` prefixed form is untested. If a developer wants a real
+   guard on force-push, point them at a pre-push hook or branch protection, which do
+   not depend on how the command was spelled.
+
+   **Approvals key on the directory Copilot was launched from, not the one it is
+   reading.** A vault entry does nothing for a session started in a parent folder or
+   another repo — the approvals for *that* directory apply instead. Say so: vault
+   verbs belong in a session rooted at the vault.
+
+   **Copilot in VS Code is a different mechanism, and a workspace file silently
+   disables the vault's own settings.** The vault ships `.vscode/settings.json` with
+   `chat.tools.terminal.autoApprove`. That setting is **window-scoped**: when a
+   `.code-workspace` is open, folder settings are ignored entirely and only the
+   workspace file's `settings` block applies. A generated workspace carrying
+   `"settings": {}` therefore turns the vault's auto-approve off while everything looks
+   correctly configured — the vault's file is present, committed, and inert. Either
+   open the vault folder directly, or copy the block into the workspace file:
+
+   ```json
+   "settings": {
+     "chat.tools.terminal.autoApprove": {
+       "/^\\s*git\\s+(status|diff|log|show|config|add|commit|push|pull|fetch|rev-list|remote|tag|checkout|ls-tree|rev-parse)\\b/": true,
+       "/^\\s*git\\s+-C\\s+(\"[^\"]*\"|\\S+)\\s+(status|diff|log|show|config|add|commit|push|pull|fetch|rev-list|remote|tag|checkout|ls-tree|rev-parse)\\b/": true,
+       "/^\\s*git\\s+(?:-c\\s+(?:[^\\s\"]|\"[^\"]*\")+\\s+)+fetch\\b/": true,
+       "/^\\s*date\\b/": true,
+       "/^\\s*git\\s+(?:-C\\s+(?:\"[^\"]*\"|\\S+)\\s+)?push\\s+--force/": false,
+       "/^\\s*git\\s+(?:-C\\s+(?:\"[^\"]*\"|\\S+)\\s+)?config\\s+--global/": false
+     }
+   }
+   ```
+
+   Observed 2026-08-29 on a vault whose folder settings were correct and whose
+   generated workspace file was empty: prompts in the workspace, none in the folder.
+
+   **A bare subcommand list is not enough.** Rules match the *start* of a command, so
+   `git -C <vault> status` and `hello`'s `git -c core.sshCommand=... fetch` match none
+   of them — the second begins `git -c`, not a subcommand name. Both prefixed forms
+   need a rule of their own, and the exclusions need the `-C` form too, or
+   `git -C <vault> push --force` is approved by the rule meant to allow reads.
+   Observed 2026-08-31.
+
+   **Here the list is a real boundary, unlike the CLI.** These are regular expressions
+   rather than command stems, so `git stash` and anything unlisted still prompt, and
+   `push --force` can genuinely be excluded. That is the one thing VS Code expresses
+   which `permissions-config.json` cannot.
+
 
    **OpenCode** — the same skill at `~/.config/opencode/skills/<vault-name>/SKILL.md`
    without the `alwaysApply` line, plus a `references` entry in
