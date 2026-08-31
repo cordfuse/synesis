@@ -4,5 +4,19 @@
   // file. VS Code workspace files accept comments, so this note travels with it.
   "folders": [
     { "path": "." }
-  ]
+  ],
+  // WINDOW SCOPED: with this workspace file open, .vscode/settings.json is ignored
+  // entirely and only this block applies. Keep the two in step, or the vault looks
+  // configured and prompts on every git call anyway.
+  "settings": {
+    "chat.tools.terminal.autoApprove": {
+      "/^\\s*git\\s+(status|diff|log|show|config|add|commit|push|pull|fetch|rev-list|remote|tag|checkout|ls-tree|rev-parse)\\b/": true,
+      "/^\\s*git\\s+-C\\s+(\"[^\"]*\"|\\S+)\\s+(status|diff|log|show|config|add|commit|push|pull|fetch|rev-list|remote|tag|checkout|ls-tree|rev-parse)\\b/": true,
+      "/^\\s*git\\s+-C\\s+(\"[^\"]*\"|\\S+)\\s+(?:-c\\s+(?:[^\\s\"]|\"[^\"]*\")+\\s+)+fetch\\b/": true,
+      "/^\\s*git\\s+(?:-c\\s+(?:[^\\s\"]|\"[^\"]*\")+\\s+)+fetch\\b/": true,
+      "/^\\s*date\\b/": true,
+      "/^\\s*git\\s+(?:-C\\s+(?:\"[^\"]*\"|\\S+)\\s+)?push\\s+--force/": false,
+      "/^\\s*git\\s+(?:-C\\s+(?:\"[^\"]*\"|\\S+)\\s+)?config\\s+--global/": false
+    }
+  }
 }
