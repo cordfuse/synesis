@@ -95,7 +95,8 @@ their call.
    match will not hit. Observed 2026-08-27.
 
    **Name exact files. Never ask for a harness directory.** `~/.codex` holds
-   `auth.json`; the other harness roots hold credentials of their own. A check for a
+   `auth.json` and `%APPDATA%\GitHub Copilot\hosts.json` holds an OAuth token; the
+   other harness roots hold credentials of their own. A check for a
    dangling path has no business requesting the folder an auth token lives in, and a
    harness that batches the request will offer to make that access permanent — one
    keystroke from a check into a standing grant over a credential store. Ask for the
