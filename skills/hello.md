@@ -84,49 +84,33 @@ four PowerShell pipelines reading frontmatter.
 ### Vault status
 - Protocol version (from PROTOCOL.md frontmatter)
 - Upstream tracking (if `upstream` field exists in PROTOCOL.md frontmatter)
-- Whether this machine is wired up. **Start with the harness you are running in, and
-  answer that one without reading anything.** If this session loaded the vault's skill
-  or instruction file, that harness is wired — the session could not have begun this
-  way otherwise, and you are reading these words as the proof. Report it wired and
-  move on. Reading the file to confirm what already happened is the single most common
-  permission prompt a briefing produces, and it confirms nothing you do not already
-  know.
+- Whether this machine is wired up — **the harness you are running in, and nothing
+  else.** If this session loaded the vault's skill or instruction file, that harness
+  is wired: the session could not have begun this way otherwise, and you are reading
+  these words as the proof. Report it in one line, name `wire` for the rest, and read
+  nothing:
 
-  For the **other** harnesses, these five paths are the entire list. Read them by name
-  and look for this vault's absolute path inside:
+  > Wired: Copilot CLI (this session). Run `wire` to check the others.
 
-  | Harness | The one file to read |
-  |---|---|
-  | Claude Code | `~/.claude/CLAUDE.md` |
-  | Antigravity | `~/.gemini/GEMINI.md` |
-  | Copilot CLI | `~/.copilot/skills/<vault-name>/SKILL.md` |
-  | Codex CLI | `~/.codex/skills/<vault-name>/SKILL.md` |
-  | OpenCode | `~/.config/opencode/skills/<vault-name>/SKILL.md` |
+  **A briefing does not audit the other harnesses.** Until v1.15 it read four wiring
+  files and three config files under the home directory to do so. That is the wrong
+  verb and the wrong cadence, for three reasons, each sufficient on its own:
 
-  **The skill-based harnesses have no global instruction file.** For Copilot, Codex
-  and OpenCode the `SKILL.md` *is* the wiring, and there is nothing else to find.
+  - **Cadence.** Wiring changes when someone installs a harness or moves the vault —
+    monthly at most. Auditing it on every briefing is a linter on every keystroke.
+  - **Cost.** Seven reads outside the working directory, every session, on every
+    harness. Where they are permitted they are silent and wasteful; where they are
+    not, they are seven approval dialogs before the developer has read a word.
+    Copilot CLI restricts file access to the working directory and below and has no
+    persistent setting that grants an exception, so there the cost is paid in
+    prompts, in full, every session. Observed 2026-08-31.
+  - **Quality.** `wire` does this properly. It resolves each path, separates *stale*
+    from *not wired*, and knows that a missing Codex trust entry makes the vault's
+    own config inert. A briefing answering yes or no cannot match that, and one that
+    tried would be `wire` with a worse name.
 
-  **A file that is not there is an answer: not wired.** Do not search a harness
-  directory for it, do not glob for a config file whose name you are guessing, and do
-  not widen the request when one is refused. Hunting for a file that does not exist
-  is how a briefing ends up reading an auth store — `~/.codex` holds `auth.json`,
-  `%APPDATA%\GitHub Copilot\hosts.json` holds an OAuth token, and a wiring check has
-  no business near either. Observed three times on 2026-08-26 before this list existed.
-
-  If none of the five carry the path, say so in one line and name `wire`: the vault is
-  invisible to sessions started outside this folder, and that reads as "this vault does
-  not do much" when the truth is it was never switched on.
-- Whether any wiring has gone **stale** — one of those files naming a path that no
-  longer exists, or a file-access key still pointing at a former vault:
-  `trustedFolders` in `~/.copilot/config.json`, `trustedWorkspaces` in
-  `~/.gemini/antigravity-cli/settings.json`,
-  `permissions.additionalDirectories` in `~/.claude/settings.json`, or the
-  `[projects]` trust entry in `~/.codex/config.toml`.
-  A missing Codex trust entry is worth reporting even when the skill is present: it
-  makes the vault's own Codex config inert, so the wiring looks correct and prompts on
-  every command. A renamed or moved vault leaves those behind and they fail silently.
-  Report it and name `wire`. Do not configure anything — `wire` prints, the developer
-  applies.
+  So: report your own harness for free, say `wire` once, and move on. The developer
+  who wants the full picture has a verb for it.
 - Any active handoff records (records tagged `handoff` with no superseding record)
 - Count of tools in `tools/` (if any beyond README.md)
 - Whether a newer protocol version is available upstream — see **Version check**
@@ -188,8 +172,16 @@ versions.
    would permit `timeout 1 <anything>`, which is arbitrary command execution wearing
    a wrapper — a far wider grant than the one it was meant to support.
 
-4. **Compare the newest tag against that version.** If the tag is newer, append one
-   line to vault status:
+4. **Compare the newest tag against that version.** List the tags in one call and read
+   the newest from the output yourself — do not pipe into `head`, `Select-Object` or
+   `findstr`, which turns one git call into a compound no approval rule can match:
+
+   ```sh
+   git tag --sort=-v:refname
+   ```
+
+   If the newest tag is newer than this vault's version, append one line to vault
+   status:
 
    > Protocol v0.7 available upstream — say `reconcile` to review the changes.
 

@@ -17,7 +17,7 @@ Cortex proved the pattern for one person. Synesis is cortex for teams.
 ## Design principles
 
 1. **Files, not services.** Markdown in a repo. No server, no database, no API keys. Clone and go.
-2. **Agent-agnostic.** Works with any AI harness that reads project files. No vendor lock-in.
+2. **Agent-agnostic.** Works with any AI harness that reads project files. No vendor lock-in. Verified on three of the five shipped harnesses — see README for which.
 3. **Brand-neutral internals.** `PROTOCOL.md`, not `SYNESIS.md`. The brand lives in `README.md` and `EXAMPLE.md` only — never in the protocol files themselves. Zero rename cost.
 4. **Trust the team.** No review gates on knowledge contributions. Anyone can commit. Git history is the audit trail. Friction kills adoption.
 5. **Use the template and own it.** Teams create a vault with "Use this template" and make it theirs. The protocol defines the structure; the team fills it with real knowledge. There is **no fork relationship** — the histories are unrelated, so git cannot merge them. Upstream changes come down through `reconcile`, a file-level diff gated per file, never a merge or rebase.

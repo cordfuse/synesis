@@ -1,0 +1,12 @@
+{
+  "// note": "Scoped to this vault. Gives Copilot in VS Code the same git posture Claude Code has via Bash(git:*) in .claude/settings.json, with the same two exclusions. Vault work is commit-directly, push-immediately with no PR gate, so a confirmation per git call buys nothing. Covers the git -C and git -c forms the vault actually runs -- a bare subcommand list misses hello's bounded fetch entirely -- and date, which note and propose require. WINDOW SCOPED: when a .code-workspace is open this file is ignored completely and only the workspace file's settings block applies. Copy this there too, or the vault looks configured and prompts anyway.",
+  "chat.tools.terminal.autoApprove": {
+    "/^\\s*git\\s+(status|diff|log|show|config|add|commit|push|pull|fetch|rev-list|remote|tag|checkout|ls-tree|rev-parse)\\b/": true,
+    "/^\\s*git\\s+-C\\s+(\"[^\"]*\"|\\S+)\\s+(status|diff|log|show|config|add|commit|push|pull|fetch|rev-list|remote|tag|checkout|ls-tree|rev-parse)\\b/": true,
+    "/^\\s*git\\s+-C\\s+(\"[^\"]*\"|\\S+)\\s+(?:-c\\s+(?:[^\\s\"]|\"[^\"]*\")+\\s+)+fetch\\b/": true,
+    "/^\\s*git\\s+(?:-c\\s+(?:[^\\s\"]|\"[^\"]*\")+\\s+)+fetch\\b/": true,
+    "/^\\s*date\\b/": true,
+    "/^\\s*git\\s+(?:-C\\s+(?:\"[^\"]*\"|\\S+)\\s+)?push\\s+--force/": false,
+    "/^\\s*git\\s+(?:-C\\s+(?:\"[^\"]*\"|\\S+)\\s+)?config\\s+--global/": false
+  }
+}

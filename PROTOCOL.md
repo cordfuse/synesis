@@ -1,5 +1,5 @@
 ---
-version: 1.6
+version: 1.7
 upstream: cordfuse/synesis
 stale-days: 90
 ---
@@ -93,7 +93,7 @@ Precedence is not composition. Do not run both the parent's version and the vaul
 
 ## Versioning
 
-This protocol is at **v1.6**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
+This protocol is at **v1.7**. Minor bumps add conventions or verbs. Major bumps change directory structure or this file's format.
 
 ## Dates
 
@@ -183,7 +183,7 @@ Links are conservative: a real relationship, not topical adjacency. `weave` cove
 
 ## Working in this vault
 
-**Read files with your file tools, not through a shell.** Reading many files at once is still reading, and every harness has tools for it. Do not shell out to PowerShell, bash or anything else to read, list, grep or parse files here. Shell access in this vault is for `git` and nothing else — `.claude/settings.json` grants `Bash(git:*)` on purpose, and a skill that needs more than git is a skill that has gone wrong.
+**Read files with your file tools, not through a shell.** Reading many files at once is still reading, and every harness has tools for it. Do not shell out to PowerShell, bash or anything else to read, list, grep or parse files here. Shell access in this vault is for `git` and `date`, and nothing else — `.claude/settings.json` grants `Bash(git:*)` and `Bash(date:*)` on purpose, and a skill that needs more than those two is a skill that has gone wrong. `date` is there because **Dates** below requires reading the date rather than inferring it, which no file tool can do.
 
 **How you address the repo depends on where the session started.**
 
@@ -192,6 +192,18 @@ When the vault **is** the working directory, run git plainly — `git config use
 When the vault is **not** the working directory — a session started in a project repo that reached this vault through wiring — use `git -C <vault-path>`. **Never `cd <vault-path>; git ...`.**
 
 That last form looks equivalent and is not. Command approvals match on the *stem* of the command, and the stem of `cd <path>; git status` is `cd`, not `git`. No git allow-rule can match it, so every call falls through to a prompt — and the only rule that would cover it, `shell(cd:*)`, allows any command that follows a `cd`, which is a blanket shell grant wearing a disguise. `git -C` keeps the stem `git`, so one narrow rule covers every call the protocol makes. Measured on Copilot CLI, 2026-08-26.
+
+**One git call per command. No variable assignment, no chaining, no pipes.** The rule that rules out `cd` rules out three more shapes for the same reason: approvals are matched per *sub-command*, and anything that is not a git call is a sub-command no git rule can match.
+
+Observed 2026-08-31 in Copilot for VS Code, where a single briefing produced this one line:
+
+```
+$v="<vault>"; git -C $v remote -v; git -C $v -c core.sshCommand=... fetch --tags --quiet upstream; git -C $v tag --sort=-v:refname | Select-Object -First 5
+```
+
+Four sub-commands, two of which are not git. The assignment matches no rule; `-C $v` is a variable rather than the literal path, so a rule scoped to the vault path cannot recognise the vault; and the pipe introduces `Select-Object`. The whole line therefore needs one approval, every session, and no set of git rules can ever grant it.
+
+The saving is a few characters of typing. The cost is a consent dialog in the middle of every briefing. Issue one git call per command and let your harness hold the results — you can keep the vault path in your own reasoning without putting it in the shell, and you do not need `head`, `Select-Object` or `findstr` to take the first lines of output the harness already hands you in full.
 
 **Do not append shell redirections to git calls** — no `2>&1`, no `>`. A redirection creates or modifies a file, so approval systems classify the whole command as a *write* rather than as git, and the only rule broad enough to permit it is an allow-everything grant. Your harness already captures stderr and hands it to you. Measured on Copilot CLI, 2026-08-26: `git -C <vault> rev-list --count HEAD..origin/main` is permitted, and the same command with `2>&1` appended is refused.
 

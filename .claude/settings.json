@@ -8,6 +8,7 @@
       "Glob",
       "Grep",
       "Bash(git:*)",
+      "Bash(date:*)",
       "WebSearch",
       "WebFetch"
     ],
@@ -21,6 +22,7 @@
       "Edit(LICENSE)",
       "Edit(README.md)",
       "Edit(PLAN.md)",
+      "Edit(.vscode/settings.json)",
       "Edit(.claude/settings.json)"
     ]
   }

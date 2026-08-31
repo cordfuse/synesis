@@ -28,9 +28,11 @@ Only these paths are compared. Everything else is vault-local and is **never** t
 | `AGENTS.md` | agent entry point |
 | `.claude/settings.json` | the permission backstop |
 | `.codex/config.toml` | the Codex sandbox and approval policy |
+| `.vscode/settings.json` | the VS Code auto-approve rules |
 | `.github/copilot-instructions.md` | Copilot entry point |
 | `GEMINI.md` | Antigravity entry point |
 | `opencode.json` | OpenCode entry point |
+| `.gitignore` | what a vault does not track |
 
 Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments/`, `tools/`, `LICENSE`, `PLAN.md`, `EXAMPLE.md`, and exactly two instruction files — `README.md` and `CLAUDE.md`. That content is the team's, not the template's, and those two are expected to diverge immediately and permanently — flagging them every run would train the user to ignore the report.
 
@@ -38,9 +40,11 @@ Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments
 
 `PLAN.md` and `EXAMPLE.md` start as the template's own files. `PLAN.md` is the framework's execution plan, not shipped knowledge — if your vault still has it, delete it rather than keeping it in sync. `EXAMPLE.md` is the same until a team **rewrites** it — its own stack, its own people, its own week of work. At that point the team owns it and it is team content like any record. Reconcile never syncs it and never offers to delete it. Judge by whether the content is still the template's, not by whether the filename is present.
 
-**Five files are reported but never pulled** — `.claude/settings.json`, `.codex/config.toml`, `GEMINI.md`, `opencode.json` and `.github/copilot-instructions.md`. They are in scope so that drift is *visible*; an agent cannot resolve them. The first two define what the session doing the writing is allowed to do — one its tool permissions, the other its sandbox and approval policy. The other three are the instructions that session is following. Every route by which an agent would rewrite either kind is refused, `git checkout` included. That guard is working as intended, and widening it to make this skill more convenient would defeat the only thing it protects. Show the diff, name the lines that differ, and let the developer apply them. Do not retry through another mechanism, and do not report any of the five as resolved.
+**The `.code-workspace` file is template content this skill cannot compare, and that is a known limitation rather than an omission.** It ships from the template and no team rewrites it, so by every argument below it belongs in scope — but a vault renames it (`vault.code-workspace` becomes `<vault-name>.code-workspace`), and a path-based diff across two repos with unrelated histories reads that as one file deleted and another added, not as drift. So it is left out deliberately: a check that reports a spurious delete on every run is worse than no check. If it needs comparing, compare it by hand, or give it a fixed name in a later protocol version and scope it then.
 
-Expect this section of the report to be non-empty and to stay that way until someone acts on it. That is the intended cost: a shim that is one line behind the template is invisible until something names it, and the failure it produces — a verb answered as a greeting — reads as the vault being useless rather than unwired.
+**Six files are reported but never pulled** — `.claude/settings.json`, `.codex/config.toml`, `.vscode/settings.json`, `GEMINI.md`, `opencode.json` and `.github/copilot-instructions.md`. They are in scope so that drift is *visible*; an agent cannot resolve them. The first three define what the session doing the writing is allowed to do — its tool permissions, its sandbox and approval policy, and which terminal commands its editor runs without asking. The other three are the instructions that session is following. Every route by which an agent would rewrite either kind is refused, `git checkout` included. That guard is working as intended, and widening it to make this skill more convenient would defeat the only thing it protects. Show the diff, name the lines that differ, and let the developer apply them. Do not retry through another mechanism, and do not report any of the six as resolved.
+
+Expect this section of the report to be non-empty and to stay that way until someone acts on it. That is the intended cost: a shim or a rule list one line behind the template is invisible until something names it, and the failure it produces — a verb answered as a greeting, or a confirmation prompt in the middle of every briefing — reads as the vault being useless rather than unwired.
 
 `LICENSE` never comes down, and the reason is worth stating plainly: the template is a public MIT repo, and most vaults built from it are not. Copying its licence onto a private vault puts the template author's copyright line on the team's own conventions, decisions, people profiles and whatever else the vault holds, and offers all of it under MIT. If a vault needs a licence it writes its own.
 
@@ -68,7 +72,7 @@ The two repos have unrelated histories — a template copy starts with a fresh c
 
 ```sh
 git fetch upstream
-git diff --name-status upstream/main HEAD -- PROTOCOL.md AGENTS.md 'skills/*.md' '*/_template.md' .claude/settings.json .codex/config.toml GEMINI.md opencode.json .github/copilot-instructions.md
+git diff --name-status upstream/main HEAD -- PROTOCOL.md AGENTS.md 'skills/*.md' '*/_template.md' .claude/settings.json .codex/config.toml GEMINI.md opencode.json .github/copilot-instructions.md .vscode/settings.json .gitignore
 ```
 
 **2. Categorize** each result:
