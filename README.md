@@ -65,9 +65,15 @@ synesis/
   conventions/             # how your team does things
   attachments/             # binary files linked to records
   tools/                   # team-shared scripts
-  synesis.code-workspace   # template multi-root workspace
+  synesis.code-workspace   # multi-root workspace — also carries the VS Code rules
+  .claude/settings.json    # Claude Code permissions: git and date, plus file tools
+  .codex/config.toml       # Codex sandbox and approval policy
+  .vscode/settings.json    # auto-approve for the git calls the vault runs
   .gitignore               # ignores .obsidian/ (per-user config)
+  .gitattributes           # LF everywhere; binaries never text-converted
 ```
+
+The four config files are shipped deliberately and are worth knowing about: without `.vscode/settings.json` and its copy inside the workspace file, Copilot in VS Code asks permission for every git call a briefing makes. Without `.gitattributes`, line endings become a property of each developer's machine instead of the repo.
 
 ### Records
 
@@ -119,6 +125,7 @@ A few worth knowing about up front:
 
 - **`note`** — records what the team learned when nothing was decided. Without it, findings get forced through the decision template and end up claiming someone chose something.
 - **`propose`** — files the *question* rather than the answer, so the reasoning is captured while options are still on the table. Without it a decision only enters the vault once someone remembers to record it, reconstructed from memory. `hello` and `status` lead with whatever is still open.
+- **`update`** — re-verifies a fact and bumps its `last-verified` date, or resolves a `deadline` that has arrived. Records and conventions can carry an optional `deadline: YYYY-MM-DD` for a date the team must act on — a certificate expiry, a contract renewal, a sunset. `note`, `propose`, `decide`, `convention` and `handoff` all write it; `hello` and `status` surface anything within 60 days; `lint` flags one that has passed. It is the only field that looks forward.
 - **`weave`** — cross-links related records and conventions so the flat vault becomes a navigable graph
 - **`wire`** — prints the exact config that makes the vault visible to agents in sessions started outside its folder, filled in with the real path and only for the harnesses you actually have installed. It never writes to your machine; setup files load in every project, so applying them stays your call.
 - **`reconcile`** — diffs your vault's protocol files against this template and surfaces what drifted, one file at a time. Vaults are created with "Use this template", so there is no fork relationship and nothing to merge; reconcile is a file-level diff, never a history operation. Your own records and conventions are never in scope — only the protocol files you inherited.
@@ -232,7 +239,7 @@ To avoid typing it every session, record the approval per location in `~/.copilo
 trust_level = "trusted"
 ```
 
-Optionally for Copilot, `--allow-tool 'shell(git:*)'` at launch. That is the whole shell grant the protocol needs, since vault shell use is restricted to git. Without it every git call in `hello` asks for approval separately and the briefing turns into a consent form. It grants a tool rather than a path, which is why it stays a flag.
+Optionally for Copilot, `--allow-tool 'shell(git:*)'` at launch. That covers almost all of it, since vault shell use is restricted to `git` and `date`. Without it every git call in `hello` asks for approval separately and the briefing turns into a consent form. It grants a tool rather than a path, which is why it stays a flag.
 
 #### OpenCode
 
@@ -332,7 +339,7 @@ Weave is idempotent: run it twice and the second run changes nothing. Links that
 
 ## Permissions
 
-The vault ships `.claude/settings.json` with a deliberately small grant: `Bash(git:*)`, plus the file tools. Every skill shells out to git and nothing else, so nothing wider is needed.
+The vault ships `.claude/settings.json` with a deliberately small grant: `Bash(git:*)` and `Bash(date:*)`, plus the file tools. Every skill shells out to git and nothing else — `date` is the one exception, because recording when something happened requires reading the real date rather than inferring it, and no file tool can do that.
 
 That matters more here than in an ordinary repo. `reconcile` pulls protocol files from the template, so a third party writes the instructions your agent then follows — the ordinary exposure of any dependency, no hostile maintainer required. A blanket shell grant is the wrong default to pair with it. `git config --global` and `git push --force` are denied outright: one writes machine state from a repo-scoped skill, the other can destroy history that is your team's only copy of its decisions.
 
