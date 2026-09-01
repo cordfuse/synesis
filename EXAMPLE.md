@@ -322,6 +322,46 @@ Editing the body would have destroyed that. It's the one thing the protocol won'
 
 ---
 
+## Day 45 — a date nobody would have remembered
+
+Mike writes down how releases get signed.
+
+```
+convention code signing
+```
+
+The convention is straightforward — which certificate, where the key lives, who
+can use it. But one line in it is a fact with an expiry date, and Mike says so:
+
+```yaml
+---
+name: Code signing
+last-verified: 2026-10-16
+deadline: 2027-04-16          # certificate expires
+tags: [release, security]
+---
+```
+
+Nothing happens for five months. Then, on a perfectly ordinary morning:
+
+```
+hello
+```
+
+> **Coming up**
+>   `conventions/code-signing.md` — certificate expires 2027-04-16, in 54 days
+
+That is the whole feature. `last-verified` measures how long since someone
+checked a fact; it cannot tell you a fact is about to stop being true. Written
+in body prose, that expiry date would have been invisible until the day a build
+failed and someone went looking for why — which is how expiries usually
+announce themselves.
+
+When the certificate is renewed, `update conventions/code-signing` moves the
+date forward. When the thing is done for good, the field comes off.
+
+---
+
 ## Day 90 — hygiene
 
 ```
