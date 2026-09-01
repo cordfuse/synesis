@@ -33,6 +33,7 @@ Only these paths are compared. Everything else is vault-local and is **never** t
 | `GEMINI.md` | Antigravity entry point |
 | `opencode.json` | OpenCode entry point |
 | `.gitignore` | what a vault does not track |
+| `.gitattributes` | line-ending and binary rules — infrastructure, not content |
 
 Explicitly **out of scope**: `records/`, `conventions/`, `people/`, `attachments/`, `tools/`, `LICENSE`, `PLAN.md`, `EXAMPLE.md`, and exactly two instruction files — `README.md` and `CLAUDE.md`. That content is the team's, not the template's, and those two are expected to diverge immediately and permanently — flagging them every run would train the user to ignore the report.
 
@@ -56,13 +57,18 @@ What you do need is a remote. Vaults are created with GitHub's "Use this templat
 
 ```sh
 git remote add upstream <template-repo-url>
-git fetch upstream
+git -c core.sshCommand="ssh -o ConnectTimeout=5 -o BatchMode=yes" \
+    -c credential.interactive=false \
+    -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=5 \
+    fetch --quiet upstream
 ```
 
 `hello` adds this remote automatically the first time it runs a version check,
 deriving the URL from the `upstream:` field and matching the form `origin` already
 uses. The commands above are the fallback for anyone who never runs `hello`, or
 whose vault came from a fork or private mirror the derivation cannot guess.
+
+The fetch is bounded for the same reason `hello`'s is: an unreachable host hangs, and a credential prompt hangs worse.
 
 The two repos have unrelated histories — a template copy starts with a fresh commit. `git diff` works fine across them; `git merge-base` returns nothing. Never attempt a merge, rebase, or pull from upstream. Reconcile is a file-level diff-and-copy, never a history operation.
 
@@ -71,8 +77,11 @@ The two repos have unrelated histories — a template copy starts with a fresh c
 **1. Fetch and diff.**
 
 ```sh
-git fetch upstream
-git diff --name-status upstream/main HEAD -- PROTOCOL.md AGENTS.md 'skills/*.md' '*/_template.md' .claude/settings.json .codex/config.toml GEMINI.md opencode.json .github/copilot-instructions.md .vscode/settings.json .gitignore
+git -c core.sshCommand="ssh -o ConnectTimeout=5 -o BatchMode=yes" \
+    -c credential.interactive=false \
+    -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=5 \
+    fetch --quiet upstream
+git diff --name-status upstream/main HEAD -- PROTOCOL.md AGENTS.md 'skills/*.md' '*/_template.md' .claude/settings.json .codex/config.toml GEMINI.md opencode.json .github/copilot-instructions.md .vscode/settings.json .gitignore .gitattributes
 ```
 
 **2. Categorize** each result:

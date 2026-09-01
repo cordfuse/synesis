@@ -43,17 +43,17 @@ When triggered, file a **note** — a dated record of something learned, observe
    title: What was learned
    type: note
    date: YYYY-MM-DD
-   decided-by: []        # empty — nothing was decided
    consulted: []
    last-verified: YYYY-MM-DD
-   superseded-by:        # set only when a later note corrects this one
    tags: [...]
    ---
    ```
 
-   **A note carries no `status` field.** Nothing was proposed and nothing was accepted, so there is no answer to record. Whether the finding still stands is answered by `superseded-by` alone.
+   **A note carries no `status` and no `decided-by`.** Nothing was proposed, nothing was accepted, and nobody chose, so there is no answer and no chooser to record. Whether the finding still stands is answered by `superseded-by` alone — add `superseded-by: <filename>` when a later note corrects this one, and never ship the key empty: a bare key reads as meaningful and is lint noise.
 
    `type: note` is what distinguishes it. Without that field a record is a decision, and `lint` will flag it for having no `decided-by` and no `status`.
+
+   **If the finding names a future date the team must act on** — an expiry, a renewal, a sunset — add `deadline: YYYY-MM-DD` set to that date (see Freshness in `PROTOCOL.md`). Do not invent one; most notes have none, and a date the note merely mentions is not a deadline.
 
    Structure the body around the finding rather than the decision template: what was observed, how it was established, what follows from it. Do not force it into Context / Options / Decision / Consequences — there were no options.
 

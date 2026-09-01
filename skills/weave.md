@@ -33,9 +33,9 @@ Skip:
 
 4. **Make links bidirectional.** If A links to B, B lists A. Apply the cap after reciprocals are added; if a reciprocal would push a file over 5, keep it anyway — reciprocity wins over the cap.
 
-5. **Write the blocks.** Replace the existing `<!-- weave:start -->` … `<!-- weave:end -->` region, or append a fresh `## Related` section at the end of the file if none exists. Never write a block with no links — omit the section entirely.
+5. **Write the blocks.** Replace the existing `<!-- weave:start -->` … `<!-- weave:end -->` region, or append a fresh `## Related` section at the end of the file if none exists. If authored content has been appended below the block since the last run — a proposal answered after weaving gains Decision and Consequences sections — move the block back to the end: it is always the last section. Never write a block with no links — omit the section entirely.
 
-6. **Report, then commit.** Summarize: files scanned, blocks written, links added, links removed since last run. Commit as one batch: `weave: cross-link records and conventions`. Do not push unless asked.
+6. **Report, commit, push.** Summarize: files scanned, blocks written, links added, links removed since last run. Commit as one batch — `weave: cross-link records and conventions` — and push: every commit is pushed immediately (Contributing, `PROTOCOL.md`).
 
 ## What counts as a high-confidence link
 

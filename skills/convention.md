@@ -36,6 +36,8 @@ The user describes the practice in their own words. **They never write frontmatt
    ---
    ```
 
+   **If the practice depends on a future date** — a certificate expiry, a licence renewal, a version sunset — add `deadline: YYYY-MM-DD` set to that date (see Freshness in `PROTOCOL.md`). Do not invent one; most conventions have none.
+
    Then the practice itself. Lead with the rule in one line, then specifics — commands, tables, examples. Write it so an agent can act on it, not just a human read it: concrete commands beat prose descriptions of commands.
 
 4. **Link related content.** Add `[[wikilinks]]` in body prose where a sentence genuinely explains a connection. Do **not** hand-write a `## Related` block — that block is derived and belongs to the `weave` skill. Run `weave` after filing to generate it.

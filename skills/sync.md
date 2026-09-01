@@ -12,7 +12,16 @@ When triggered, bring the vault up to date with the remote and push any local wo
 ## Steps
 
 1. Check for uncommitted changes in the vault. If any exist, commit them with a descriptive message.
-2. Run `git fetch origin` then `git pull --rebase origin main`.
+2. Run one bounded pull — `pull --rebase` fetches on its own, so a separate `git fetch` first opens a second connection for nothing:
+
+   ```sh
+   git -c core.sshCommand="ssh -o ConnectTimeout=5 -o BatchMode=yes" \
+       -c credential.interactive=false \
+       -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=5 \
+       pull --rebase origin main
+   ```
+
+   Bounded for the same reason hello's fetch is: an unreachable host hangs, and a credential prompt hangs worse.
 3. If the rebase encounters conflicts, report them and stop — do not auto-resolve.
 4. If there are local commits ahead of origin, push them.
 5. Briefly summarize what changed: new or updated files pulled, and anything pushed.

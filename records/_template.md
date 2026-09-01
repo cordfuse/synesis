@@ -1,12 +1,13 @@
 ---
 title:
-type: decision   # decision | note — omit for decision
+# type: note — only on a note; a record with no type is a decision
 date:
-decided-by: []          # decisions only — required once accepted or rejected
+decided-by: []          # decisions only — required once accepted or rejected; omit on a note
 consulted: []
 last-verified:
+# deadline: YYYY-MM-DD — only when the content names a future date the team must act on
 status: accepted        # decisions only — proposed | accepted | rejected. Omit entirely on a note.
-superseded-by:          # set when a later record replaces this one; status stays as it was
+# superseded-by: <filename> — add when a later record replaces this one; status stays as it was. Never ship the key empty.
 tags: []
 ---
 

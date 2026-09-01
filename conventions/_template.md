@@ -1,6 +1,7 @@
 ---
 name:
 last-verified:
+# deadline: YYYY-MM-DD — only when the content names a future date the team must act on
 tags: []
 ---
 

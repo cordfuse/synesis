@@ -46,6 +46,8 @@ Without it, a decision only enters the vault after it is made, reconstructed fro
    consulted: [initials] # who should weigh in
    ```
 
+   **If something is forcing the question by a date** — a contract expiring, a migration cutoff, a sunset — add `deadline: YYYY-MM-DD` set to that date (see Freshness in `PROTOCOL.md`), so an unanswered question surfaces before the date rather than after. Do not invent one; most proposals have none.
+
    Fill `## Context` and `## Options considered`. **Leave `## Decision` and `## Consequences` empty** — writing them is what `decide` does. The marker that a record is open is `status: proposed` in frontmatter, not the empty section; check the field, never the prose.
 
 4. **Commit and push.** `records: propose {slug}`.

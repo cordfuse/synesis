@@ -24,6 +24,10 @@ When triggered, re-verify a convention or record to confirm it's still accurate.
 
 5. **Commit and push.** Commit the change with a descriptive message, then push.
 
+## Deadlines
+
+`update` also resolves a deadline that has passed or is approaching — the ones `lint` check 11 flags and `hello` surfaces. Re-verify the underlying fact first, then either move `deadline` to the new date or remove the field because the event has been handled. Both are frontmatter changes, so both are allowed on a record. If the file itself is finished rather than the date moved, recommend supersede or `archive` instead — a passed deadline on a file nobody will act on again is noise every run.
+
 ## Notes
 
 - This is the counterpart to `lint` — lint flags stale items, update resolves them.

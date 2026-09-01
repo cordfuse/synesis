@@ -337,9 +337,12 @@ lint
 > **Unanswered proposals:**
 >   `records/2026-09-14-queue-choice.md` — open 34 days, consulted: MW
 >
+> **Approaching deadline:**
+>   `conventions/code-signing.md` — certificate expires 2026-12-19, in 41 days
+>
 > No broken links. No orphaned profiles. No unfilled templates. No weave problems.
 > No template files referencing vault content. No lifecycle field errors. No dead
-> permission rules.
+> permission rules. No passed deadlines.
 
 Nothing is deleted or auto-fixed — lint reports, the team decides. Sarah re-reads the deployment convention, confirms it's still right, and runs `update conventions/deployment` to bump the date.
 

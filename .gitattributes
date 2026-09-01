@@ -1,0 +1,14 @@
+# Line endings are part of the repo, not of each machine's git config.
+# Text is stored and checked out LF everywhere; binaries are never touched.
+# The explicit binary rules exist because auto-detection fails: git has
+# classified a real PDF as text and corrupted every checkout of it.
+* text=auto eol=lf
+*.pdf  binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.docx binary
+*.xlsx binary
+*.pptx binary
+*.zip  binary

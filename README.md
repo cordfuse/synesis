@@ -303,6 +303,8 @@ The next time they say `hello`, they skip straight to the briefing. No setup doc
 
 Records and conventions carry a `last-verified` date. The `lint` skill flags anything older than the configurable threshold (default: 90 days). No automated deletion — just visibility. The team decides what to update, verify, or supersede.
 
+**`last-verified` looks backward; `deadline` looks forward.** A file whose content names a date the team must act on — a certificate expiry, a contract renewal, a sunset — carries an optional `deadline: YYYY-MM-DD`. `hello` and `status` surface any deadline within 60 days, and `lint` flags one that has passed. Without it, a date written in body prose is invisible until it is already history, which is how most expiries actually happen. A vault that cannot warn about the future is an archive, not memory.
+
 Knowledge that is no longer current gets `archive`d rather than deleted: it drops out of briefings and lint, stays findable by `search`, and `weave` stops linking to it so the graph doesn't lead anywhere dead. Nothing leaves the vault, and `git log` keeps the rest.
 
 ## Catching up
