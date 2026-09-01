@@ -12,7 +12,7 @@ When triggered, run the onboarding flow for the current user.
 
 ## Steps
 
-1. **Identify the user.** Read `git config user.name` and `git config user.email`. Check `people/` for a profile where `email` matches.
+1. **Identify the user.** Read `git config user.name` and `git config user.email`. Check `people/` for a profile where `email` matches, or an `aliases` entry does — people commit under more than one address, and onboarding someone twice is the failure this catches.
 
 2. **If a profile exists:** Skip the interview and the profile commit. Deliver the
    briefing (step 6), then offer `wire` (step 7) — a returning developer on a new

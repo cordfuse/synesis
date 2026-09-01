@@ -103,6 +103,12 @@ Report as: `.claude/settings.json — deny rule Write(skills/**) is never consul
 
 **A bare tool name is not this defect.** `"Write"` or `"Glob"` with no parentheses matches at the tool level and works as written — the allow list is expected to contain them. Only a rule carrying a path is dead.
 
+### 11. Passed deadlines
+
+Scan `records/` and `conventions/` (excluding `archived: true`) for a frontmatter `deadline` in the past. A passed deadline means the event it names has happened: the file needs its date moved, the field removed because the event was handled, or the record superseded or archived. Report it — do not fix it. Compare against `date +%F`, never an inferred date.
+
+Report as: `conventions/code-signing.md — deadline 2027-04-16 passed 12 days ago`.
+
 ## Output format
 
 Report findings grouped by check, with file paths and a one-line description of each issue. If a check finds nothing, say so in one line. Example:

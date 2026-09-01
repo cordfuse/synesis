@@ -19,7 +19,7 @@ When triggered, report what's in flight and who's working on what.
 
 4. **Ownership map.** Scan `people/` profiles and summarize the "Owns" section from each. Show who owns what areas.
 
-5. **Stale items.** Check `records/` and `conventions/` (excluding `archived: true`) for anything with `last-verified` older than `stale-days`. List any stale items as a heads-up.
+5. **Stale and dated items.** Check `records/` and `conventions/` (excluding `archived: true`) for anything with `last-verified` older than `stale-days`, and anything whose `deadline` falls within 60 days or has passed. List both as a heads-up.
 
 ## Notes
 

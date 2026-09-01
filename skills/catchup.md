@@ -11,7 +11,7 @@ When triggered, summarize what changed in the vault since the current user's las
 
 ## Steps
 
-1. **Identify the user.** Read `git config user.email` and find their profile in `people/`.
+1. **Identify the user.** Read `git config user.email` and find their profile in `people/` — matching `email`, or an `aliases` entry, since people commit under more than one address.
 
 2. **Find the baseline.** Read the `last-seen` field from the user's people profile. If no `last-seen` exists, fall back to asking "since when?" or default to the last 7 days.
 

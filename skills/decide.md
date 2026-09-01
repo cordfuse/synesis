@@ -36,6 +36,8 @@ If a proposal exists but the decision went somewhere its options never covered, 
 
 2. **Create the record.** Write `records/{date}-{slug}.md` using the template from `records/_template.md`. Date is today in `YYYY-MM-DD` format. Slug is a short kebab-case summary of the decision.
 
+   **If the decision names a future date the team must act on** — a renewal, a migration cutoff, a sunset the consequences depend on — set `deadline: YYYY-MM-DD` to that date (see Freshness in `PROTOCOL.md`). Do not invent one; most records have none. When resolving a proposal that already carries one, leave it unless the answer moved the date.
+
 3. **Link related content.** Add `[[wikilinks]]` in the body prose where a sentence genuinely explains a connection. Do **not** hand-write a `## Related` block — that block is derived and belongs to the `weave` skill. Run `weave` after filing to generate it (see Record linking in `PROTOCOL.md`).
 
 4. **Commit and push.** Commit with a message like: `records: {title}`. Push to the remote.
