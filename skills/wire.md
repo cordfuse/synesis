@@ -301,11 +301,11 @@ their call.
    hardest while doing its actual job reads as not worth using. Observed 2026-08-29.
 
    **The list is derived from what the skills actually run.** `git config` for the
-   identity read in `hello`, `git -c` for the bounded fetches in `hello`, `git ls-tree`
+   identity read in `hello`, `git -c` for the bounded fetch in `hello`, `git ls-tree`
    and `git checkout` for `reconcile`, `git rev-parse` for this skill's own step 1, and
    `date` for the `date +%F` that `note` and `propose` require. An entry missing from
-   this list costs a prompt in the middle of a verb, and `git config` — step 2 of the
-   first verb of every session — is the one developers meet first. Observed on a list
+   this list costs a prompt in the middle of a verb, and `git config` — the identity
+   read in the first verb of every session — is the one developers meet first. Observed on a list
    that had the other thirteen, 2026-08-31.
 
    **This list is not a security boundary, and must not be presented as one.**
